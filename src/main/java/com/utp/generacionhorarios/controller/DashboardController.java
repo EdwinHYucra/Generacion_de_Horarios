@@ -19,53 +19,73 @@ public class DashboardController {
         this.usuarioRepository = usuarioRepository;
     }
 
+    // =========================
+    // LOGIN
+    // =========================
     @PostMapping("/login")
-public String procesarLogin(@RequestParam String username,
-                            @RequestParam String password) {
+    public String procesarLogin(@RequestParam String username,
+                                @RequestParam String password,
+                                HttpSession session) {
 
-    System.out.println("USERNAME: " + username);
-    System.out.println("PASSWORD: " + password);
+        Usuario usuario = usuarioRepository.findByCorreo(username).orElse(null);
 
-    Usuario usuario = usuarioRepository.findByCorreo(username).orElse(null);
+        if (usuario == null) {
+            return "redirect:/login?error";
+        }
 
-    System.out.println("USUARIO EN BD: " + usuario);
+        if (!usuario.getPassword().equals(password)) {
+            return "redirect:/login?error";
+        }
 
-    if (usuario == null) {
-        System.out.println("USUARIO NO ENCONTRADO");
-        return "redirect:/login?error";
+        // GUARDAR SESIÓN
+        session.setAttribute("usuario", usuario);
+
+        // REDIRECCIÓN POR ROL
+        if ("ADMIN".equals(usuario.getRol())) {
+            return "redirect:/admin/dashboard";
+        } else {
+            return "redirect:/docente/dashboard";
+        }
     }
-
-    System.out.println("PASS BD: " + usuario.getPassword());
-
-    if (!usuario.getPassword().equals(password)) {
-        System.out.println("PASSWORD INCORRECTA");
-        return "redirect:/login?error";
-    }
-
-    System.out.println("LOGIN OK");
-
-    return usuario.getRol().equals("ADMIN")
-            ? "redirect:/admin/dashboard"
-            : "redirect:/docente/dashboard";
-}
 
     @GetMapping("/login")
     public String login() {
         return "login";
     }
 
+    // =========================
+    // ADMIN DASHBOARD (PROTEGIDO)
+    // =========================
     @GetMapping("/admin/dashboard")
-    public String adminDashboard() {
+    public String adminDashboard(HttpSession session) {
+
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
+
+        if (usuario == null || !"ADMIN".equals(usuario.getRol())) {
+            return "redirect:/login";
+        }
+
         return "dashboard_administrador";
     }
 
+    // =========================
+    // DOCENTE DASHBOARD (PROTEGIDO)
+    // =========================
     @GetMapping("/docente/dashboard")
-    public String docenteDashboard() {
+    public String docenteDashboard(HttpSession session) {
+
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
+
+        if (usuario == null || !"DOCENTE".equals(usuario.getRol())) {
+            return "redirect:/login";
+        }
+
         return "dashboard_docente";
     }
+
     @GetMapping("/logout")
-public String logout(HttpSession session) {
-    session.invalidate();
-    return "redirect:/login";
-}
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/login";
+    }
 }
