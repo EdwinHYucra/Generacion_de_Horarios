@@ -9,5 +9,4 @@ public class GeneracionDeHorariosApplication {
     public static void main(String[] args) {
         SpringApplication.run(GeneracionDeHorariosApplication.class, args);
     }
-
 }

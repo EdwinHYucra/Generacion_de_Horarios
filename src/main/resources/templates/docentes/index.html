@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<!--/*@thymesVar id="docente" type="com.utp.generacionhorarios.entity.Docente"*/-->
+<!--/*@thymesVar id="docentes" type="java.util.List<com.utp.generacionhorarios.entity.Docente>"*/-->
+<!--/*@thymesVar id="modoEdicion" type="java.lang.Boolean"*/-->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UTP Admin - Gestión de Docentes</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Poppins:wght@600;700;800&display=swap"
+            rel="stylesheet">
+
+    <link rel="stylesheet" th:href="@{/css/docentes.css}">
+</head>
+
+<body>
+
+<div class="app-layout">
+
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <div class="page-layout">
+
+        <div th:replace="~{fragments/header :: header}"></div>
+
+        <main class="main-content">
+            <section class="content-wrapper">
+
+                <div class="page-heading">
+                    <div>
+                        <h1>Gestión de docentes</h1>
+                        <p>Administra los perfiles y disponibilidad del cuerpo docente.</p>
+                    </div>
+
+                    <button id="btnAbrirModal" class="btn btn--primary" type="button">
+                        <span class="btn__icon">+</span>
+                        <span>Agregar docente</span>
+                    </button>
+                </div>
+
+                <section class="filters-card">
+                    <div class="search-box">
+                        <img th:src="@{/assets/IMG_12.svg}" alt="Buscar">
+                        <input id="inputBuscarDocente"
+                               type="text"
+                               placeholder="Buscar docente por nombre o código...">
+                    </div>
+
+                    <div class="filters-card__right">
+                        <div class="filter-label">
+                            <img th:src="@{/assets/IMG_14.svg}" alt="Filtros">
+                            <span>Filtros:</span>
+                        </div>
+
+                        <select id="filtroCarrera">
+                            <option value="">Carrera</option>
+                            <option value="Ingeniería de Sistemas">Ingeniería de Sistemas</option>
+                            <option value="Ciencias Básicas">Ciencias Básicas</option>
+                            <option value="Arquitectura">Arquitectura</option>
+                            <option value="Administración">Administración</option>
+                            <option value="Ingeniería Civil">Ingeniería Civil</option>
+                            <option value="Psicología">Psicología</option>
+                        </select>
+
+                        <select id="filtroOrden">
+                            <option value="">Orden</option>
+                            <option value="az">A-Z</option>
+                            <option value="za">Z-A</option>
+                        </select>
+
+                        <select id="filtroEstado">
+                            <option value="">Estado</option>
+                            <option value="Activo">Activo</option>
+                            <option value="Inactivo">Inactivo</option>
+                        </select>
+                    </div>
+                </section>
+
+                <section class="table-card">
+                    <div class="table-responsive">
+                        <table class="docentes-table">
+                            <thead>
+                            <tr>
+                                <th>Docente</th>
+                                <th>Especialidad</th>
+                                <th>Contacto / Código</th>
+                                <th>Estado</th>
+                                <th class="text-right">Acciones</th>
+                            </tr>
+                            </thead>
+
+                            <tbody id="tablaDocentesBody">
+
+                            <tr th:if="${#lists.isEmpty(docentes)}">
+                                <td colspan="5" class="empty-table">
+                                    No hay docentes registrados.
+                                </td>
+                            </tr>
+
+                            <tr th:each="docente : ${docentes}"
+                                class="docente-row"
+                                th:attr="data-nombre=${docente.nombres + ' ' + docente.apellidos},
+                                         data-codigo=${docente.codigo},
+                                         data-carrera=${docente.carrera},
+                                         data-estado=${docente.estado ? 'Activo' : 'Inactivo'}">
+
+                                <td>
+                                    <div class="teacher-cell">
+                                        <img th:src="@{/assets/IMG_15.webp}" alt="Foto docente">
+                                        <strong th:text="${docente.nombres + ' ' + docente.apellidos}">
+                                            Nombre del docente
+                                        </strong>
+                                    </div>
+                                </td>
+
+                                <td th:text="${docente.especialidad}">
+                                    Especialidad
+                                </td>
+
+                                <td>
+                                    <span th:text="${docente.correo}">
+                                        correo@utp.edu.pe
+                                    </span>
+
+                                    <small th:text="${docente.codigo}">
+                                        C00000
+                                    </small>
+                                </td>
+
+                                <td>
+                                    <span th:if="${docente.estado}" class="status status--active">
+                                        Activo
+                                    </span>
+
+                                    <span th:unless="${docente.estado}" class="status status--inactive">
+                                        Inactivo
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <div class="action-buttons">
+
+                                        <button type="button" title="Disponibilidad">
+                                            <img th:src="@{/assets/IMG_6.svg}" alt="Disponibilidad">
+                                        </button>
+
+                                        <a th:href="@{/docentes/editar/{id}(id=${docente.idDocente})}"
+                                           title="Editar"
+                                           class="action-link">
+                                            <img th:src="@{/assets/IMG_16.svg}" alt="Editar">
+                                        </a>
+
+                                        <button type="button"
+                                                class="btnEliminarDocente"
+                                                title="Eliminar"
+                                                th:attr="data-id=${docente.idDocente}, data-nombre=${docente.nombres + ' ' + docente.apellidos}">
+                                            <img th:src="@{/assets/IMG_17.svg}" alt="Eliminar">
+                                        </button>
+
+                                    </div>
+                                </td>
+                            </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="table-footer">
+                        <p>
+                            Mostrando
+                            <strong id="cantidadDocentes" th:text="${#lists.size(docentes)}">0</strong>
+                            docentes registrados
+                        </p>
+
+                        <div class="pagination">
+                            <button type="button" disabled>‹</button>
+                            <button type="button" class="is-active">1</button>
+                            <button type="button" disabled>›</button>
+                        </div>
+                    </div>
+                </section>
+
+            </section>
+        </main>
+
+        <div th:replace="~{fragments/footer :: footer}"></div>
+
+    </div>
+</div>
+
+<div id="modalDocente"
+     class="modal"
+     th:classappend="${modoEdicion} ? ' is-open' : ''"
+     th:attr="aria-hidden=${modoEdicion} ? 'false' : 'true'">
+
+    <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="modalDocenteTitulo">
+
+        <div class="modal__header">
+            <h2 id="modalDocenteTitulo"
+                th:text="${modoEdicion} ? 'Editar Docente' : 'Agregar Nuevo Docente'">
+                Agregar Nuevo Docente
+            </h2>
+
+            <button id="btnCerrarModal"
+                    class="modal__close"
+                    type="button"
+                    aria-label="Cerrar">
+                ×
+            </button>
+        </div>
+
+        <div class="modal__body">
+
+            <form id="formDocente"
+                  class="teacher-form"
+                  th:action="@{/docentes/guardar}"
+                  th:object="${docente}"
+                  method="post">
+
+                <input type="hidden" th:field="*{idDocente}">
+
+                <div class="teacher-form__top">
+
+                    <div class="photo-upload">
+                        <div class="photo-upload__circle">
+                            <span>Foto</span>
+                        </div>
+
+                        <button type="button" class="photo-upload__button">
+                            ●
+                        </button>
+
+                        <small>JPG o PNG. Máx 2MB.</small>
+                    </div>
+
+                    <div class="form-grid form-grid--two">
+
+                        <div class="form-group">
+                            <label for="nombres">Nombres <span>*</span></label>
+                            <input id="nombres"
+                                   type="text"
+                                   th:field="*{nombres}"
+                                   placeholder="Ej. Ana García..."
+                                   required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="apellidos">Apellidos <span>*</span></label>
+                            <input id="apellidos"
+                                   type="text"
+                                   th:field="*{apellidos}"
+                                   placeholder="Ej. Rojas Vera..."
+                                   required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="codigo">Código Institucional <span>*</span></label>
+                            <input id="codigo"
+                                   type="text"
+                                   th:field="*{codigo}"
+                                   placeholder="Ej. C19203..."
+                                   required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="correo">Correo Electrónico <span>*</span></label>
+                            <input id="correo"
+                                   type="email"
+                                   th:field="*{correo}"
+                                   placeholder="usuario@utp.edu.pe"
+                                   required>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="form-grid form-grid--three">
+
+                    <div class="form-group">
+                        <label for="dni">DNI <span>*</span></label>
+                        <input id="dni"
+                               type="text"
+                               th:field="*{dni}"
+                               placeholder="Ej. 40785621"
+                               maxlength="8"
+                               required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="celular">Celular <span>*</span></label>
+                        <input id="celular"
+                               type="text"
+                               th:field="*{celular}"
+                               placeholder="Ej. 987654321"
+                               maxlength="9"
+                               required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="especialidad">Especialidad <span>*</span></label>
+                        <input id="especialidad"
+                               type="text"
+                               th:field="*{especialidad}"
+                               placeholder="Ej. Ingeniería de Sistemas"
+                               required>
+                    </div>
+
+                </div>
+
+                <div class="form-grid form-grid--three">
+
+                    <select th:field="*{carrera}">
+                        <option value="">Carrera</option>
+                        <option value="Ingeniería de Sistemas">Ingeniería de Sistemas</option>
+                        <option value="Ciencias Básicas">Ciencias Básicas</option>
+                        <option value="Arquitectura">Arquitectura</option>
+                        <option value="Administración">Administración</option>
+                        <option value="Ingeniería Civil">Ingeniería Civil</option>
+                        <option value="Psicología">Psicología</option>
+                    </select>
+
+                    <select th:field="*{gradoAcademico}">
+                        <option value="">Grado Académico</option>
+                        <option value="Bachiller">Bachiller</option>
+                        <option value="Titulado">Titulado</option>
+                        <option value="Magíster">Magíster</option>
+                        <option value="Doctor">Doctor</option>
+                    </select>
+
+                    <select th:field="*{tipoContrato}">
+                        <option value="">Contrato</option>
+                        <option value="Tiempo completo">Tiempo completo</option>
+                        <option value="Tiempo parcial">Tiempo parcial</option>
+                        <option value="Por horas">Por horas</option>
+                    </select>
+
+                </div>
+
+                <div class="status-box">
+                    <div>
+                        <strong>Estado del Docente</strong>
+                        <p>Define si el docente está disponible para ser asignado en el periodo actual.</p>
+                    </div>
+
+                    <label class="switch">
+                        <input type="checkbox" th:field="*{estado}">
+                        <span></span>
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label for="observaciones">Comentarios u Observaciones</label>
+                    <textarea id="observaciones"
+                              rows="3"
+                              th:field="*{observaciones}"
+                              placeholder="Añada notas sobre restricciones especiales, contratos u otros detalles relevantes..."></textarea>
+                </div>
+
+            </form>
+        </div>
+
+        <div class="modal__footer">
+            <button id="btnCancelarModal"
+                    type="button"
+                    class="btn btn--secondary">
+                Cancelar
+            </button>
+
+            <button type="submit"
+                    form="formDocente"
+                    class="btn btn--primary"
+                    th:text="${modoEdicion} ? 'Actualizar Docente' : 'Guardar Docente'">
+                Guardar Docente
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<div id="modalEliminarDocente" class="modal-delete" aria-hidden="true">
+
+    <div class="modal-delete__panel">
+        <div class="modal-delete__icon">!</div>
+
+        <h2>Eliminar docente</h2>
+
+        <p>
+            ¿Estás seguro de que deseas eliminar al docente
+            <strong id="nombreDocenteEliminar">seleccionado</strong>?
+        </p>
+
+        <form id="formEliminarDocente" method="post">
+            <div class="modal-delete__actions">
+                <button id="btnCancelarEliminar"
+                        type="button"
+                        class="btn btn--secondary">
+                    Cancelar
+                </button>
+
+                <button type="submit"
+                        class="btn btn--danger">
+                    Sí, eliminar
+                </button>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<script th:src="@{/js/docentes.js}"></script>
+
+</body>
+</html>
