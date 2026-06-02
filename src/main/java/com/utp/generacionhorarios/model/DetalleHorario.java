@@ -1,4 +1,4 @@
-package com.utp.generadorhorarios.model;
+package com.utp.generacionhorarios.model;
 
 import jakarta.persistence.*;
 import lombok.*;
