@@ -2,6 +2,7 @@ package com.utp.generacionhorarios.controller;
 
 import com.utp.generacionhorarios.dto.SeleccionCursosDTO;
 import com.utp.generacionhorarios.service.CursoDocenteService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,16 +19,15 @@ public class CursoDocenteController {
     }
 
     @GetMapping
-    public String mostrarCursos(Model model) {
+    public String mostrarCursos(Model model, HttpSession session) {
 
-        Long docenteId = 1L;
+        Long docenteId = obtenerDocenteIdDesdeSesion(session);
 
         model.addAttribute("docenteId", docenteId);
         model.addAttribute("cursosCarrera", cursoDocenteService.obtenerCursosCarrera());
         model.addAttribute("cursosGenerales", cursoDocenteService.obtenerCursosGenerales());
         model.addAttribute("cursosSeleccionados",
                 cursoDocenteService.obtenerCursosSeleccionadosPorDocente(docenteId));
-
         model.addAttribute("seleccionCursosDTO", new SeleccionCursosDTO());
 
         return "cursos";
@@ -37,8 +37,13 @@ public class CursoDocenteController {
     public String guardarCursos(
             @ModelAttribute SeleccionCursosDTO seleccionCursosDTO,
             RedirectAttributes redirectAttributes,
-            Model model) {
+            Model model,
+            HttpSession session) {
+
         try {
+            Long docenteId = obtenerDocenteIdDesdeSesion(session);
+            seleccionCursosDTO.setDocenteId(docenteId);
+
             cursoDocenteService.guardarCursosSeleccionados(seleccionCursosDTO);
 
             redirectAttributes.addFlashAttribute(
@@ -49,7 +54,7 @@ public class CursoDocenteController {
 
         } catch (IllegalArgumentException e) {
 
-            Long docenteId = seleccionCursosDTO.getDocenteId();
+            Long docenteId = obtenerDocenteIdDesdeSesion(session);
 
             model.addAttribute("error", e.getMessage());
             model.addAttribute("docenteId", docenteId);
@@ -61,5 +66,15 @@ public class CursoDocenteController {
 
             return "cursos";
         }
+    }
+
+    private Long obtenerDocenteIdDesdeSesion(HttpSession session) {
+        Object docenteId = session.getAttribute("docenteId");
+
+        if (docenteId != null) {
+            return Long.valueOf(docenteId.toString());
+        }
+
+        return 1L;
     }
 }

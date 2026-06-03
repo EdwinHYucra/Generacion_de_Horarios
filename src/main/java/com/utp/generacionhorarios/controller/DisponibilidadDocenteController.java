@@ -2,6 +2,7 @@ package com.utp.generacionhorarios.controller;
 
 import com.utp.generacionhorarios.dto.DisponibilidadDocenteDTO;
 import com.utp.generacionhorarios.service.DisponibilidadDocenteService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,9 +19,9 @@ public class DisponibilidadDocenteController {
     }
 
     @GetMapping
-    public String mostrarDisponibilidad(Model model) {
+    public String mostrarDisponibilidad(Model model, HttpSession session) {
 
-        Long docenteId = 1L;
+        Long docenteId = obtenerDocenteIdDesdeSesion(session);
 
         model.addAttribute("docenteId", docenteId);
         model.addAttribute("diasSemana", disponibilidadDocenteService.obtenerDiasSemana());
@@ -36,8 +37,10 @@ public class DisponibilidadDocenteController {
     public String guardarDisponibilidad(
             @ModelAttribute DisponibilidadDocenteDTO disponibilidadDocenteDTO,
             RedirectAttributes redirectAttributes,
-            Model model) {
-        Long docenteId = 1L;
+            Model model,
+            HttpSession session) {
+
+        Long docenteId = obtenerDocenteIdDesdeSesion(session);
 
         try {
             disponibilidadDocenteDTO.setDocenteId(docenteId);
@@ -62,5 +65,15 @@ public class DisponibilidadDocenteController {
 
             return "disponibilidad";
         }
+    }
+
+    private Long obtenerDocenteIdDesdeSesion(HttpSession session) {
+        Object docenteId = session.getAttribute("docenteId");
+
+        if (docenteId != null) {
+            return Long.valueOf(docenteId.toString());
+        }
+
+        return 1L;
     }
 }
