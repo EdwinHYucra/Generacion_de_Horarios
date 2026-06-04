@@ -130,9 +130,8 @@
 
                                     <div class="fake-options">
                                         <label th:each="curso : ${cursosCarrera}" class="fake-option">
-                                            <input type="checkbox" name="cursosSeleccionados"
-                                                th:value="${curso.idCurso}" th:data-nombre="${curso.nombre}"
-                                                th:data-creditos="${curso.creditos}">
+                                            <input type="checkbox" name="cursosSeleccionados" th:value="${curso.id}"
+                                                th:data-nombre="${curso.nombre}" th:data-creditos="${curso.creditos}">
                                             <span th:text="${curso.nombre}">Base de Datos I</span>
                                         </label>
 
@@ -154,9 +153,8 @@
 
                                     <div class="fake-options">
                                         <label th:each="curso : ${cursosGenerales}" class="fake-option">
-                                            <input type="checkbox" name="cursosSeleccionados"
-                                                th:value="${curso.idCurso}" th:data-nombre="${curso.nombre}"
-                                                th:data-creditos="${curso.creditos}">
+                                            <input type="checkbox" name="cursosSeleccionados" th:value="${curso.id}"
+                                                th:data-nombre="${curso.nombre}" th:data-creditos="${curso.creditos}">
                                             <span th:text="${curso.nombre}">Cálculo I</span>
                                         </label>
 

@@ -1,101 +1,47 @@
 package com.utp.generacionhorarios.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
+import java.util.Set;
 
 @Entity
-@Table(name = "docentes")
+@Table(name = "docente")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@EqualsAndHashCode(exclude = { "cursos", "disponibilidades" })
+@ToString(exclude = { "cursos", "disponibilidades" })
 public class Docente {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+    private Integer id;
 
-    @Column(name = "codigo_usuario")
-    private String codigoUsuario;
+    @OneToOne
+    @JoinColumn(name = "usuario_id", nullable = false, unique = true)
+    private Usuario usuario;
 
-    @Column(name = "contrasenia")
-    private String contrasenia;
+    @Column(nullable = false, length = 100)
+    private String nombres;
 
-    @Column(name = "nombre")
-    private String nombre;
+    @Column(nullable = false, length = 100)
+    private String apellidos;
 
-    @Column(name = "codigo_docente")
-    private String codigoDocente;
+    @Column(nullable = false, unique = true, length = 8)
+    private String dni;
 
-    @Column(name = "especialidad")
-    private String especialidad;
+    @Column(nullable = false, unique = true, length = 120)
+    private String email;
 
-    @Column(name = "grado_academico")
-    private String gradoAcademico;
+    @Builder.Default
+    @Column(nullable = false)
+    private Boolean estado = true;
 
-    @Column(name = "tipo_contrato")
-    private String tipoContrato;
+    @ManyToMany
+    @JoinTable(name = "docente_curso", joinColumns = @JoinColumn(name = "docente_id"), inverseJoinColumns = @JoinColumn(name = "curso_id"))
+    private Set<Curso> cursos;
 
-    public Docente() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getCodigoUsuario() {
-        return codigoUsuario;
-    }
-
-    public String getContrasenia() {
-        return contrasenia;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public String getCodigoDocente() {
-        return codigoDocente;
-    }
-
-    public String getEspecialidad() {
-        return especialidad;
-    }
-
-    public String getGradoAcademico() {
-        return gradoAcademico;
-    }
-
-    public String getTipoContrato() {
-        return tipoContrato;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setCodigoUsuario(String codigoUsuario) {
-        this.codigoUsuario = codigoUsuario;
-    }
-
-    public void setContrasenia(String contrasenia) {
-        this.contrasenia = contrasenia;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public void setCodigoDocente(String codigoDocente) {
-        this.codigoDocente = codigoDocente;
-    }
-
-    public void setEspecialidad(String especialidad) {
-        this.especialidad = especialidad;
-    }
-
-    public void setGradoAcademico(String gradoAcademico) {
-        this.gradoAcademico = gradoAcademico;
-    }
-
-    public void setTipoContrato(String tipoContrato) {
-        this.tipoContrato = tipoContrato;
-    }
+    @OneToMany(mappedBy = "docente", cascade = CascadeType.ALL)
+    private Set<DisponibilidadDocente> disponibilidades;
 }

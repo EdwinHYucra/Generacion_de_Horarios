@@ -174,14 +174,15 @@ body {
     border-bottom: 1px solid #dedfe3;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-end;
     padding: 0 23px;
 }
 
 .profile-area {
     display: flex;
     align-items: center;
-    gap: 11px;
+    gap: 10px;
+    margin-left: auto;
 }
 
 .bell {
@@ -204,41 +205,41 @@ body {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    line-height: 1.05;
 }
 
 .profile-text strong {
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 800;
     color: #24262d;
 }
 
 .profile-text span {
     margin-top: 3px;
-    font-size: 9px;
+    font-size: 10px;
     color: #818792;
     font-weight: 600;
 }
 
 .avatar {
     position: relative;
-    width: 27px;
-    height: 27px;
+    width: 34px;
+    height: 34px;
 }
 
 .avatar img {
-    width: 27px;
-    height: 27px;
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
     object-fit: cover;
+    display: block;
 }
 
 .online {
     position: absolute;
-    right: -1px;
+    right: 0;
     bottom: 0;
-    width: 7px;
-    height: 7px;
+    width: 8px;
+    height: 8px;
     background: #16c35b;
     border-radius: 50%;
     border: 2px solid #f2f2f4;
@@ -249,10 +250,14 @@ body {
 .content {
     flex: 1;
     padding: 25px 28px 0 28px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
 }
 
 .content-inner {
     width: 100%;
+    max-width: 1130px;
 }
 
 .page-title-row {

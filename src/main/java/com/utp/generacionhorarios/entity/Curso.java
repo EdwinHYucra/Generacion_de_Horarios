@@ -1,92 +1,40 @@
 package com.utp.generacionhorarios.entity;
 
 import jakarta.persistence.*;
-
-import java.time.LocalDateTime;
+import lombok.*;
 
 @Entity
-@Table(name = "cursos")
+@Table(name = "curso")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Curso {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_curso")
-    private Long idCurso;
+    private Integer id;
 
-    @Column(name = "codigo", nullable = false)
+    @Column(nullable = false, unique = true, length = 15)
     private String codigo;
 
-    @Column(name = "nombre", nullable = false)
+    @Column(nullable = false, length = 120)
     private String nombre;
 
-    @Column(name = "creditos", nullable = false)
+    @Column(nullable = false)
     private Integer creditos;
 
-    @Column(name = "tipo", nullable = false)
+    @Column(name = "horas_teoria", nullable = false)
+    private Integer horasTeoria = 0;
+
+    @Column(name = "horas_practica", nullable = false)
+    private Integer horasPractica = 0;
+
+    private Integer ciclo;
+
+    @Column(nullable = false)
+    private Boolean estado = true;
+
+    @Column(nullable = false, length = 20)
     private String tipo;
-
-    @Column(name = "estado", nullable = false)
-    private Integer estado;
-
-    @Column(name = "fecha_creacion")
-    private LocalDateTime fechaCreacion;
-
-    public Curso() {
-    }
-
-    public Long getIdCurso() {
-        return idCurso;
-    }
-
-    public String getCodigo() {
-        return codigo;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public Integer getCreditos() {
-        return creditos;
-    }
-
-    public String getTipo() {
-        return tipo;
-    }
-
-    public Integer getEstado() {
-        return estado;
-    }
-
-    public LocalDateTime getFechaCreacion() {
-        return fechaCreacion;
-    }
-
-    public void setIdCurso(Long idCurso) {
-        this.idCurso = idCurso;
-    }
-
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public void setCreditos(Integer creditos) {
-        this.creditos = creditos;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-    }
-
-    public void setEstado(Integer estado) {
-        this.estado = estado;
-    }
-
-    public void setFechaCreacion(LocalDateTime fechaCreacion) {
-        this.fechaCreacion = fechaCreacion;
-    }
 }

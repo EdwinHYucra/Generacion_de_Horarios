@@ -1,8 +1,9 @@
 package com.utp.generacionhorarios.repository;
 
-import com.utp.generacionhorarios.model.Docente;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import com.utp.generacionhorarios.entity.Docente;
 
 import java.util.List;
 

@@ -68,123 +68,127 @@
         <section class="main">
 
             <header class="topbar">
-                <div></div>
 
                 <div class="profile-area">
+
                     <div class="bell">
                         <i class="fa-regular fa-bell"></i>
                         <span class="notification-dot"></span>
                     </div>
 
-                    <div<strong th:text="${nombreDocente}">
-                        Juan Pérez
+                    <div class="profile-text">
+                        <strong th:text="${nombreDocente}">
+                            Juan Pérez
                         </strong>
 
                         <span th:text="${rolDocente}">
                             Docente
                         </span>
-                </div>
-
-                <div class="avatar">
-                    <img src="https://i.pravatar.cc/40?img=12" alt="Docente">
-                    <span class="online"></span>
-                </div>
-    </div>
-    </header>
-
-    <main class="content">
-
-        <div class="content-inner">
-
-            <div class="page-title-row">
-                <div>
-                    <div class="title-line">
-                        <i class="fa-regular fa-calendar-days"></i>
-                        <h1>Disponibilidad</h1>
                     </div>
 
-                    <p class="subtitle">
-                        Define tus rangos de hora disponibles para el ciclo académico.
-                        Haz clic o arrastra sobre la cuadrícula para seleccionar tus horas preferidas.
-                    </p>
-                </div>
-
-                <div class="interval-pill">
-                    <i class="fa-regular fa-clock"></i>
-                    Intervalos de 15 minutos
-                </div>
-            </div>
-
-            <form th:action="@{/docente/disponibilidad/guardar}" method="post" id="formDisponibilidad">
-                <input type="hidden" name="docenteId" th:value="${docenteId}">
-                <div id="inputsBloques"></div>
-
-                <div id="datosDisponibilidad" hidden>
-                    <span th:each="item : ${disponibilidadRegistrada}" class="dispo-item"
-                        th:data-dia="${item.diaSemana}" th:data-inicio="${item.horaInicio}"
-                        th:data-fin="${item.horaFin}">
-                    </span>
-                </div>
-
-                <div class="schedule-card">
-
-                    <div class="schedule-scroll">
-                        <table class="schedule-table">
-                            <thead>
-                                <tr>
-                                    <th class="col-time">Horario</th>
-
-                                    <th th:each="dia : ${diasSemana}">
-                                        <span th:text="${#strings.capitalize(#strings.toLowerCase(dia))}"></span>
-                                        <small>⌄</small>
-                                    </th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                <tr th:each="hora : ${bloquesHorario}">
-                                    <td class="time-cell">
-                                        <span class="time-label" th:data-time="${hora}" th:text="${hora}">
-                                        </span>
-                                    </td>
-
-                                    <td th:each="dia : ${diasSemana}" class="block-cell" th:data-dia="${dia}"
-                                        th:data-hora="${hora}">
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div class="avatar">
+                        <img src="https://i.pravatar.cc/40?img=12" alt="Docente">
+                        <span class="online"></span>
                     </div>
 
-                    <div class="schedule-actions">
-                        <div class="selected-count" id="contadorBloques">
-                            0 bloques seleccionados (0.0 horas)
+                </div>
+
+            </header>
+
+            <main class="content">
+
+                <div class="content-inner">
+
+                    <div class="page-title-row">
+                        <div>
+                            <div class="title-line">
+                                <i class="fa-regular fa-calendar-days"></i>
+                                <h1>Disponibilidad</h1>
+                            </div>
+
+                            <p class="subtitle">
+                                Define tus rangos de hora disponibles para el ciclo académico.
+                                Haz clic o arrastra sobre la cuadrícula para seleccionar tus horas preferidas.
+                            </p>
                         </div>
 
-                        <div class="button-group">
-                            <button type="button" id="btnLimpiar" class="btn btn-clean">
-                                Limpiar
-                            </button>
-
-                            <button type="submit" class="btn btn-confirm">
-                                Confirmar
-                            </button>
+                        <div class="interval-pill">
+                            <i class="fa-regular fa-clock"></i>
+                            Intervalos de 15 minutos
                         </div>
                     </div>
 
+                    <form th:action="@{/docente/disponibilidad/guardar}" method="post" id="formDisponibilidad">
+                        <input type="hidden" name="docenteId" th:value="${docenteId}">
+                        <div id="inputsBloques"></div>
+
+                        <div id="datosDisponibilidad" hidden>
+                            <span th:each="item : ${disponibilidadRegistrada}" class="dispo-item"
+                                th:data-dia="${item.diaSemana}" th:data-inicio="${item.horaInicio}"
+                                th:data-fin="${item.horaFin}">
+                            </span>
+                        </div>
+
+                        <div class="schedule-card">
+
+                            <div class="schedule-scroll">
+                                <table class="schedule-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="col-time">Horario</th>
+
+                                            <th th:each="dia : ${diasSemana}">
+                                                <span
+                                                    th:text="${#strings.capitalize(#strings.toLowerCase(dia))}"></span>
+                                                <small>⌄</small>
+                                            </th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        <tr th:each="hora : ${bloquesHorario}">
+                                            <td class="time-cell">
+                                                <span class="time-label" th:data-time="${hora}" th:text="${hora}">
+                                                </span>
+                                            </td>
+
+                                            <td th:each="dia : ${diasSemana}" class="block-cell" th:data-dia="${dia}"
+                                                th:data-hora="${hora}">
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="schedule-actions">
+                                <div class="selected-count" id="contadorBloques">
+                                    0 bloques seleccionados (0.0 horas)
+                                </div>
+
+                                <div class="button-group">
+                                    <button type="button" id="btnLimpiar" class="btn btn-clean">
+                                        Limpiar
+                                    </button>
+
+                                    <button type="submit" class="btn btn-confirm">
+                                        Confirmar
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+
                 </div>
-            </form>
 
-        </div>
+            </main>
 
-    </main>
+            <footer class="footer">
+                <span>Generador de Horarios Automático UTP</span>
+                <span>Soporte Técnico</span>
+            </footer>
 
-    <footer class="footer">
-        <span>Generador de Horarios Automático UTP</span>
-        <span>Soporte Técnico</span>
-    </footer>
-
-    </section>
+        </section>
 
     </div>
 

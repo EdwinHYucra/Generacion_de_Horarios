@@ -1,7 +1,7 @@
 package com.utp.generacionhorarios.service;
 
 import com.utp.generacionhorarios.dto.DisponibilidadDocenteDTO;
-import com.utp.generacionhorarios.model.DisponibilidadDocente;
+import com.utp.generacionhorarios.entity.DisponibilidadDocente;
 import com.utp.generacionhorarios.repository.DisponibilidadDocenteRepository;
 import org.springframework.stereotype.Service;
 

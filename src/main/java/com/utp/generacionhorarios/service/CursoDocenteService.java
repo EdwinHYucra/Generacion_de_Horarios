@@ -1,8 +1,8 @@
 package com.utp.generacionhorarios.service;
 
 import com.utp.generacionhorarios.dto.SeleccionCursosDTO;
-import com.utp.generacionhorarios.model.Curso;
-import com.utp.generacionhorarios.model.Docente;
+import com.utp.generacionhorarios.entity.Curso;
+import com.utp.generacionhorarios.entity.Docente;
 import com.utp.generacionhorarios.repository.CursoRepository;
 import com.utp.generacionhorarios.repository.DocenteRepository;
 import org.springframework.stereotype.Service;
@@ -25,14 +25,15 @@ public class CursoDocenteService {
     }
 
     public List<Curso> obtenerCursosCarrera() {
-        return cursoRepository.findByEstadoTrue();
+        return cursoRepository.findByTipoAndEstadoTrue("CARRERA");
     }
 
     public List<Curso> obtenerCursosGenerales() {
-        return new ArrayList<>();
+        return cursoRepository.findByTipoAndEstadoTrue("GENERAL");
     }
 
     public List<Integer> obtenerCursosSeleccionadosPorDocente(Integer docenteId) {
+
         Docente docente = docenteRepository.findById(docenteId)
                 .orElse(null);
 

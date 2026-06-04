@@ -1,11 +1,14 @@
-package com.utp.generacionhorarios.model;
+package com.utp.generacionhorarios.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
 @Table(name = "aula")
-@Data @NoArgsConstructor @AllArgsConstructor @Builder
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Aula {
 
     @Id
@@ -27,5 +30,7 @@ public class Aula {
     @Column(nullable = false)
     private Boolean estado = true;
 
-    public enum TipoAula { TEORICA, LABORATORIO, TALLER }
+    public enum TipoAula {
+        TEORICA, LABORATORIO, TALLER
+    }
 }
