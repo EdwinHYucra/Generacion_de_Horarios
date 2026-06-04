@@ -1,177 +1,181 @@
-# Sistema de Generación de Horarios Automático
-### Universidad Tecnológica del Perú
-**Curso:** Curso Integrador I — Sistemas de Software  
-**Docente:** M. Sc. Percy Maldonado Quispe  
-**Sección:** 28636 | **Grupo:** 3  
-**Ciclo Académico:** 2026-I
+# Generador de Horarios Automático — UTP
+
+Sistema web para la generación automática de horarios académicos de la Universidad Tecnológica del Perú, desarrollado con Spring Boot + Thymeleaf + MySQL.
+
+![Java](https://img.shields.io/badge/Java-21-orange?logo=java)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-4.0.6-brightgreen?logo=springboot)
+![MySQL](https://img.shields.io/badge/MySQL-8.0-blue?logo=mysql)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.x-38BDF8?logo=tailwindcss)
+![Progreso](https://img.shields.io/badge/Avance-40%25-yellow)
 
 ---
 
-## Descripción del Proyecto
+## Descripción
 
-El presente sistema tiene como finalidad automatizar la generación de horarios académicos en la Universidad Tecnológica del Perú, eliminando el proceso manual que actualmente genera errores de asignación, conflictos de disponibilidad docente y uso ineficiente de aulas.
+El Generador de Horarios Automático tiene como objetivo optimizar la planificación académica de la UTP mediante la automatización de la asignación de horarios, considerando la disponibilidad de docentes, los cursos programados y los recursos institucionales disponibles.
 
-La solución está desarrollada bajo la arquitectura **MVC (Modelo-Vista-Controlador)** utilizando el framework **Spring Boot**, con persistencia de datos mediante **Spring Data JPA** sobre un motor de base de datos **MySQL**, e interfaz web renderizada con el motor de plantillas **Thymeleaf**.
-
----
-
-## Objetivos del Sistema
-
-- Registrar y gestionar docentes, cursos y aulas de forma centralizada.
-- Registrar la disponibilidad horaria de cada docente por semestre académico.
-- Generar horarios automáticamente respetando las restricciones de disponibilidad y capacidad.
-- Detectar y prevenir conflictos de asignación en tiempo real.
-- Permitir la visualización y modificación controlada de horarios generados.
+La aplicación reduce conflictos de programación, mejora la gestión académica y centraliza la administración de recursos en una sola plataforma web.
 
 ---
 
-## Tecnologías Utilizadas
+## Tecnologías
 
-| Tecnología | Versión | Propósito |
-|---|---|---|
-| Java | 21 | Lenguaje principal de desarrollo |
-| Spring Boot | 3.x | Framework de aplicación web |
-| Spring Data JPA | 3.x | Capa de persistencia y acceso a datos |
-| Hibernate | 6.x | Implementación ORM del estándar JPA |
-| Thymeleaf | 3.x | Motor de plantillas para vistas HTML |
-| MySQL | 8.x | Sistema gestor de base de datos |
-| Lombok | 1.18.x | Reducción de código repetitivo |
-| Maven | 3.x | Gestión de dependencias y construcción |
+| Capa | Tecnologías |
+|------|-------------|
+| Backend | Java 21, Spring Boot 4.0.6, Spring Security, Spring Data JPA, Hibernate |
+| Base de datos | MySQL 8.0 |
+| Frontend | Thymeleaf, Tailwind CSS, HTML5, CSS3, JavaScript |
+| Herramientas | Maven, Git, GitHub, Visual Studio Code, XAMPP |
 
 ---
 
-## Requisitos del Entorno
+## Arquitectura del Proyecto
 
-Antes de ejecutar el proyecto, asegúrese de contar con lo siguiente instalado:
-
-- **Java Development Kit (JDK) 21** — [Descargar](https://www.oracle.com/java/technologies/downloads/)
-- **XAMPP** (con servicio MySQL activo) — [Descargar](https://www.apachefriends.org/)
-- **IntelliJ IDEA** (recomendado) o cualquier IDE compatible con proyectos Maven
-- **Git** — [Descargar](https://git-scm.com/)
+```
+src/
+└── main/
+    ├── java/com/utp/generacionhorarios/
+    │   ├── config/          # Configuración de seguridad (Spring Security)
+    │   ├── controller/      # Controladores MVC
+    │   ├── service/         # Lógica de negocio
+    │   ├── repository/      # Acceso a datos (JPA Repositories)
+    │   ├── model/           # Entidades JPA
+    │   ├── dto/             # Data Transfer Objects
+    │   └── security/        # Configuración de autenticación
+    └── resources/
+        ├── templates/       # Vistas Thymeleaf
+        └── static/          # CSS, imágenes, JavaScript
+```
 
 ---
 
-## Instrucciones de Instalación y Configuración
+## Actores del Sistema
 
-### Paso 1 — Clonar el repositorio
+- **Administrador** — Gestiona docentes, cursos, aulas y valida los horarios generados.
+- **Docente** — Registra su disponibilidad y consulta sus horarios asignados.
 
+---
+
+## Casos de Uso
+
+| ID | Descripción | Estado |
+|----|-------------|--------|
+| CU-01 | Registrar Docente | Implementado |
+| CU-02 | Registrar Curso | Parcialmente implementado |
+| CU-03 | Registrar Aula | Pendiente |
+| CU-04 | Registrar Disponibilidad de Docente | Implementado |
+| CU-05 | Generar Horarios Automáticamente | En desarrollo |
+| CU-06 | Detectar Conflictos de Horarios | En desarrollo |
+| CU-07 | Visualizar Horarios | Parcialmente implementado |
+| CU-08 | Modificar Horarios | Pendiente |
+
+---
+
+## Configuración y Ejecución
+
+### Prerrequisitos
+
+- Java 21 o superior
+- XAMPP con MySQL activo
+- Git
+
+### Pasos
+
+**1. Clonar el repositorio**
 ```bash
 git clone https://github.com/EdwinHYucra/Generacion_de_Horarios.git
 cd Generacion_de_Horarios
 ```
 
-### Paso 2 — Crear la base de datos
+**2. Crear la base de datos**
 
-1. Iniciar **XAMPP** y activar el servicio **MySQL**.
-2. Acceder a **phpMyAdmin** mediante `http://localhost/phpmyadmin`.
-3. Crear una base de datos con el siguiente nombre:
-
+Abrir phpMyAdmin (`http://localhost/phpmyadmin`) y ejecutar:
 ```sql
-CREATE DATABASE generador_horarios CHARACTER SET utf8mb4 COLLATE utf8mb4_spanish_ci;
+CREATE DATABASE generador_horarios;
 ```
 
-> Las tablas serán generadas automáticamente por **Hibernate** al iniciar la aplicación, gracias a la configuración `spring.jpa.hibernate.ddl-auto=update`.
+**3. Insertar datos iniciales**
 
-### Paso 3 — Configurar la conexión a la base de datos
+Ejecutar el script `src/main/resources/static/Script Inicial.sql` en phpMyAdmin.
 
-Verificar el archivo `src/main/resources/application.properties` y ajustar las credenciales si es necesario:
-
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/generador_horarios
-spring.datasource.username=root
-spring.datasource.password=        # Dejar vacío si usa XAMPP por defecto
-```
-
-### Paso 4 — Cargar las dependencias Maven
-
-En **IntelliJ IDEA**: clic derecho sobre el archivo `pom.xml` → **Maven** → **Reload Project**.
-
-### Paso 5 — Ejecutar la aplicación
-
-Ejecutar la clase principal del proyecto:
-
-```
-src/main/java/com/utp/generadorhorarios/GeneradorHorariosApplication.java
-```
-
-O mediante terminal:
-
+**4. Ejecutar el proyecto**
 ```bash
+# Windows
+.\mvnw.cmd spring-boot:run
+
+# Linux / Mac
 ./mvnw spring-boot:run
 ```
 
-Una vez iniciada la aplicación, acceder desde el navegador a:
-
+**5. Acceder al sistema**
 ```
 http://localhost:8080
 ```
 
+> **Nota:** Si el entorno local tiene contraseña en MySQL, actualizar el campo `spring.datasource.password` en `src/main/resources/application.properties`.
+
 ---
 
-## Estructura del Proyecto
+## Estado Actual del Proyecto
+
+Avance estimado: **40 %**
 
 ```
-src/
-└── main/
-    ├── java/com/utp/generadorhorarios/
-    │   ├── model/          ← Entidades JPA que representan las tablas de la BD
-    │   ├── repository/     ← Interfaces de acceso a datos (Spring Data JPA)
-    │   ├── service/        ← Lógica de negocio del sistema
-    │   └── controller/     ← Controladores MVC (rutas y respuestas HTTP)
-    └── resources/
-        ├── application.properties  ← Configuración del sistema
-        └── templates/              ← Vistas HTML renderizadas con Thymeleaf
+[████████████████░░░░░░░░░░░░░░░░░░░░░░░░] 40%
 ```
 
----
+### Módulos implementados
+- Sistema de autenticación (Spring Security + BCrypt)
+- Gestión de usuarios con roles (ADMIN / DOCENTE)
+- Gestión de docentes (CRUD completo)
+- Registro de disponibilidad docente
+- Dashboards para Administrador y Docente
+- Base de datos con 10 entidades JPA
+- Integración con MySQL mediante Hibernate
 
-## Modelo de Base de Datos
+### Módulos en desarrollo
+- Algoritmo generador de horarios automático
+- Detección de conflictos académicos
+- Integración completa de la lógica de horarios
 
-El esquema de la base de datos está compuesto por las siguientes entidades principales:
-
-| Tabla | Descripción |
-|---|---|
-| `semestre` | Registro de ciclos académicos |
-| `usuario` | Credenciales de acceso al sistema |
-| `docente` | Información del personal docente |
-| `curso` | Catálogo de cursos por ciclo |
-| `aula` | Aulas disponibles con tipo y capacidad |
-| `bloque_horario` | Franjas horarias del día |
-| `disponibilidad_docente` | Disponibilidad de cada docente por semestre |
-| `horario` | Cabecera del horario generado por semestre |
-| `detalle_horario` | Asignaciones concretas de docente, curso, aula y bloque |
-| `solicitud_cambio` | Registro de solicitudes de modificación de horario |
-
----
-
-## Control de Versiones — Ramas del Equipo
-
-El repositorio sigue la convención de **una rama por integrante**. Está prohibido realizar commits directamente sobre la rama `main`.
-
-| Integrante | Rama | Responsabilidad |
-|---|---|---|
-| Edwin Yucra | `Edwin` | Configuración base del proyecto y Spring Boot |
-| Dayanna | `Dayanna` | Por definir |
-| Melissa | `Melissa` | Por definir |
-| Alvaro Nando | `Alvaro` | Modelo de datos: entidades JPA y repositorios |
+### Módulos pendientes
+- Gestión completa de aulas
+- Modificación manual de horarios
+- Validaciones finales e integración completa
 
 ---
 
-## Casos de Uso Implementados
+## Equipo de Desarrollo
 
-| Código | Caso de Uso |
-|---|---|
-| CU-01 | Registrar Docente |
-| CU-02 | Registrar Curso |
-| CU-03 | Registrar Aula |
-| CU-04 | Registrar Disponibilidad Docente |
-| CU-05 | Generar Horario Automático |
-| CU-06 | Detectar Conflictos de Horario |
-| CU-07 | Visualizar Horario |
-| CU-08 | Modificar Horario |
+| Integrante | Código | Rol |
+|------------|--------|-----|
+| Alberssi Jorge, Dayanna Simona | U22303776 | Autenticación, Seguridad e Integración de Componentes |
+| Huancachoque Yucra, Edwin Eulogio | U24233971 | Gestión de Docentes |
+| Montes Acero, Mireya Melissa | U23308222 | Disponibilidad Docente y Gestión de Cursos |
+| Quispe Huamani, Álvaro Nando | U19201812 | Base de Datos y Persistencia |
 
 ---
 
-## Licencia
+## Ramas del Repositorio
 
-Proyecto académico desarrollado con fines educativos para la Universidad Tecnológica del Perú. Todos los derechos reservados © 2026.
+| Rama | Responsable | Contenido |
+|------|-------------|-----------|
+| `main` | Equipo | Código integrado y estable |
+| `Dayanna` | Dayanna | Autenticación y dashboards |
+| `Edwin` | Edwin | Módulo de docentes |
+| `Melissa` | Melissa | Disponibilidad y cursos |
+| `Alvaro` | Álvaro | Base de datos, persistencia y módulo de docentes |
+
+---
+
+## Información del Curso
+
+**Curso:** Curso Integrador I: Sistemas Software  
+**Sección:** 28636  
+**Docente:** Mg. Percy Maldonado Quispe  
+**Institución:** Universidad Tecnológica del Perú  
+**Sede:** Arequipa, 2026
+
+---
+
+© 2026 Universidad Tecnológica del Perú. Todos los derechos reservados.
