@@ -1,11 +1,14 @@
-package com.utp.generacionhorarios.model;
+package com.utp.generacionhorarios.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
 @Table(name = "solicitud_cambio")
-@Data @NoArgsConstructor @AllArgsConstructor @Builder
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class SolicitudCambio {
 
     @Id
@@ -39,5 +42,7 @@ public class SolicitudCambio {
     @Column(nullable = false)
     private EstadoCambio estado = EstadoCambio.PENDIENTE;
 
-    public enum EstadoCambio { PENDIENTE, APROBADO, RECHAZADO }
+    public enum EstadoCambio {
+        PENDIENTE, APROBADO, RECHAZADO
+    }
 }

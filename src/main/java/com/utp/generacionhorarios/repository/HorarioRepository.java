@@ -1,7 +1,9 @@
 package com.utp.generacionhorarios.repository;
 
-import com.utp.generacionhorarios.model.Horario;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.utp.generacionhorarios.entity.Horario;
+
 import java.util.List;
 
 public interface HorarioRepository extends JpaRepository<Horario, Integer> {

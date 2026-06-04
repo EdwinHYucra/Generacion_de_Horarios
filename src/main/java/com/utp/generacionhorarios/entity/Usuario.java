@@ -1,4 +1,4 @@
-package com.utp.generacionhorarios.model;
+package com.utp.generacionhorarios.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -15,7 +15,10 @@ import lombok.*;
 
 @Entity
 @Table(name = "usuario")
-@Data @NoArgsConstructor @AllArgsConstructor @Builder
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Usuario {
 
     @Id
@@ -35,5 +38,7 @@ public class Usuario {
     @Column(nullable = false)
     private Boolean activo = true;
 
-    public enum Rol { ADMIN, DOCENTE }
+    public enum Rol {
+        ADMIN, DOCENTE
+    }
 }

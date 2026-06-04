@@ -1,4 +1,4 @@
-package com.utp.generacionhorarios.model;
+package com.utp.generacionhorarios.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -6,9 +6,12 @@ import java.util.Set;
 
 @Entity
 @Table(name = "docente")
-@Data @NoArgsConstructor @AllArgsConstructor @Builder
-@EqualsAndHashCode(exclude = {"cursos", "disponibilidades"})
-@ToString(exclude = {"cursos", "disponibilidades"})
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@EqualsAndHashCode(exclude = { "cursos", "disponibilidades" })
+@ToString(exclude = { "cursos", "disponibilidades" })
 public class Docente {
 
     @Id
@@ -31,16 +34,12 @@ public class Docente {
     @Column(nullable = false, unique = true, length = 120)
     private String email;
 
+    @Builder.Default
     @Column(nullable = false)
     private Boolean estado = true;
 
-    // Un docente puede dictar varios cursos
     @ManyToMany
-    @JoinTable(
-        name = "docente_curso",
-        joinColumns = @JoinColumn(name = "docente_id"),
-        inverseJoinColumns = @JoinColumn(name = "curso_id")
-    )
+    @JoinTable(name = "docente_curso", joinColumns = @JoinColumn(name = "docente_id"), inverseJoinColumns = @JoinColumn(name = "curso_id"))
     private Set<Curso> cursos;
 
     @OneToMany(mappedBy = "docente", cascade = CascadeType.ALL)

@@ -1,18 +1,21 @@
-package com.utp.generacionhorarios.model;
+package com.utp.generacionhorarios.entity;
+
+import com.utp.generacionhorarios.entity.DisponibilidadDocente.DiaSemana;
 
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "detalle_horario",
-    uniqueConstraints = {
+@Table(name = "detalle_horario", uniqueConstraints = {
         // Un docente no puede tener dos clases al mismo tiempo (CU-06)
-        @UniqueConstraint(columnNames = {"horario_id", "docente_id", "dia_semana", "bloque_id"}),
+        @UniqueConstraint(columnNames = { "horario_id", "docente_id", "dia_semana", "bloque_id" }),
         // Un aula no puede tener dos cursos al mismo tiempo (CU-06)
-        @UniqueConstraint(columnNames = {"horario_id", "aula_id", "dia_semana", "bloque_id"})
-    }
-)
-@Data @NoArgsConstructor @AllArgsConstructor @Builder
+        @UniqueConstraint(columnNames = { "horario_id", "aula_id", "dia_semana", "bloque_id" })
+})
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class DetalleHorario {
 
     @Id
