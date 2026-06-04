@@ -85,17 +85,15 @@
   <main class="flex-grow flex flex-col lg:flex-row overflow-hidden">
 
     <!-- IMAGEN IZQUIERDA -->
-    <section class="hidden lg:block lg:w-1/2 relative bg-[#F8FAFC] border-r border-[#E1E1E5] overflow-hidden">
-      <div class="absolute inset-0 flex items-center justify-center">
+<section class="hidden lg:flex lg:w-1/2 items-center justify-center bg-[#F8FAFC] border-r border-[#E1E1E5]">
 
-        <img
-          th:src="@{/img/login/IMG_2.png}"
-          alt="Ilustración UTP"
-          class="w-full h-full object-cover object-center scale-110"
-        >
+    <img
+        th:src="@{/img/login/IMG_2.png}"
+        alt="Ilustración UTP"
+        class="max-w-[70%] h-auto object-contain"
+    >
 
-      </div>
-    </section>
+</section>
 
     <!-- FORMULARIO LOGIN -->
     <section class="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-12">
