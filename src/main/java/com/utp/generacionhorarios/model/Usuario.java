@@ -3,6 +3,15 @@ package com.utp.generacionhorarios.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+/**
+ * Entidad que representa a los usuarios
+ * registrados en el sistema.
+ *
+ * Almacena credenciales de acceso y
+ * el rol asignado a cada usuario.
+ *
+ * @author Dayanna
+ */
 @Entity
 @Table(name = "usuario")
 @Data @NoArgsConstructor @AllArgsConstructor @Builder
