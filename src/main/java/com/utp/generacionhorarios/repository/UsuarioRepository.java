@@ -1,11 +1,10 @@
 package com.utp.generacionhorarios.repository;
 
-import com.utp.generacionhorarios.entity.Usuario;
+import com.utp.generacionhorarios.model.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
-import java.util.Optional; 
+import java.util.Optional;
 
 public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
-    
-    
-    Optional<Usuario> findByCorreo(String correo);
+    Optional<Usuario> findByUsername(String username);
 }
+

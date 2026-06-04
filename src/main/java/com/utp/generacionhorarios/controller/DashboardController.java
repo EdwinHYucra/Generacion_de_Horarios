@@ -1,91 +1,88 @@
+
 package com.utp.generacionhorarios.controller;
 
+
+import org.springframework.security.core.Authentication;
+
+import org.springframework.security.core.context.SecurityContextHolder;
+
 import org.springframework.stereotype.Controller;
+
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import com.utp.generacionhorarios.entity.Usuario;
-import com.utp.generacionhorarios.repository.UsuarioRepository;
+/**
+ * Controlador encargado del inicio de sesión
+ * y la redirección de usuarios según su rol.
+ *
+ * Gestiona el acceso a los dashboards de
+ * administrador y docente.
+ *
+ * @author Dayanna
+ */
 
-import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class DashboardController {
 
-    private final UsuarioRepository usuarioRepository;
-
-    public DashboardController(UsuarioRepository usuarioRepository) {
-        this.usuarioRepository = usuarioRepository;
-    }
-
     // =========================
     // LOGIN
     // =========================
-    @PostMapping("/login")
-    public String procesarLogin(@RequestParam String username,
-                                @RequestParam String password,
-                                HttpSession session) {
-
-        Usuario usuario = usuarioRepository.findByCorreo(username).orElse(null);
-
-        if (usuario == null) {
-            return "redirect:/login?error";
-        }
-
-        if (!usuario.getPassword().equals(password)) {
-            return "redirect:/login?error";
-        }
-
-        // GUARDAR SESIÓN
-        session.setAttribute("usuario", usuario);
-
-        // REDIRECCIÓN POR ROL
-        if ("ADMIN".equals(usuario.getRol())) {
-            return "redirect:/admin/dashboard";
-        } else {
-            return "redirect:/docente/dashboard";
-        }
-    }
 
     @GetMapping("/login")
     public String login() {
+
         return "login";
     }
 
     // =========================
-    // ADMIN DASHBOARD (PROTEGIDO)
+    // REDIRECCIÓN POR ROL
     // =========================
+
+ /**
+ * Redirecciona al usuario autenticado
+ * al dashboard correspondiente según
+ * el rol asignado en el sistema.
+ *
+ * @return redirección al dashboard de
+ * administrador o docente
+ */
+  
+    @GetMapping("/redireccionar")
+public String redireccionarSegunRol() {
+
+    Authentication auth = SecurityContextHolder
+            .getContext()
+            .getAuthentication();
+
+    boolean esAdmin = auth.getAuthorities()
+            .stream()
+            .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+    if (esAdmin) {
+        return "redirect:/admin/dashboard";
+    }
+
+    return "redirect:/docente/dashboard";
+}
+
+    // =========================
+    // ADMIN DASHBOARD
+    // =========================
+
     @GetMapping("/admin/dashboard")
-    public String adminDashboard(HttpSession session) {
-
-        Usuario usuario = (Usuario) session.getAttribute("usuario");
-
-        if (usuario == null || !"ADMIN".equals(usuario.getRol())) {
-            return "redirect:/login";
-        }
+    public String adminDashboard() {
 
         return "dashboard_administrador";
     }
 
     // =========================
-    // DOCENTE DASHBOARD (PROTEGIDO)
+    // DOCENTE DASHBOARD
     // =========================
+
     @GetMapping("/docente/dashboard")
-    public String docenteDashboard(HttpSession session) {
-
-        Usuario usuario = (Usuario) session.getAttribute("usuario");
-
-        if (usuario == null || !"DOCENTE".equals(usuario.getRol())) {
-            return "redirect:/login";
-        }
+    public String docenteDashboard() {
 
         return "dashboard_docente";
     }
-
-    @GetMapping("/logout")
-    public String logout(HttpSession session) {
-        session.invalidate();
-        return "redirect:/login";
-    }
 }
+

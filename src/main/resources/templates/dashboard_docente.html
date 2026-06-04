@@ -74,7 +74,7 @@ transition-transform duration-300 -translate-x-full lg:translate-x-0">
     <!-- Logo Section -->
     <div class="h-16 flex items-center px-6 border-b border-[#27272A]">
       <div class="w-8 h-8 bg-[#FAFAFA] rounded-md flex items-center justify-center mr-3">
-        <img src="../static/img/docente/IMG_1.svg" alt="Calendar" class="w-5.5 h-5.5">
+        <img th:src="@{/img/docente/IMG_1.svg}" alt="Calendar" class="w-5.5 h-5.5">
       </div>
       <span class="text-[#FAFAFA] font-bold text-xl">Generador UTP</span>
     </div>
@@ -82,27 +82,27 @@ transition-transform duration-300 -translate-x-full lg:translate-x-0">
     <!-- Navigation -->
     <nav class="flex-1 px-4 py-6 space-y-1">
       <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl sidebar-active text-white">
-        <img src="../static/img/docente/IMG_2.svg" alt="Dashboard" class="w-5 h-5">
+        <img th:src="@{/img/docente/IMG_2.svg}" alt="Dashboard" class="w-5 h-5">
         <span class="font-medium">Dashboard</span>
       </a>
       <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#27272A] hover:text-white transition-colors">
-        <img src="../static/img/docente/IMG_3.svg" alt="Disponibilidad" class="w-5 h-5 opacity-70">
+        <img th:src="@{/img/docente/IMG_3.svg}" alt="Disponibilidad" class="w-5 h-5 opacity-70">
         <span class="font-normal">Disponibilidad</span>
       </a>
       <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#27272A] hover:text-white transition-colors">
-        <img src="../static/img/docente/IMG_4.svg" alt="Cursos" class="w-5 h-5 opacity-70">
+        <img th:src="@{/img/docente/IMG_4.svg}" alt="Cursos" class="w-5 h-5 opacity-70">
         <span class="font-normal">Cursos</span>
       </a>
       <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#27272A] hover:text-white transition-colors">
-        <img src="../static/img/docente/IMG_5.svg" alt="Opciones" class="w-5 h-5 opacity-70">
+        <img th:src="@{/img/docente/IMG_5.svg}" alt="Opciones" class="w-5 h-5 opacity-70">
         <span class="font-normal">Opciones de horario</span>
       </a>
       <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#27272A] hover:text-white transition-colors">
-        <img src="../static/img/docente/IMG_6.svg" alt="Solicitudes" class="w-5 h-5 opacity-70">
+        <img th:src="@{/img/docente/IMG_6.svg}" alt="Solicitudes" class="w-5 h-5 opacity-70">
         <span class="font-normal">Solicitudes</span>
       </a>
       <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#27272A] hover:text-white transition-colors">
-        <img src="../static/img/docente/IMG_7.svg" alt="Mi Horario" class="w-5 h-5 opacity-70">
+        <img th:src="@{/img/docente/IMG_7.svg}" alt="Mi Horario" class="w-5 h-5 opacity-70">
         <span class="font-normal">Mi Horario</span>
       </a>
     </nav>
@@ -111,7 +111,7 @@ transition-transform duration-300 -translate-x-full lg:translate-x-0">
     <div class="mt-auto">
       <div class="px-4 py-4 border-t border-[#1E293B]">
         <button class="flex items-center gap-5 px-3 py-2 w-full text-[#94A3B8] hover:text-white transition-colors">
-          <img src="../static/img/docente/IMG_8.svg" alt="Logout" class="w-5 h-5">
+          <img th:src="@{/img/docente/IMG_8.svg}" alt="Logout" class="w-5 h-5">
           <a href="/logout" class="flex items-center gap-5 ...">
   Cerrar sesión
 </a>
@@ -137,7 +137,7 @@ transition-transform duration-300 -translate-x-full lg:translate-x-0">
       </div>
       <div class="flex items-center gap-6 ml-auto">
         <div class="relative">
-          <img src="../static/img/docente/IMG_10.svg" alt="Notifications" class="w-5 h-5 text-[#595E69]">
+          <img th:src="@{/img/docente/IMG_10.svg}" alt="Notifications" class="w-5 h-5 text-[#595E69]">
           <div class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-[#DC2626] border border-[#F4F4F6] rounded-full"></div>
         </div>
         <div class="flex items-center gap-3">
@@ -147,7 +147,7 @@ transition-transform duration-300 -translate-x-full lg:translate-x-0">
           </div>
           <div class="relative">
             <div class="w-9 h-9 rounded-full overflow-hidden border border-gray-200">
-              <img src="../static/img/docente/IMG_9.webp" alt="User Avatar" class="w-full h-full object-cover">
+              <img th:src="@{/img/docente/IMG_9.webp}" alt="User Avatar" class="w-full h-full object-cover">
             </div>
             <div class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[#36E27E] border-2 border-white rounded-full"></div>
           </div>
@@ -169,7 +169,7 @@ transition-transform duration-300 -translate-x-full lg:translate-x-0">
           <!-- Card 1 -->
           <div class="bg-white rounded-[14px] border border-[#E0E2E6] p-8 flex flex-col items-center text-center card-shadow">
             <div class="w-16 h-16 bg-[#D50000]/10 rounded-full flex items-center justify-center mb-6">
-              <img src="../static/img/docente/IMG_3.svg" alt="Disponibilidad" class="w-8 h-8 text-[#D50000]">
+              <img th:src="@{/img/docente/IMG_3.svg}" alt="Disponibilidad" class="w-8 h-8 text-[#D50000]">
             </div>
             <h3 class="text-xl font-semibold text-[#17191C] mb-2">Registrar disponibilidad</h3>
             <p class="text-sm text-[#595E69] leading-relaxed mb-8 max-w-[400px]">
@@ -177,14 +177,14 @@ transition-transform duration-300 -translate-x-full lg:translate-x-0">
             </p>
             <button class="mt-auto bg-[#D50000] text-white px-6 py-2.5 rounded-xl flex items-center gap-2 text-sm font-medium hover:bg-[#b00000] transition-colors shadow-sm">
               Ir a Disponibilidad
-              <img src="../static/img/docente/IMG_11.svg" alt="Arrow" class="w-4 h-4">
+              <img th:src="@{/img/docente/IMG_11.svg}" alt="Arrow" class="w-4 h-4">
             </button>
           </div>
 
           <!-- Card 2 -->
           <div class="bg-white rounded-[14px] border border-[#E0E2E6] p-8 flex flex-col items-center text-center card-shadow">
             <div class="w-16 h-16 bg-[#D50000]/10 rounded-full flex items-center justify-center mb-6">
-              <img src="../static/img/docente/IMG_12.svg" alt="Cursos" class="w-8 h-8 text-[#D50000]">
+              <img th:src="@{/img/docente/IMG_12.svg}" alt="Cursos" class="w-8 h-8 text-[#D50000]">
             </div>
             <h3 class="text-xl font-semibold text-[#17191C] mb-2">Seleccionar cursos</h3>
             <p class="text-sm text-[#595E69] leading-relaxed mb-8 max-w-[400px]">
@@ -192,14 +192,14 @@ transition-transform duration-300 -translate-x-full lg:translate-x-0">
             </p>
             <button class="mt-auto bg-[#D50000] text-white px-6 py-2.5 rounded-xl flex items-center gap-2 text-sm font-medium hover:bg-[#b00000] transition-colors shadow-sm">
               Ver Cursos
-              <img src="../static/img/docente/IMG_11.svg" alt="Arrow" class="w-4 h-4">
+              <img th:src="@{/img/docente/IMG_11.svg}" alt="Arrow" class="w-4 h-4">
             </button>
           </div>
 
           <!-- Card 3 -->
           <div class="bg-white rounded-[14px] border border-[#E0E2E6] p-8 flex flex-col items-center text-center card-shadow">
             <div class="w-16 h-16 bg-[#D50000]/10 rounded-full flex items-center justify-center mb-6">
-              <img src="../static/img/docente/IMG_13.svg" alt="Opciones" class="w-8 h-8 text-[#D50000]">
+              <img th:src="@{/img/docente/IMG_13.svg}" alt="Opciones" class="w-8 h-8 text-[#D50000]">
             </div>
             <h3 class="text-xl font-semibold text-[#17191C] mb-2">Ver opciones generales</h3>
             <p class="text-sm text-[#595E69] leading-relaxed mb-8 max-w-[400px]">
@@ -207,14 +207,14 @@ transition-transform duration-300 -translate-x-full lg:translate-x-0">
             </p>
             <button class="mt-auto bg-[#D50000] text-white px-6 py-2.5 rounded-xl flex items-center gap-2 text-sm font-medium hover:bg-[#b00000] transition-colors shadow-sm">
               Ver Opciones
-              <img src="../static/img/docente/IMG_11.svg" alt="Arrow" class="w-4 h-4">
+              <img th:src="@{/img/docente/IMG_11.svg}" alt="Arrow" class="w-4 h-4">
             </button>
           </div>
 
           <!-- Card 4 -->
           <div class="bg-white rounded-[14px] border border-[#E0E2E6] p-8 flex flex-col items-center text-center card-shadow">
             <div class="w-16 h-16 bg-[#D50000]/10 rounded-full flex items-center justify-center mb-6">
-              <img src="../static/img/docente/IMG_14.svg" alt="Horario" class="w-8 h-8 text-[#D50000]">
+              <img th:src="@{/img/docente/IMG_14.svg}" alt="Horario" class="w-8 h-8 text-[#D50000]">
             </div>
             <h3 class="text-xl font-semibold text-[#17191C] mb-2">Mi horario</h3>
             <p class="text-sm text-[#595E69] leading-relaxed mb-8 max-w-[400px]">
@@ -222,7 +222,7 @@ transition-transform duration-300 -translate-x-full lg:translate-x-0">
             </p>
             <button class="mt-auto bg-[#D50000] text-white px-6 py-2.5 rounded-xl flex items-center gap-2 text-sm font-medium hover:bg-[#b00000] transition-colors shadow-sm">
               Ver Horario
-              <img src="../static/img/docente/IMG_11.svg" alt="Arrow" class="w-4 h-4">
+              <img th:src="@{/img/docente/IMG_11.svg}" alt="Arrow" class="w-4 h-4">
             </button>
           </div>
         </div>
@@ -236,7 +236,7 @@ transition-transform duration-300 -translate-x-full lg:translate-x-0">
           <div class="p-8 grid grid-cols-1 sm:grid-cols-3 gap-8">
             <!-- Status Item 1 -->
             <div class="flex items-start gap-4">
-              <img src="../static/img/docente/IMG_15.svg" alt="Check" class="w-6 h-6 mt-0.5">
+              <img th:src="@{/img/docente/IMG_15.svg}" alt="Check" class="w-6 h-6 mt-0.5">
               <div>
                 <p class="text-sm text-[#17191C] font-medium">Disponibilidad</p>
                 <p class="text-sm text-[#17191C] font-bold">Registrada</p>
@@ -244,7 +244,7 @@ transition-transform duration-300 -translate-x-full lg:translate-x-0">
             </div>
             <!-- Status Item 2 -->
             <div class="flex items-start gap-4">
-              <img src="../static/img/docente/IMG_15.svg" alt="Check" class="w-6 h-6 mt-0.5">
+              <img th:src="@{/img/docente/IMG_15.svg}" alt="Check" class="w-6 h-6 mt-0.5">
               <div>
                 <p class="text-sm text-[#17191C] font-medium">Cursos</p>
                 <p class="text-sm text-[#17191C] font-bold">Seleccionados</p>
@@ -252,7 +252,7 @@ transition-transform duration-300 -translate-x-full lg:translate-x-0">
             </div>
             <!-- Status Item 3 -->
             <div class="flex items-start gap-4">
-              <img src="../static/img/docente/IMG_16.svg" alt="Pending" class="w-6 h-6 mt-0.5 opacity-75">
+              <img th:src="@{/img/docente/IMG_16.svg}" alt="Pending" class="w-6 h-6 mt-0.5 opacity-75">
               <div>
                 <p class="text-sm text-[#17191C] font-medium">Horario Final</p>
                 <p class="text-sm text-[#17191C] font-bold">Pendiente de asignación</p>

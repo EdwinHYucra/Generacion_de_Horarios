@@ -90,7 +90,7 @@
     <!-- Logo Section -->
     <div class="h-16 flex items-center px-6 border-b border-[#1E293B]">
       <div class="w-7 h-7 bg-[#D50000] rounded-md flex items-center justify-center mr-3">
-        <img src="../static/img/administrador/IMG_1.svg" alt="Logo" class="w-[18px] h-[18px]">
+        <img th:src="@{/img/administrador/IMG_1.svg}" alt="Logo" class="w-[18px] h-[18px]">
       </div>
       <span class="text-[#D50000] font-bold text-lg font-[Poppins]">UTP Admin</span>
     </div>
@@ -98,31 +98,31 @@
     <!-- Navigation Links -->
     <nav class="flex-1 py-6 px-4 space-y-2 overflow-y-auto no-scrollbar">
       <a href="#" class="sidebar-link flex items-center gap-4 px-3 py-2.5 rounded-md sidebar-active">
-        <img src="../static/img/administrador/IMG_2.svg" alt="Dashboard" class="w-5 h-5">
+        <img th:src="@{/img/administrador/IMG_2.svg}" alt="Dashboard" class="w-5 h-5">
         <span>Dashboard</span>
       </a>
       <a href="#" class="sidebar-link flex items-center gap-4 px-3 py-2.5 rounded-md hover:bg-slate-800/50 hover:text-white">
-        <img src="../static/img/administrador/IMG_3.svg" alt="Docentes" class="w-5 h-5 opacity-60">
+        <img th:src="@{/img/administrador/IMG_3.svg}" alt="Docentes" class="w-5 h-5 opacity-60">
         <span>Docentes</span>
       </a>
       <a href="#" class="sidebar-link flex items-center gap-4 px-3 py-2.5 rounded-md hover:bg-slate-800/50 hover:text-white">
-        <img src="../static/img/administrador/IMG_4.svg" alt="Cursos" class="w-5 h-5 opacity-60">
+        <img th:src="@{/img/administrador/IMG_4.svg}" alt="Cursos" class="w-5 h-5 opacity-60">
         <span class="font-[Roboto]">Cursos</span>
       </a>
       <a href="#" class="sidebar-link flex items-center gap-4 px-3 py-2.5 rounded-md hover:bg-slate-800/50 hover:text-white">
-        <img src="../static/img/administrador/IMG_1.svg" alt="Carreras" class="w-5 h-5 opacity-60">
+        <img th:src="@{/img/administrador/IMG_1.svg}" alt="Carreras" class="w-5 h-5 opacity-60">
         <span class="font-[Roboto]">Carreras</span>
       </a>
       <a href="#" class="sidebar-link flex items-center gap-4 px-3 py-2.5 rounded-md hover:bg-slate-800/50 hover:text-white">
-        <img src="../static/img/administrador/IMG_5.svg" alt="Aulas" class="w-5 h-5 opacity-60">
+        <img th:src="@{/img/administrador/IMG_5.svg}" alt="Aulas" class="w-5 h-5 opacity-60">
         <span>Aulas</span>
       </a>
       <a href="#" class="sidebar-link flex items-center gap-4 px-3 py-2.5 rounded-md hover:bg-slate-800/50 hover:text-white">
-        <img src="../static/img/administrador/IMG_6.svg" alt="Validación" class="w-5 h-5 opacity-60">
+        <img th:src="@{/img/administrador/IMG_6.svg}" alt="Validación" class="w-5 h-5 opacity-60">
         <span class="font-[Roboto]">Validación</span>
       </a>
       <a href="#" class="sidebar-link flex items-center gap-4 px-3 py-2.5 rounded-md hover:bg-slate-800/50 hover:text-white">
-        <img src="../static/img/administrador/IMG_7.svg" alt="Solicitud" class="w-5 h-5 opacity-60">
+        <img th:src="@{/img/administrador/IMG_7.svg}" alt="Solicitud" class="w-5 h-5 opacity-60">
         <span class="font-[Roboto]">Solicitud de cambio</span>
       </a>
     </nav>
@@ -130,7 +130,7 @@
     <!-- Logout Section -->
     <div class="p-4 border-t border-[#1E293B]">
       <button class="sidebar-link w-full flex items-center gap-4 px-3 py-2.5 rounded-md hover:bg-slate-800/50 hover:text-white text-[#94A3B8]">
-        <img src="../static/img/administrador/IMG_8.svg" alt="Logout" class="w-5 h-5">
+        <img th:src="@{/img/administrador/IMG_8.svg}" alt="Logout" class="w-5 h-5">
         <a href="/logout" class="flex items-center gap-5 ...">
   Cerrar sesión
 </a>
@@ -150,7 +150,7 @@
       <div class="flex items-center ml-auto gap-6">
         <!-- Notifications -->
         <div class="relative">
-          <img src="../static/img/administrador/IMG_10.svg" alt="Notifications" class="w-5 h-5 text-[#95959D]">
+          <img th:src="@{/img/administrador/IMG_10.svg}" alt="Notifications" class="w-5 h-5 text-[#95959D]">
           <span class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-[#D50000] rounded-full"></span>
         </div>
 
@@ -162,7 +162,7 @@
           </div>
           <div class="relative">
             <div class="w-9 h-9 rounded-full overflow-hidden bg-[#ede6fc]">
-              <img src="../static/img/administrador/IMG_9.webp" alt="Avatar" class="w-full h-full object-cover">
+              <img th:src="@{/img/administrador/IMG_9.webp}" alt="Avatar" class="w-full h-full object-cover">
             </div>
             <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[#36E27E] border-2 border-white rounded-full"></span>
           </div>
@@ -185,7 +185,7 @@
         <!-- Card 1: Docentes -->
         <div class="bg-white p-8 rounded-lg smooth-shadow card-hover-effect flex flex-col items-center text-center">
           <div class="w-20 h-20 bg-[#D50000]/10 rounded-full flex items-center justify-center mb-6">
-            <img src="../static/img/administrador/IMG_3.svg" alt="Docentes" class="w-10 h-10 text-[#D50000]">
+            <img th:src="@{/img/administrador/IMG_3.svg}" alt="Docentes" class="w-10 h-10 text-[#D50000]">
           </div>
           <h3 class="card-title mb-3">Gestionar docentes</h3>
           <p class="text-[#95959D] text-sm mb-8 leading-relaxed">Agrega, edita y revisa la disponibilidad de la plana docente de la institución.</p>
@@ -195,7 +195,7 @@
         <!-- Card 2: Cursos -->
         <div class="bg-white p-8 rounded-lg smooth-shadow card-hover-effect flex flex-col items-center text-center">
           <div class="w-20 h-20 bg-[#D50000]/10 rounded-full flex items-center justify-center mb-6">
-            <img src="../static/img/administrador/IMG_4.svg" alt="Cursos" class="w-10 h-10 text-[#D50000]">
+            <img th:src="@{/img/administrador/IMG_4.svg}" alt="Cursos" class="w-10 h-10 text-[#D50000]">
           </div>
           <h3 class="card-title mb-3">Gestionar cursos</h3>
           <p class="text-[#95959D] text-sm mb-8 leading-relaxed">Administra la malla curricular, secciones y créditos de los cursos activos.</p>
@@ -205,7 +205,7 @@
         <!-- Card 3: Aulas -->
         <div class="bg-white p-8 rounded-lg smooth-shadow card-hover-effect flex flex-col items-center text-center">
           <div class="w-20 h-20 bg-[#D50000]/10 rounded-full flex items-center justify-center mb-6">
-            <img src="../static/img/administrador/IMG_5.svg" alt="Aulas" class="w-10 h-10 text-[#D50000]">
+            <img th:src="@{/img/administrador/IMG_5.svg}" alt="Aulas" class="w-10 h-10 text-[#D50000]">
           </div>
           <h3 class="card-title mb-3">Gestionar aulas</h3>
           <p class="text-[#95959D] text-sm mb-8 leading-relaxed">Supervisa la capacidad y asignación de los laboratorios y aulas del campus.</p>
@@ -215,7 +215,7 @@
         <!-- Card 4: Validación -->
         <div class="bg-white p-8 rounded-lg smooth-shadow card-hover-effect flex flex-col items-center text-center">
           <div class="w-20 h-20 bg-[#D50000]/10 rounded-full flex items-center justify-center mb-6">
-            <img src="../static/img/administrador/IMG_6.svg" alt="Validación" class="w-10 h-10 text-[#D50000]">
+            <img th:src="@{/img/administrador/IMG_6.svg}" alt="Validación" class="w-10 h-10 text-[#D50000]">
           </div>
           <h3 class="card-title mb-3">Validación de horarios</h3>
           <p class="text-[#95959D] text-sm mb-8 leading-relaxed">Revisa, resuelve conflictos y aprueba los horarios generados automáticamente.</p>
@@ -227,7 +227,7 @@
       <section class="bg-white rounded-lg smooth-shadow overflow-hidden">
         <div class="p-6 border-b border-[#E1E1E5]/50">
           <div class="flex items-center gap-3 mb-1">
-            <img src="../static/img/administrador/IMG_11.svg" alt="Activity" class="w-5 h-5 text-[#D50000]">
+            <img th:src="@{/img/administrador/IMG_11.svg}" alt="Activity" class="w-5 h-5 text-[#D50000]">
             <h3 class="text-xl font-semibold">Estado del sistema</h3>
           </div>
           <p class="text-[#95959D] text-sm">Resumen de registros activos en el ciclo académico actual.</p>
@@ -237,7 +237,7 @@
           <!-- Stat 1 -->
           <div class="p-8 flex items-center gap-6 border-b md:border-b-0 md:border-r border-[#E1E1E5]">
             <div class="w-14 h-14 bg-[#F4F4F6] rounded-xl flex items-center justify-center smooth-shadow">
-              <img src="../static/img/administrador/IMG_14.svg" alt="Docentes" class="w-7 h-7 text-[#111111]">
+              <img th:src="@{/img/administrador/IMG_14.svg}" alt="Docentes" class="w-7 h-7 text-[#111111]">
             </div>
             <div>
               <p class="stats-number text-3xl">25</p>
@@ -247,7 +247,7 @@
           <!-- Stat 2 -->
           <div class="p-8 flex items-center gap-6 border-b md:border-b-0 md:border-r border-[#E1E1E5]">
             <div class="w-14 h-14 bg-[#F4F4F6] rounded-xl flex items-center justify-center smooth-shadow">
-              <img src="../static/img/administrador/IMG_12.svg" alt="Cursos" class="w-7 h-7 text-[#111111]">
+              <img th:src="@{/img/administrador/IMG_12.svg}" alt="Cursos" class="w-7 h-7 text-[#111111]">
             </div>
             <div>
               <p class="stats-number text-3xl">40</p>
@@ -257,7 +257,7 @@
           <!-- Stat 3 -->
           <div class="p-8 flex items-center gap-6">
             <div class="w-14 h-14 bg-[#F4F4F6] rounded-xl flex items-center justify-center smooth-shadow">
-              <img src="../static/img/administrador/IMG_13.svg" alt="Alert" class="w-7 h-7 text-[#111111]">
+              <img th:src="@{/img/administrador/IMG_13.svg}" alt="Alert" class="w-7 h-7 text-[#111111]">
             </div>
             <div>
               <p class="stats-number text-3xl">7</p>
