@@ -3,6 +3,8 @@ package com.utp.generacionhorarios.controller;
 import com.utp.generacionhorarios.dto.SeleccionCursosDTO;
 import com.utp.generacionhorarios.service.CursoDocenteService;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +24,10 @@ public class CursoDocenteController {
     public String mostrarCursos(Model model, HttpSession session) {
 
         Long docenteId = obtenerDocenteIdDesdeSesion(session);
+        String nombreDocente = obtenerNombreUsuarioAutenticado();
+
+        model.addAttribute("nombreDocente", nombreDocente);
+        model.addAttribute("rolDocente", "Docente");
 
         model.addAttribute("docenteId", docenteId);
         model.addAttribute("cursosCarrera", cursoDocenteService.obtenerCursosCarrera());
@@ -55,6 +61,10 @@ public class CursoDocenteController {
         } catch (IllegalArgumentException e) {
 
             Long docenteId = obtenerDocenteIdDesdeSesion(session);
+            String nombreDocente = obtenerNombreUsuarioAutenticado();
+
+            model.addAttribute("nombreDocente", nombreDocente);
+            model.addAttribute("rolDocente", "Docente");
 
             model.addAttribute("error", e.getMessage());
             model.addAttribute("docenteId", docenteId);
@@ -76,5 +86,17 @@ public class CursoDocenteController {
         }
 
         return 1L;
+    }
+
+    private String obtenerNombreUsuarioAutenticado() {
+        Authentication auth = SecurityContextHolder
+                .getContext()
+                .getAuthentication();
+
+        if (auth == null || auth.getName() == null || "anonymousUser".equals(auth.getName())) {
+            return "Juan Pérez";
+        }
+
+        return auth.getName();
     }
 }

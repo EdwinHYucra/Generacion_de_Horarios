@@ -1,253 +1,265 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <title>Cursos - Generador UTP</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" th:href="@{/css/cursos.css?v=1}">
+    <link rel="stylesheet" th:href="@{/css/cursos.css?v=2}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 
 <body>
 
-<div class="mockup-layout">
+    <div class="mockup-layout">
 
-    <aside class="sidebar">
-        <div class="brand">
-            <div class="brand-icon">▣</div>
-            <span>Generador UTP</span>
-        </div>
-
-        <nav class="menu">
-            <a href="#" class="menu-item">
-                <span class="menu-icon">⌘</span>
-                Dashboard
-            </a>
-
-            <a th:href="@{/docente/disponibilidad}" class="menu-item">
-                <span class="menu-icon">◴</span>
-                Disponibilidad
-            </a>
-
-            <a th:href="@{/docente/cursos}" class="menu-item active">
-                <span class="menu-icon">▥</span>
-                Cursos
-            </a>
-
-            <a href="#" class="menu-item">
-                <span class="menu-icon">◉</span>
-                Opciones de horario
-            </a>
-
-            <a href="#" class="menu-item">
-                <span class="menu-icon">▱</span>
-                Solicitudes
-            </a>
-
-            <a href="#" class="menu-item">
-                <span class="menu-icon">□</span>
-                Mi Horario
-            </a>
-        </nav>
-
-        <div class="sidebar-footer">
-            <a href="#" class="logout">
-                <span>↪</span>
-                Cerrar sesión
-            </a>
-
-            <div class="version">© 2024 UTP V1.0</div>
-        </div>
-    </aside>
-
-    <section class="main">
-
-        <header class="topbar">
-            <div></div>
-
-            <div class="profile-area">
-                <div class="bell">⌁</div>
-
-                <div class="profile-text">
-                    <strong>Juan Pérez</strong>
-                    <span>Docente</span>
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-calendar-days"></i>
                 </div>
-
-                <div class="avatar">
-                    <img src="https://i.pravatar.cc/40?img=12" alt="Docente">
-                    <span class="online"></span>
-                </div>
-            </div>
-        </header>
-
-        <main class="content cursos-content">
-
-            <div class="courses-layout">
-
-                <section class="courses-main">
-
-                    <div class="courses-header">
-                        <h1>Seleccione cursos</h1>
-                        <p>Seleccione cursos que pueda dictar</p>
-                    </div>
-
-                    <form th:action="@{/docente/cursos/guardar}" method="post" id="formCursos">
-                        <input type="hidden" name="docenteId" th:value="${docenteId}">
-
-                        <div class="search-row">
-                            <div class="search-box">
-                                <span>⌕</span>
-                                <input type="text" id="buscarCurso" placeholder="Buscar cursos">
-                            </div>
-
-                            <button type="button" class="btn-search">Buscar</button>
-                        </div>
-
-                        <div class="select-section">
-                            <label class="select-label">Cursos de carrera:</label>
-
-                            <div class="fake-select">
-                                <button type="button" class="fake-select-button">
-                                    Seleccionar cursos
-                                    <span>⌄</span>
-                                </button>
-
-                                <div class="fake-options">
-                                    <label th:each="curso : ${cursosCarrera}" class="fake-option">
-                                        <input type="checkbox"
-                                               name="cursosSeleccionados"
-                                               th:value="${curso.idCurso}"
-                                               th:data-nombre="${curso.nombre}"
-                                               th:data-creditos="${curso.creditos}">
-                                        <span th:text="${curso.nombre}">Base de Datos I</span>
-                                    </label>
-
-                                    <p th:if="${#lists.isEmpty(cursosCarrera)}" class="empty-options">
-                                        No hay cursos de carrera registrados.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="select-section general-section">
-                            <label class="select-label">Cursos generales:</label>
-
-                            <div class="fake-select">
-                                <button type="button" class="fake-select-button">
-                                    Seleccionar cursos
-                                    <span>⌄</span>
-                                </button>
-
-                                <div class="fake-options">
-                                    <label th:each="curso : ${cursosGenerales}" class="fake-option">
-                                        <input type="checkbox"
-                                               name="cursosSeleccionados"
-                                               th:value="${curso.idCurso}"
-                                               th:data-nombre="${curso.nombre}"
-                                               th:data-creditos="${curso.creditos}">
-                                        <span th:text="${curso.nombre}">Cálculo I</span>
-                                    </label>
-
-                                    <p th:if="${#lists.isEmpty(cursosGenerales)}" class="empty-options">
-                                        No hay cursos generales registrados.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                    </form>
-
-                </section>
-
-                <aside class="courses-summary">
-                    <h2>Resumen de Selección</h2>
-
-                    <div id="resumenCursos" class="summary-list">
-                        <p class="empty-summary">Aún no seleccionaste cursos.</p>
-                    </div>
-
-                    <div class="summary-footer-box">
-                        <p><strong>Total cursos:</strong> <span id="totalCursos">0</span></p>
-                        <p><strong>Créditos totales:</strong> <span id="totalCreditos">0</span></p>
-                        <p><strong>Estado:</strong> Borrador</p>
-
-                        <button type="submit" form="formCursos" class="btn-confirm-summary">
-                            Confirmar
-                        </button>
-                    </div>
-                </aside>
-
+                <span>Generador UTP</span>
             </div>
 
-        </main>
+            <nav class="menu">
+                <a href="/docente/dashboard" class="sidebar-link">
+                    <i class="fa-solid fa-house"></i>
+                    <span>Dashboard</span>
+                </a>
 
-        <footer class="footer">
-            <span>Generador de Horarios Automático UTP</span>
-            <span>Soporte Técnico</span>
-        </footer>
+                <a th:href="@{/docente/disponibilidad}" class="sidebar-link">
+                    <i class="fa-solid fa-calendar-check"></i>
+                    <span>Disponibilidad</span>
+                </a>
 
-    </section>
+                <a th:href="@{/docente/cursos}" class="sidebar-link active">
+                    <i class="fa-solid fa-book-open"></i>
+                    <span>Cursos</span>
+                </a>
 
-</div>
+                <a href="#" class="sidebar-link">
+                    <i class="fa-solid fa-calendar-week"></i>
+                    <span>Opciones de horario</span>
+                </a>
 
-<script>
-    const checkboxes = document.querySelectorAll('input[name="cursosSeleccionados"]');
-    const resumenCursos = document.getElementById("resumenCursos");
-    const totalCursos = document.getElementById("totalCursos");
-    const totalCreditos = document.getElementById("totalCreditos");
-    const formCursos = document.getElementById("formCursos");
-    const buscarCurso = document.getElementById("buscarCurso");
+                <a href="#" class="sidebar-link">
+                    <i class="fa-solid fa-file-signature"></i>
+                    <span>Solicitudes</span>
+                </a>
 
-    checkboxes.forEach(chk => {
-        chk.addEventListener("change", actualizarResumen);
-    });
+                <a href="#" class="sidebar-link">
+                    <i class="fa-solid fa-table"></i>
+                    <span>Mi Horario</span>
+                </a>
+            </nav>
 
-    formCursos.addEventListener("submit", (event) => {
-        const seleccionados = document.querySelectorAll('input[name="cursosSeleccionados"]:checked');
+            <div class="sidebar-footer">
+                <a href="/logout" class="logout">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Cerrar sesión</span>
+                </a>
 
-        if (seleccionados.length === 0) {
-            event.preventDefault();
-            alert("Debe seleccionar al menos un curso.");
-        }
-    });
+                <div class="version">© 2024 UTP V1.0</div>
+            </div>
+        </aside>
 
-    buscarCurso.addEventListener("input", () => {
-        const texto = buscarCurso.value.toLowerCase();
+        <section class="main">
 
-        document.querySelectorAll(".fake-option").forEach(option => {
-            const nombre = option.innerText.toLowerCase();
-            option.style.display = nombre.includes(texto) ? "flex" : "none";
+            <header class="topbar">
+                <div></div>
+
+                <div class="profile-area">
+                    <div class="bell">
+                        <i class="fa-regular fa-bell"></i>
+                        <span class="notification-dot"></span>
+                    </div>
+
+                    <div class="profile-text">
+                        <strong th:text="${nombreDocente}">
+                            Juan Pérez
+                        </strong>
+
+                        <span th:text="${rolDocente}">
+                            Docente
+                        </span>
+                    </div>
+
+                    <div class="avatar">
+                        <img src="https://i.pravatar.cc/40?img=12" alt="Docente">
+                        <span class="online"></span>
+                    </div>
+                </div>
+            </header>
+
+            <main class="content cursos-content">
+
+                <div class="courses-layout">
+
+                    <section class="courses-main">
+
+                        <div class="courses-header">
+                            <div class="courses-title">
+                                <i class="fa-solid fa-book-open"></i>
+                                <h1>Seleccione cursos</h1>
+                            </div>
+                            <p>Seleccione los cursos que pueda dictar durante el ciclo académico.</p>
+                        </div>
+
+                        <form th:action="@{/docente/cursos/guardar}" method="post" id="formCursos">
+                            <input type="hidden" name="docenteId" th:value="${docenteId}">
+
+                            <div class="search-row">
+                                <div class="search-box">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                    <input type="text" id="buscarCurso" placeholder="Buscar cursos">
+                                </div>
+
+                                <button type="button" class="btn-search">Buscar</button>
+                            </div>
+
+                            <div class="select-section">
+                                <label class="select-label">Cursos de carrera:</label>
+
+                                <div class="fake-select">
+                                    <button type="button" class="fake-select-button">
+                                        Seleccionar cursos
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </button>
+
+                                    <div class="fake-options">
+                                        <label th:each="curso : ${cursosCarrera}" class="fake-option">
+                                            <input type="checkbox" name="cursosSeleccionados"
+                                                th:value="${curso.idCurso}" th:data-nombre="${curso.nombre}"
+                                                th:data-creditos="${curso.creditos}">
+                                            <span th:text="${curso.nombre}">Base de Datos I</span>
+                                        </label>
+
+                                        <p th:if="${#lists.isEmpty(cursosCarrera)}" class="empty-options">
+                                            No hay cursos de carrera registrados.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="select-section general-section">
+                                <label class="select-label">Cursos generales:</label>
+
+                                <div class="fake-select">
+                                    <button type="button" class="fake-select-button">
+                                        Seleccionar cursos
+                                        <i class="fa-solid fa-chevron-down"></i>
+                                    </button>
+
+                                    <div class="fake-options">
+                                        <label th:each="curso : ${cursosGenerales}" class="fake-option">
+                                            <input type="checkbox" name="cursosSeleccionados"
+                                                th:value="${curso.idCurso}" th:data-nombre="${curso.nombre}"
+                                                th:data-creditos="${curso.creditos}">
+                                            <span th:text="${curso.nombre}">Cálculo I</span>
+                                        </label>
+
+                                        <p th:if="${#lists.isEmpty(cursosGenerales)}" class="empty-options">
+                                            No hay cursos generales registrados.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </form>
+
+                    </section>
+
+                    <aside class="courses-summary">
+                        <h2>Resumen de Selección</h2>
+
+                        <div id="resumenCursos" class="summary-list">
+                            <p class="empty-summary">Aún no seleccionaste cursos.</p>
+                        </div>
+
+                        <div class="summary-footer-box">
+                            <p><strong>Total cursos:</strong> <span id="totalCursos">0</span></p>
+                            <p><strong>Créditos totales:</strong> <span id="totalCreditos">0</span></p>
+                            <p><strong>Estado:</strong> Borrador</p>
+
+                            <button type="submit" form="formCursos" class="btn-confirm-summary">
+                                Confirmar
+                            </button>
+                        </div>
+                    </aside>
+
+                </div>
+
+            </main>
+
+            <footer class="footer">
+                <span>Generador de Horarios Automático UTP</span>
+                <span>Soporte Técnico</span>
+            </footer>
+
+        </section>
+
+    </div>
+
+    <script>
+        const checkboxes = document.querySelectorAll('input[name="cursosSeleccionados"]');
+        const resumenCursos = document.getElementById("resumenCursos");
+        const totalCursos = document.getElementById("totalCursos");
+        const totalCreditos = document.getElementById("totalCreditos");
+        const formCursos = document.getElementById("formCursos");
+        const buscarCurso = document.getElementById("buscarCurso");
+
+        checkboxes.forEach(chk => {
+            chk.addEventListener("change", actualizarResumen);
         });
-    });
 
-    function actualizarResumen() {
-        const seleccionados = document.querySelectorAll('input[name="cursosSeleccionados"]:checked');
+        formCursos.addEventListener("submit", (event) => {
+            const seleccionados = document.querySelectorAll('input[name="cursosSeleccionados"]:checked');
 
-        resumenCursos.innerHTML = "";
-        let creditos = 0;
+            if (seleccionados.length === 0) {
+                event.preventDefault();
+                alert("Debe seleccionar al menos un curso.");
+            }
+        });
 
-        if (seleccionados.length === 0) {
-            resumenCursos.innerHTML = `<p class="empty-summary">Aún no seleccionaste cursos.</p>`;
-        }
+        buscarCurso.addEventListener("input", () => {
+            const texto = buscarCurso.value.toLowerCase();
 
-        seleccionados.forEach(chk => {
-            const nombre = chk.dataset.nombre;
-            const credito = parseInt(chk.dataset.creditos || "0");
-            creditos += credito;
+            document.querySelectorAll(".fake-option").forEach(option => {
+                const nombre = option.innerText.toLowerCase();
+                option.style.display = nombre.includes(texto) ? "flex" : "none";
+            });
+        });
 
-            resumenCursos.innerHTML += `
+        function actualizarResumen() {
+            const seleccionados = document.querySelectorAll('input[name="cursosSeleccionados"]:checked');
+
+            resumenCursos.innerHTML = "";
+            let creditos = 0;
+
+            if (seleccionados.length === 0) {
+                resumenCursos.innerHTML = `<p class="empty-summary">Aún no seleccionaste cursos.</p>`;
+            }
+
+            seleccionados.forEach(chk => {
+                const nombre = chk.dataset.nombre;
+                const credito = parseInt(chk.dataset.creditos || "0");
+                creditos += credito;
+
+                resumenCursos.innerHTML += `
                 <div class="summary-item">
                     <span class="summary-check">✓</span>
                     <span>${nombre}</span>
                 </div>
             `;
-        });
+            });
 
-        totalCursos.textContent = seleccionados.length;
-        totalCreditos.textContent = creditos;
-    }
-</script>
+            totalCursos.textContent = seleccionados.length;
+            totalCreditos.textContent = creditos;
+        }
+    </script>
 
 </body>
+
 </html>
