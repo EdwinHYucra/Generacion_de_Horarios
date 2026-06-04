@@ -7,7 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class GeneracionDeHorariosApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(GeneracionDeHorariosApplication.class, args);
+        SpringApplication.run(
+                GeneracionDeHorariosApplication.class,
+                args);
     }
-
 }
