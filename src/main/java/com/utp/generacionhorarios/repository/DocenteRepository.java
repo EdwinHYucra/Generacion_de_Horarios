@@ -1,15 +1,14 @@
 package com.utp.generacionhorarios.repository;
 
-import com.utp.generacionhorarios.entity.Docente;
+import com.utp.generacionhorarios.model.Docente;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
+import java.util.List;
 
 @Repository
-public interface DocenteRepository extends JpaRepository<Docente, Long> {
+public interface DocenteRepository extends JpaRepository<Docente, Integer> {
 
-    Optional<Docente> findByCodigoUsuario(String codigoUsuario);
+    List<Docente> findByEstadoTrue();
 
-    Optional<Docente> findByCodigoDocente(String codigoDocente);
 }

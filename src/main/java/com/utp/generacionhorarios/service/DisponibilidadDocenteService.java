@@ -1,15 +1,10 @@
 package com.utp.generacionhorarios.service;
 
-import com.utp.generacionhorarios.dto.BloqueDisponibilidadDTO;
 import com.utp.generacionhorarios.dto.DisponibilidadDocenteDTO;
-import com.utp.generacionhorarios.entity.DisponibilidadDocente;
-import com.utp.generacionhorarios.entity.Docente;
+import com.utp.generacionhorarios.model.DisponibilidadDocente;
 import com.utp.generacionhorarios.repository.DisponibilidadDocenteRepository;
-import com.utp.generacionhorarios.repository.DocenteRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,13 +13,10 @@ import java.util.List;
 public class DisponibilidadDocenteService {
 
     private final DisponibilidadDocenteRepository disponibilidadDocenteRepository;
-    private final DocenteRepository docenteRepository;
 
     public DisponibilidadDocenteService(
-            DisponibilidadDocenteRepository disponibilidadDocenteRepository,
-            DocenteRepository docenteRepository) {
+            DisponibilidadDocenteRepository disponibilidadDocenteRepository) {
         this.disponibilidadDocenteRepository = disponibilidadDocenteRepository;
-        this.docenteRepository = docenteRepository;
     }
 
     public List<String> obtenerDiasSemana() {
@@ -34,8 +26,7 @@ public class DisponibilidadDocenteService {
                 "MIERCOLES",
                 "JUEVES",
                 "VIERNES",
-                "SABADO",
-                "DOMINGO");
+                "SABADO");
     }
 
     public List<String> obtenerBloquesHorario() {
@@ -53,10 +44,9 @@ public class DisponibilidadDocenteService {
     }
 
     public List<DisponibilidadDocente> obtenerDisponibilidadPorDocente(Long docenteId) {
-        return disponibilidadDocenteRepository.findByDocenteId(docenteId);
+        return new ArrayList<>();
     }
 
-    @Transactional
     public void guardarDisponibilidad(DisponibilidadDocenteDTO disponibilidadDocenteDTO) {
 
         if (disponibilidadDocenteDTO.getDocenteId() == null) {
@@ -68,36 +58,8 @@ public class DisponibilidadDocenteService {
             throw new IllegalArgumentException("Debe seleccionar al menos un bloque de disponibilidad.");
         }
 
-        Docente docente = docenteRepository.findById(disponibilidadDocenteDTO.getDocenteId())
-                .orElseThrow(() -> new IllegalArgumentException("El docente no existe."));
-
-        disponibilidadDocenteRepository.deleteByDocenteId(docente.getId());
-
-        List<DisponibilidadDocente> disponibilidades = new ArrayList<>();
-
-        for (BloqueDisponibilidadDTO bloqueDTO : disponibilidadDocenteDTO.getBloques()) {
-
-            if (bloqueDTO.getDiaSemana() == null ||
-                    bloqueDTO.getHoraInicio() == null ||
-                    bloqueDTO.getHoraFin() == null) {
-                continue;
-            }
-
-            DisponibilidadDocente disponibilidad = new DisponibilidadDocente();
-            disponibilidad.setDocente(docente);
-            disponibilidad.setDiaSemana(bloqueDTO.getDiaSemana());
-            disponibilidad.setHoraInicio(LocalTime.parse(bloqueDTO.getHoraInicio()));
-            disponibilidad.setHoraFin(LocalTime.parse(bloqueDTO.getHoraFin()));
-            disponibilidad.setEstado(1);
-            disponibilidad.setFechaCreacion(LocalDateTime.now());
-
-            disponibilidades.add(disponibilidad);
-        }
-
-        if (disponibilidades.isEmpty()) {
-            throw new IllegalArgumentException("Debe seleccionar al menos un bloque válido.");
-        }
-
-        disponibilidadDocenteRepository.saveAll(disponibilidades);
+        // Temporal:
+        // Luego se conectará con el modelo nuevo de Dayanna/Álvaro:
+        // Docente + Semestre + BloqueHorario.
     }
 }

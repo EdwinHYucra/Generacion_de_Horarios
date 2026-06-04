@@ -32,8 +32,9 @@ public class CursoDocenteController {
         model.addAttribute("docenteId", docenteId);
         model.addAttribute("cursosCarrera", cursoDocenteService.obtenerCursosCarrera());
         model.addAttribute("cursosGenerales", cursoDocenteService.obtenerCursosGenerales());
-        model.addAttribute("cursosSeleccionados",
-                cursoDocenteService.obtenerCursosSeleccionadosPorDocente(docenteId));
+        model.addAttribute(
+                "cursosSeleccionados",
+                cursoDocenteService.obtenerCursosSeleccionadosPorDocente(docenteId.intValue()));
         model.addAttribute("seleccionCursosDTO", new SeleccionCursosDTO());
 
         return "cursos";
@@ -47,6 +48,7 @@ public class CursoDocenteController {
             HttpSession session) {
 
         try {
+
             Long docenteId = obtenerDocenteIdDesdeSesion(session);
             seleccionCursosDTO.setDocenteId(docenteId);
 
@@ -70,8 +72,11 @@ public class CursoDocenteController {
             model.addAttribute("docenteId", docenteId);
             model.addAttribute("cursosCarrera", cursoDocenteService.obtenerCursosCarrera());
             model.addAttribute("cursosGenerales", cursoDocenteService.obtenerCursosGenerales());
-            model.addAttribute("cursosSeleccionados",
-                    cursoDocenteService.obtenerCursosSeleccionadosPorDocente(docenteId));
+
+            model.addAttribute(
+                    "cursosSeleccionados",
+                    cursoDocenteService.obtenerCursosSeleccionadosPorDocente(docenteId.intValue()));
+
             model.addAttribute("seleccionCursosDTO", seleccionCursosDTO);
 
             return "cursos";
@@ -89,11 +94,15 @@ public class CursoDocenteController {
     }
 
     private String obtenerNombreUsuarioAutenticado() {
+
         Authentication auth = SecurityContextHolder
                 .getContext()
                 .getAuthentication();
 
-        if (auth == null || auth.getName() == null || "anonymousUser".equals(auth.getName())) {
+        if (auth == null ||
+                auth.getName() == null ||
+                "anonymousUser".equals(auth.getName())) {
+
             return "Juan Pérez";
         }
 

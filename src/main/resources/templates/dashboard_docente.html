@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generador UTP - Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/iconify-icon@3.0.2/dist/iconify-icon.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Calistoga&display=swap" rel="stylesheet">
+  
+  <style>
+    body {
+      font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      color: #1e293b;
+      background-color: #ffffff;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .font-calistoga {
+      font-family: "Calistoga", serif;
+    }
+
+    * {
+      transition: all 0.2s ease;
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+
+    .sidebar-active {
+      background-color: #27272A;
+      color: #ffffff;
+    }
+
+    .card-shadow {
+      box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.07), 0px 1px 2px 0px rgba(0, 0, 0, 0.07);
+    }
+
+    @media (max-width: 1024px) {
+      .sidebar-collapsed {
+        width: 0;
+        overflow: hidden;
+      }
+    }
+  </style>
+</head>
+<body class="bg-white min-h-screen flex">
+
+  <!-- Sidebar -->
+  <aside id="sidebar"
+class="fixed inset-y-0 left-0 z-50 w-64 bg-[#09090B] text-[#A1A1AA] flex flex-col
+transition-transform duration-300 -translate-x-full lg:translate-x-0">
+    <!-- Logo Section -->
+    <div class="h-16 flex items-center px-6 border-b border-[#27272A]">
+      <div class="w-8 h-8 bg-[#FAFAFA] rounded-md flex items-center justify-center mr-3">
+        <img th:src="@{/img/docente/IMG_1.svg}" alt="Calendar" class="w-5.5 h-5.5">
+      </div>
+      <span class="text-[#FAFAFA] font-bold text-xl">Generador UTP</span>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="flex-1 px-4 py-6 space-y-1">
+      <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl sidebar-active text-white">
+        <img th:src="@{/img/docente/IMG_2.svg}" alt="Dashboard" class="w-5 h-5">
+        <span class="font-medium">Dashboard</span>
+      </a>
+      <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#27272A] hover:text-white transition-colors">
+        <img th:src="@{/img/docente/IMG_3.svg}" alt="Disponibilidad" class="w-5 h-5 opacity-70">
+        <span class="font-normal">Disponibilidad</span>
+      </a>
+      <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#27272A] hover:text-white transition-colors">
+        <img th:src="@{/img/docente/IMG_4.svg}" alt="Cursos" class="w-5 h-5 opacity-70">
+        <span class="font-normal">Cursos</span>
+      </a>
+      <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#27272A] hover:text-white transition-colors">
+        <img th:src="@{/img/docente/IMG_5.svg}" alt="Opciones" class="w-5 h-5 opacity-70">
+        <span class="font-normal">Opciones de horario</span>
+      </a>
+      <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#27272A] hover:text-white transition-colors">
+        <img th:src="@{/img/docente/IMG_6.svg}" alt="Solicitudes" class="w-5 h-5 opacity-70">
+        <span class="font-normal">Solicitudes</span>
+      </a>
+      <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#27272A] hover:text-white transition-colors">
+        <img th:src="@{/img/docente/IMG_7.svg}" alt="Mi Horario" class="w-5 h-5 opacity-70">
+        <span class="font-normal">Mi Horario</span>
+      </a>
+    </nav>
+
+    <!-- Footer Sidebar -->
+    <div class="mt-auto">
+      <div class="px-4 py-4 border-t border-[#1E293B]">
+        <button class="flex items-center gap-5 px-3 py-2 w-full text-[#94A3B8] hover:text-white transition-colors">
+          <img th:src="@{/img/docente/IMG_8.svg}" alt="Logout" class="w-5 h-5">
+          <a href="/logout" class="flex items-center gap-5 ...">
+  Cerrar sesión
+</a>
+        </button>
+      </div>
+      <div class="py-4 border-t border-[#27272A] text-center">
+        <span class="text-[12px] text-[#71717A]">© 2024 UTP V1.0</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="flex-1 flex flex-col min-w-0">
+    <!-- Header -->
+    <header class="h-16 bg-[#F4F4F6] border-b border-[#E0E2E6] flex items-center justify-between px-6 md:px-12 sticky top-0 z-40">
+  <button class="lg:hidden p-2 text-[#595E69]"
+    onclick="document.getElementById('sidebar').classList.toggle('-translate-x-full')">
+    ☰
+  </button>
+
+  <!-- resto del header -->
+  <div class="flex items-center gap-6 ml-auto">
+      </div>
+      <div class="flex items-center gap-6 ml-auto">
+        <div class="relative">
+          <img th:src="@{/img/docente/IMG_10.svg}" alt="Notifications" class="w-5 h-5 text-[#595E69]">
+          <div class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-[#DC2626] border border-[#F4F4F6] rounded-full"></div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="text-right hidden sm:block">
+            <p class="text-sm font-semibold text-[#17191C] leading-none">Juan Pérez</p>
+            <p class="text-xs text-[#595E69] mt-1">Docente</p>
+          </div>
+          <div class="relative">
+            <div class="w-9 h-9 rounded-full overflow-hidden border border-gray-200">
+              <img th:src="@{/img/docente/IMG_9.webp}" alt="User Avatar" class="w-full h-full object-cover">
+            </div>
+            <div class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[#36E27E] border-2 border-white rounded-full"></div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content Area -->
+    <main class="flex-1 overflow-y-auto p-6 md:p-12">
+      <div class="max-w-6xl mx-auto">
+        <!-- Welcome Section -->
+        <section class="mb-10">
+          <h1 class="text-3xl md:text-[30px] text-[#17191C] font-bold tracking-tight">Bienvenido, Docente</h1>
+          <p class="text-[#595E69] text-lg mt-2">Gestione su disponibilidad y revise su horario asignado para el período académico actual.</p>
+        </section>
+
+        <!-- Action Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <!-- Card 1 -->
+          <div class="bg-white rounded-[14px] border border-[#E0E2E6] p-8 flex flex-col items-center text-center card-shadow">
+            <div class="w-16 h-16 bg-[#D50000]/10 rounded-full flex items-center justify-center mb-6">
+              <img th:src="@{/img/docente/IMG_3.svg}" alt="Disponibilidad" class="w-8 h-8 text-[#D50000]">
+            </div>
+            <h3 class="text-xl font-semibold text-[#17191C] mb-2">Registrar disponibilidad</h3>
+            <p class="text-sm text-[#595E69] leading-relaxed mb-8 max-w-[400px]">
+              Indique los rangos de horas y días en los que se encuentra disponible para dictar clases.
+            </p>
+            <button class="mt-auto bg-[#D50000] text-white px-6 py-2.5 rounded-xl flex items-center gap-2 text-sm font-medium hover:bg-[#b00000] transition-colors shadow-sm">
+              Ir a Disponibilidad
+              <img th:src="@{/img/docente/IMG_11.svg}" alt="Arrow" class="w-4 h-4">
+            </button>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="bg-white rounded-[14px] border border-[#E0E2E6] p-8 flex flex-col items-center text-center card-shadow">
+            <div class="w-16 h-16 bg-[#D50000]/10 rounded-full flex items-center justify-center mb-6">
+              <img th:src="@{/img/docente/IMG_12.svg}" alt="Cursos" class="w-8 h-8 text-[#D50000]">
+            </div>
+            <h3 class="text-xl font-semibold text-[#17191C] mb-2">Seleccionar cursos</h3>
+            <p class="text-sm text-[#595E69] leading-relaxed mb-8 max-w-[400px]">
+              Elija las materias o asignaturas que desea y está capacitado para dictar este ciclo.
+            </p>
+            <button class="mt-auto bg-[#D50000] text-white px-6 py-2.5 rounded-xl flex items-center gap-2 text-sm font-medium hover:bg-[#b00000] transition-colors shadow-sm">
+              Ver Cursos
+              <img th:src="@{/img/docente/IMG_11.svg}" alt="Arrow" class="w-4 h-4">
+            </button>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="bg-white rounded-[14px] border border-[#E0E2E6] p-8 flex flex-col items-center text-center card-shadow">
+            <div class="w-16 h-16 bg-[#D50000]/10 rounded-full flex items-center justify-center mb-6">
+              <img th:src="@{/img/docente/IMG_13.svg}" alt="Opciones" class="w-8 h-8 text-[#D50000]">
+            </div>
+            <h3 class="text-xl font-semibold text-[#17191C] mb-2">Ver opciones generales</h3>
+            <p class="text-sm text-[#595E69] leading-relaxed mb-8 max-w-[400px]">
+              Revise las opciones generales de configuración y notificaciones enviadas por el sistema.
+            </p>
+            <button class="mt-auto bg-[#D50000] text-white px-6 py-2.5 rounded-xl flex items-center gap-2 text-sm font-medium hover:bg-[#b00000] transition-colors shadow-sm">
+              Ver Opciones
+              <img th:src="@{/img/docente/IMG_11.svg}" alt="Arrow" class="w-4 h-4">
+            </button>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="bg-white rounded-[14px] border border-[#E0E2E6] p-8 flex flex-col items-center text-center card-shadow">
+            <div class="w-16 h-16 bg-[#D50000]/10 rounded-full flex items-center justify-center mb-6">
+              <img th:src="@{/img/docente/IMG_14.svg}" alt="Horario" class="w-8 h-8 text-[#D50000]">
+            </div>
+            <h3 class="text-xl font-semibold text-[#17191C] mb-2">Mi horario</h3>
+            <p class="text-sm text-[#595E69] leading-relaxed mb-8 max-w-[400px]">
+              Visualice su horario final asignado y confirmado una vez finalizado el proceso.
+            </p>
+            <button class="mt-auto bg-[#D50000] text-white px-6 py-2.5 rounded-xl flex items-center gap-2 text-sm font-medium hover:bg-[#b00000] transition-colors shadow-sm">
+              Ver Horario
+              <img th:src="@{/img/docente/IMG_11.svg}" alt="Arrow" class="w-4 h-4">
+            </button>
+          </div>
+        </div>
+
+        <!-- Status Section -->
+        <div class="bg-white rounded-[14px] border border-[#E0E2E6] overflow-hidden card-shadow">
+          <div class="bg-[#F4F4F6]/40 px-6 py-4 border-b border-[#E0E2E6] flex items-center gap-3">
+            <div class="w-1.5 h-6 bg-[#D50000] rounded-full"></div>
+            <h2 class="text-lg font-semibold text-[#17191C]">Estado Actual del Proceso</h2>
+          </div>
+          <div class="p-8 grid grid-cols-1 sm:grid-cols-3 gap-8">
+            <!-- Status Item 1 -->
+            <div class="flex items-start gap-4">
+              <img th:src="@{/img/docente/IMG_15.svg}" alt="Check" class="w-6 h-6 mt-0.5">
+              <div>
+                <p class="text-sm text-[#17191C] font-medium">Disponibilidad</p>
+                <p class="text-sm text-[#17191C] font-bold">Registrada</p>
+              </div>
+            </div>
+            <!-- Status Item 2 -->
+            <div class="flex items-start gap-4">
+              <img th:src="@{/img/docente/IMG_15.svg}" alt="Check" class="w-6 h-6 mt-0.5">
+              <div>
+                <p class="text-sm text-[#17191C] font-medium">Cursos</p>
+                <p class="text-sm text-[#17191C] font-bold">Seleccionados</p>
+              </div>
+            </div>
+            <!-- Status Item 3 -->
+            <div class="flex items-start gap-4">
+              <img th:src="@{/img/docente/IMG_16.svg}" alt="Pending" class="w-6 h-6 mt-0.5 opacity-75">
+              <div>
+                <p class="text-sm text-[#17191C] font-medium">Horario Final</p>
+                <p class="text-sm text-[#17191C] font-bold">Pendiente de asignación</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="h-16 bg-[#F4F4F6]/20 border-t border-[#E0E2E6] flex items-center justify-between px-8 text-sm text-[#595E69]">
+      <span>Generador de Horarios Automático UTP</span>
+      <a href="#" class="hover:text-[#D50000] transition-colors">Soporte Técnico</a>
+    </footer>
+  </div>
+
+</body>
+</html>

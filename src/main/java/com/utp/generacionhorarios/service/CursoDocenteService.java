@@ -1,16 +1,14 @@
 package com.utp.generacionhorarios.service;
 
 import com.utp.generacionhorarios.dto.SeleccionCursosDTO;
-import com.utp.generacionhorarios.entity.Curso;
-import com.utp.generacionhorarios.entity.Docente;
-import com.utp.generacionhorarios.entity.DocenteCurso;
+import com.utp.generacionhorarios.model.Curso;
+import com.utp.generacionhorarios.model.Docente;
 import com.utp.generacionhorarios.repository.CursoRepository;
-import com.utp.generacionhorarios.repository.DocenteCursoRepository;
 import com.utp.generacionhorarios.repository.DocenteRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -18,29 +16,33 @@ public class CursoDocenteService {
 
     private final CursoRepository cursoRepository;
     private final DocenteRepository docenteRepository;
-    private final DocenteCursoRepository docenteCursoRepository;
 
     public CursoDocenteService(
             CursoRepository cursoRepository,
-            DocenteRepository docenteRepository,
-            DocenteCursoRepository docenteCursoRepository) {
+            DocenteRepository docenteRepository) {
         this.cursoRepository = cursoRepository;
         this.docenteRepository = docenteRepository;
-        this.docenteCursoRepository = docenteCursoRepository;
     }
 
     public List<Curso> obtenerCursosCarrera() {
-        return cursoRepository.findByTipoAndEstado("CARRERA", 1);
+        return cursoRepository.findByEstadoTrue();
     }
 
     public List<Curso> obtenerCursosGenerales() {
-        return cursoRepository.findByTipoAndEstado("GENERAL", 1);
+        return new ArrayList<>();
     }
 
-    public List<Long> obtenerCursosSeleccionadosPorDocente(Long docenteId) {
-        return docenteCursoRepository.findByDocenteId(docenteId)
+    public List<Integer> obtenerCursosSeleccionadosPorDocente(Integer docenteId) {
+        Docente docente = docenteRepository.findById(docenteId)
+                .orElse(null);
+
+        if (docente == null || docente.getCursos() == null) {
+            return new ArrayList<>();
+        }
+
+        return docente.getCursos()
                 .stream()
-                .map(docenteCurso -> docenteCurso.getCurso().getIdCurso())
+                .map(Curso::getId)
                 .toList();
     }
 
@@ -56,27 +58,23 @@ public class CursoDocenteService {
             throw new IllegalArgumentException("Debe seleccionar al menos un curso.");
         }
 
-        Docente docente = docenteRepository.findById(seleccionCursosDTO.getDocenteId())
+        Integer docenteId = seleccionCursosDTO.getDocenteId().intValue();
+
+        Docente docente = docenteRepository.findById(docenteId)
                 .orElseThrow(() -> new IllegalArgumentException("El docente no existe."));
 
-        docenteCursoRepository.deleteByDocenteId(docente.getId());
+        List<Integer> cursosIds = seleccionCursosDTO.getCursosSeleccionados()
+                .stream()
+                .map(Long::intValue)
+                .toList();
 
-        List<Curso> cursos = cursoRepository.findAllById(seleccionCursosDTO.getCursosSeleccionados());
+        List<Curso> cursos = cursoRepository.findAllById(cursosIds);
 
         if (cursos.isEmpty()) {
             throw new IllegalArgumentException("No se encontraron cursos válidos.");
         }
 
-        List<DocenteCurso> docenteCursos = cursos.stream()
-                .map(curso -> {
-                    DocenteCurso docenteCurso = new DocenteCurso();
-                    docenteCurso.setDocente(docente);
-                    docenteCurso.setCurso(curso);
-                    docenteCurso.setFechaCreacion(LocalDateTime.now());
-                    return docenteCurso;
-                })
-                .toList();
-
-        docenteCursoRepository.saveAll(docenteCursos);
+        docente.setCursos(new java.util.HashSet<>(cursos));
+        docenteRepository.save(docente);
     }
 }
