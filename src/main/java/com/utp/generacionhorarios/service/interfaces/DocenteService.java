@@ -1,4 +1,4 @@
-package com.utp.generacionhorarios.service;
+package com.utp.generacionhorarios.service.interfaces;
 
 import com.utp.generacionhorarios.entity.Docente;
 
