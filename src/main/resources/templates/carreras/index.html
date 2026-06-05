@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Carreras</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+
+<div class="app">
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <div class="main">
+        <div th:replace="~{fragments/header :: header}"></div>
+
+        <main class="content">
+
+            <section class="page-title">
+                <div class="page-title__row">
+                    <img class="page-title__icon" th:src="@{/assets/IMG_5.svg}" alt="Carreras">
+                    <h1>Gestión de Carreras</h1>
+                </div>
+                <p>Administre los programas académicos y sus códigos.</p>
+            </section>
+
+            <div th:if="${mensajeExito}" class="alert alert--success">
+                <span th:text="${mensajeExito}"></span>
+            </div>
+
+            <div th:if="${mensajeError}" class="alert alert--error">
+                <span th:text="${mensajeError}"></span>
+            </div>
+
+            <section class="panel">
+                <div class="panel__header">
+                    <div class="panel__title">
+                        <div class="panel__title-icon">+</div>
+                        <div>
+                            <h2 th:text="${modoEdicion} ? 'Editar Carrera' : 'Agregar Nueva Carrera'">Agregar Nueva Carrera</h2>
+                            <p>Complete los detalles para registrar un nuevo programa académico.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <form th:action="@{/carreras/guardar}" th:object="${carrera}" method="post">
+                    <div class="panel__body">
+                        <input type="hidden" th:field="*{idCarrera}">
+                        <input type="hidden" th:field="*{estado}">
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Nombre de la Carrera <span class="required">*</span></label>
+                                <input type="text" th:field="*{nombre}" class="form-control" required maxlength="120" placeholder="Ej. Ingeniería de Software">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Código <span class="required">*</span></label>
+                                <input type="text" th:field="*{codigo}" class="form-control" required maxlength="20" placeholder="Ej. CAR-010">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel__footer">
+                        <a th:href="@{/carreras}" class="btn btn--secondary">Cancelar</a>
+                        <button type="submit" class="btn btn--primary">Guardar Carrera</button>
+                    </div>
+                </form>
+            </section>
+
+            <section class="panel">
+                <div class="panel__header">
+                    <div class="panel__title">
+                        <div>
+                            <h2>Carreras Registradas</h2>
+                            <p>Gestione el listado de todos los programas académicos activos.</p>
+                        </div>
+                    </div>
+
+                    <input id="inputBuscarCarrera" type="text" class="form-control table-toolbar" placeholder="Buscar por nombre o código...">
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Nombre de Carrera</th>
+                            <th>Estado</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <tr th:each="item : ${carreras}"
+                            class="carrera-row"
+                            th:attr="data-codigo=${item.codigo}, data-nombre=${item.nombre}">
+                            <td><strong th:text="${item.codigo}"></strong></td>
+                            <td><strong th:text="${item.nombre}"></strong></td>
+                            <td><span class="badge badge--active">Activo</span></td>
+                            <td>
+                                <div class="action-group">
+                                    <a th:href="@{/carreras/editar/{id}(id=${item.idCarrera})}" class="action-link">
+                                        <img th:src="@{/assets/IMG_16.svg}" alt="Editar">
+                                    </a>
+
+                                    <form th:action="@{/carreras/eliminar/{id}(id=${item.idCarrera})}" method="post" class="inline-form"
+                                          onsubmit="return confirm('¿Seguro que deseas desactivar esta carrera?');">
+                                        <button type="submit" class="action-button">
+                                            <img th:src="@{/assets/IMG_17.svg}" alt="Eliminar">
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr th:if="${#lists.isEmpty(carreras)}">
+                            <td colspan="4" class="empty-table">No hay carreras registradas.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="table-footer">
+                    <p>Mostrando <strong id="cantidadCarreras" th:text="${#lists.size(carreras)}">0</strong> registros</p>
+                    <div class="pagination">
+                        <button type="button" disabled>Anterior</button>
+                        <button type="button" disabled>Siguiente</button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <div th:replace="~{fragments/footer :: footer}"></div>
+    </div>
+</div>
+
+<script th:src="@{/js/admin.js}"></script>
+</body>
+</html>

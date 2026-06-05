@@ -1,7 +1,8 @@
-package com.utp.generacionhorarios.service;
+package com.utp.generacionhorarios.service.implementations;
 
 import com.utp.generacionhorarios.entity.Docente;
 import com.utp.generacionhorarios.repository.DocenteRepository;
+import com.utp.generacionhorarios.service.interfaces.DocenteService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
