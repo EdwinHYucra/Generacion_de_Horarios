@@ -3,38 +3,35 @@ package com.utp.generacionhorarios.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "cursos")
-public class Curso {
+@Table(name = "sedes")
+public class Sede {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_curso")
-    private Long idCurso;
+    @Column(name = "id_sede")
+    private Long idSede;
 
     @Column(name = "codigo", nullable = false, unique = true, length = 30)
     private String codigo;
 
-    @Column(name = "nombre", nullable = false, unique = true, length = 150)
+    @Column(name = "nombre", nullable = false, unique = true, length = 120)
     private String nombre;
 
-    @Column(name = "horas_semanales", nullable = false)
-    private Integer horasSemanales;
-
-    @Column(name = "tipo", nullable = false, length = 30)
-    private String tipo;
+    @Column(name = "direccion", length = 200)
+    private String direccion;
 
     @Column(name = "estado", nullable = false)
     private Boolean estado = true;
 
-    public Curso() {
+    public Sede() {
     }
 
-    public Long getIdCurso() {
-        return idCurso;
+    public Long getIdSede() {
+        return idSede;
     }
 
-    public void setIdCurso(Long idCurso) {
-        this.idCurso = idCurso;
+    public void setIdSede(Long idSede) {
+        this.idSede = idSede;
     }
 
     public String getCodigo() {
@@ -53,20 +50,12 @@ public class Curso {
         this.nombre = nombre;
     }
 
-    public Integer getHorasSemanales() {
-        return horasSemanales;
+    public String getDireccion() {
+        return direccion;
     }
 
-    public void setHorasSemanales(Integer horasSemanales) {
-        this.horasSemanales = horasSemanales;
-    }
-
-    public String getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
     }
 
     public Boolean getEstado() {

@@ -1,13 +1,17 @@
 package com.utp.generacionhorarios.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import com.utp.generacionhorarios.entity.Aula;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-public interface AulaRepository extends JpaRepository<Aula, Integer> {
+@Repository
+public interface AulaRepository extends JpaRepository<Aula, Long> {
+
     List<Aula> findByEstadoTrue();
 
-    List<Aula> findByTipoAndEstadoTrue(Aula.TipoAula tipo);
+    boolean existsByCodigo(String codigo);
+
+    boolean existsByCodigoAndIdAulaNot(String codigo, Long idAula);
 }

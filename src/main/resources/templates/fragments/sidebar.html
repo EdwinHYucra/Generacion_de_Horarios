@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<aside th:fragment="sidebar" class="sidebar">
+
+    <div class="sidebar__brand">
+        <div class="sidebar__logo">
+            <img th:src="@{/assets/IMG_1.svg}" alt="Logo">
+        </div>
+        <span>UTP Admin</span>
+    </div>
+
+    <nav class="sidebar__nav">
+
+        <a th:href="@{/dashboard}" class="sidebar__link"
+           th:classappend="${moduloActivo == 'dashboard'} ? ' sidebar__link--active' : ''">
+            <img th:src="@{/assets/IMG_2.svg}" alt="Dashboard">
+            <span>Dashboard</span>
+        </a>
+
+        <a th:href="@{/docentes}" class="sidebar__link"
+           th:classappend="${moduloActivo == 'docentes'} ? ' sidebar__link--active' : ''">
+            <img th:src="@{/assets/IMG_3.svg}" alt="Docentes">
+            <span>Docentes</span>
+        </a>
+
+        <a th:href="@{/cursos}" class="sidebar__link"
+           th:classappend="${moduloActivo == 'cursos'} ? ' sidebar__link--active' : ''">
+            <img th:src="@{/assets/IMG_4.svg}" alt="Cursos">
+            <span>Cursos</span>
+        </a>
+
+        <a th:href="@{/carreras}" class="sidebar__link"
+           th:classappend="${moduloActivo == 'carreras'} ? ' sidebar__link--active' : ''">
+            <img th:src="@{/assets/IMG_5.svg}" alt="Carreras">
+            <span>Carreras</span>
+        </a>
+
+        <a th:href="@{/carrera-cursos}" class="sidebar__link"
+           th:classappend="${moduloActivo == 'carrera-cursos'} ? ' sidebar__link--active' : ''">
+            <img th:src="@{/assets/IMG_4.svg}" alt="Asignar Cursos">
+            <span>Asignar Cursos</span>
+        </a>
+
+        <a th:href="@{/sedes}" class="sidebar__link"
+           th:classappend="${moduloActivo == 'sedes'} ? ' sidebar__link--active' : ''">
+            <img th:src="@{/assets/IMG_6.svg}" alt="Sedes">
+            <span>Sedes</span>
+        </a>
+
+        <a th:href="@{/aulas}" class="sidebar__link"
+           th:classappend="${moduloActivo == 'aulas'} ? ' sidebar__link--active' : ''">
+            <img th:src="@{/assets/IMG_6.svg}" alt="Aulas">
+            <span>Aulas</span>
+        </a>
+
+        <a href="#" class="sidebar__link">
+            <img th:src="@{/assets/IMG_7.svg}" alt="Validación">
+            <span>Validación</span>
+        </a>
+
+    </nav>
+
+    <div class="sidebar__logout">
+        <button type="button" class="sidebar__logout-button">
+            <img th:src="@{/assets/IMG_8.svg}" alt="Cerrar sesión">
+            <span>Cerrar sesión</span>
+        </button>
+    </div>
+
+</aside>
+
+</body>
+</html>

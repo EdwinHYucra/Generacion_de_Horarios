@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<header th:fragment="header" class="topbar">
+    <button class="topbar__menu" type="button" aria-label="Abrir menú">☰</button>
+
+    <div class="topbar__right">
+        <div class="topbar__notification">
+            <img th:src="@{/assets/IMG_10.svg}" alt="Notificaciones">
+            <span></span>
+        </div>
+
+        <div class="topbar__divider"></div>
+
+        <div class="topbar__user">
+            <div class="topbar__user-text">
+                <strong>Hola, Admin</strong>
+                <small>Administrador</small>
+            </div>
+
+            <div class="topbar__avatar">
+                <img th:src="@{/assets/IMG_9.webp}" alt="Usuario">
+                <span></span>
+            </div>
+        </div>
+    </div>
+</header>
+
+</body>
+</html>

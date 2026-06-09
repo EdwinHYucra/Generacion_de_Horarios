@@ -1,47 +1,156 @@
 package com.utp.generacionhorarios.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
-import java.util.Set;
 
 @Entity
-@Table(name = "docente")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-@EqualsAndHashCode(exclude = { "cursos", "disponibilidades" })
-@ToString(exclude = { "cursos", "disponibilidades" })
+@Table(name = "docentes")
 public class Docente {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @Column(name = "id_docente")
+    private Long idDocente;
 
-    @OneToOne
-    @JoinColumn(name = "usuario_id", nullable = false, unique = true)
-    private Usuario usuario;
+    @Column(name = "codigo", nullable = false, length = 20)
+    private String codigo;
 
-    @Column(nullable = false, length = 100)
+    @Column(name = "nombres", nullable = false, length = 80)
     private String nombres;
 
-    @Column(nullable = false, length = 100)
+    @Column(name = "apellidos", nullable = false, length = 80)
     private String apellidos;
 
-    @Column(nullable = false, unique = true, length = 8)
+    @Column(name = "dni", nullable = false, length = 8)
     private String dni;
 
-    @Column(nullable = false, unique = true, length = 120)
-    private String email;
+    @Column(name = "correo", nullable = false, length = 120)
+    private String correo;
 
-    @Builder.Default
-    @Column(nullable = false)
+    @Column(name = "celular", length = 15)
+    private String celular;
+
+    @Column(name = "especialidad", nullable = false, length = 100)
+    private String especialidad;
+
+    @Column(name = "carrera", length = 100)
+    private String carrera;
+
+    @Column(name = "grado_academico", length = 80)
+    private String gradoAcademico;
+
+    @Column(name = "tipo_contrato", length = 80)
+    private String tipoContrato;
+
+    @Column(name = "observaciones", length = 300)
+    private String observaciones;
+
+    @Column(name = "estado", nullable = false)
     private Boolean estado = true;
 
-    @ManyToMany
-    @JoinTable(name = "docente_curso", joinColumns = @JoinColumn(name = "docente_id"), inverseJoinColumns = @JoinColumn(name = "curso_id"))
-    private Set<Curso> cursos;
+    public Docente() {
+    }
 
-    @OneToMany(mappedBy = "docente", cascade = CascadeType.ALL)
-    private Set<DisponibilidadDocente> disponibilidades;
+    public Long getIdDocente() {
+        return idDocente;
+    }
+
+    public void setIdDocente(Long idDocente) {
+        this.idDocente = idDocente;
+    }
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
+    }
+
+    public String getNombres() {
+        return nombres;
+    }
+
+    public void setNombres(String nombres) {
+        this.nombres = nombres;
+    }
+
+    public String getApellidos() {
+        return apellidos;
+    }
+
+    public void setApellidos(String apellidos) {
+        this.apellidos = apellidos;
+    }
+
+    public String getDni() {
+        return dni;
+    }
+
+    public void setDni(String dni) {
+        this.dni = dni;
+    }
+
+    public String getCorreo() {
+        return correo;
+    }
+
+    public void setCorreo(String correo) {
+        this.correo = correo;
+    }
+
+    public String getCelular() {
+        return celular;
+    }
+
+    public void setCelular(String celular) {
+        this.celular = celular;
+    }
+
+    public String getEspecialidad() {
+        return especialidad;
+    }
+
+    public void setEspecialidad(String especialidad) {
+        this.especialidad = especialidad;
+    }
+
+    public String getCarrera() {
+        return carrera;
+    }
+
+    public void setCarrera(String carrera) {
+        this.carrera = carrera;
+    }
+
+    public String getGradoAcademico() {
+        return gradoAcademico;
+    }
+
+    public void setGradoAcademico(String gradoAcademico) {
+        this.gradoAcademico = gradoAcademico;
+    }
+
+    public String getTipoContrato() {
+        return tipoContrato;
+    }
+
+    public void setTipoContrato(String tipoContrato) {
+        this.tipoContrato = tipoContrato;
+    }
+
+    public String getObservaciones() {
+        return observaciones;
+    }
+
+    public void setObservaciones(String observaciones) {
+        this.observaciones = observaciones;
+    }
+
+    public Boolean getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Boolean estado) {
+        this.estado = estado;
+    }
 }
