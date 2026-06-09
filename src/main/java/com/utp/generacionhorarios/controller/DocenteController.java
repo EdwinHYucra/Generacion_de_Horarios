@@ -1,6 +1,6 @@
 package com.utp.generacionhorarios.controller;
 
-import com.utp.generacionhorarios.model.Docente;
+import com.utp.generacionhorarios.entity.Docente;
 import com.utp.generacionhorarios.service.DocenteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -29,12 +29,9 @@ public class DocenteController {
     }
 
     @PostMapping("/nuevo")
-    public String guardar(@ModelAttribute Docente docente,
-                          @RequestParam String username,
-                          @RequestParam String password,
-                          RedirectAttributes ra) {
+    public String guardar(@ModelAttribute Docente docente, RedirectAttributes ra) {
         try {
-            docenteService.guardar(docente, username, password);
+            docenteService.guardar(docente);
             ra.addFlashAttribute("mensaje", "Docente registrado correctamente.");
             ra.addFlashAttribute("tipo", "success");
         } catch (Exception e) {
@@ -45,7 +42,7 @@ public class DocenteController {
     }
 
     @GetMapping("/editar/{id}")
-    public String formularioEditar(@PathVariable Integer id, Model model) {
+    public String formularioEditar(@PathVariable Long id, Model model) {
         Docente docente = docenteService.buscarPorId(id)
                 .orElseThrow(() -> new RuntimeException("Docente no encontrado"));
         model.addAttribute("docente", docente);
@@ -54,7 +51,7 @@ public class DocenteController {
     }
 
     @PostMapping("/editar/{id}")
-    public String actualizar(@PathVariable Integer id,
+    public String actualizar(@PathVariable Long id,
                              @ModelAttribute Docente datos,
                              RedirectAttributes ra) {
         try {
@@ -69,7 +66,7 @@ public class DocenteController {
     }
 
     @PostMapping("/desactivar/{id}")
-    public String desactivar(@PathVariable Integer id, RedirectAttributes ra) {
+    public String desactivar(@PathVariable Long id, RedirectAttributes ra) {
         docenteService.desactivar(id);
         ra.addFlashAttribute("mensaje", "Docente desactivado.");
         ra.addFlashAttribute("tipo", "warning");

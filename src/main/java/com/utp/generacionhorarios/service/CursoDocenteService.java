@@ -3,12 +3,13 @@ package com.utp.generacionhorarios.service;
 import com.utp.generacionhorarios.dto.SeleccionCursosDTO;
 import com.utp.generacionhorarios.entity.Curso;
 import com.utp.generacionhorarios.entity.Docente;
+import com.utp.generacionhorarios.entity.DocenteCurso;
 import com.utp.generacionhorarios.repository.CursoRepository;
+import com.utp.generacionhorarios.repository.DocenteCursoRepository;
 import com.utp.generacionhorarios.repository.DocenteRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -16,12 +17,14 @@ public class CursoDocenteService {
 
     private final CursoRepository cursoRepository;
     private final DocenteRepository docenteRepository;
+    private final DocenteCursoRepository docenteCursoRepository;
 
-    public CursoDocenteService(
-            CursoRepository cursoRepository,
-            DocenteRepository docenteRepository) {
+    public CursoDocenteService(CursoRepository cursoRepository,
+                                DocenteRepository docenteRepository,
+                                DocenteCursoRepository docenteCursoRepository) {
         this.cursoRepository = cursoRepository;
         this.docenteRepository = docenteRepository;
+        this.docenteCursoRepository = docenteCursoRepository;
     }
 
     public List<Curso> obtenerCursosCarrera() {
@@ -32,50 +35,41 @@ public class CursoDocenteService {
         return cursoRepository.findByTipoAndEstadoTrue("GENERAL");
     }
 
-    public List<Integer> obtenerCursosSeleccionadosPorDocente(Integer docenteId) {
-
-        Docente docente = docenteRepository.findById(docenteId)
-                .orElse(null);
-
-        if (docente == null || docente.getCursos() == null) {
-            return new ArrayList<>();
-        }
-
-        return docente.getCursos()
+    public List<Long> obtenerCursosSeleccionadosPorDocente(Long docenteId) {
+        return docenteCursoRepository.findByDocente_IdDocente(docenteId)
                 .stream()
-                .map(Curso::getId)
+                .map(dc -> dc.getCurso().getIdCurso())
                 .toList();
     }
 
     @Transactional
-    public void guardarCursosSeleccionados(SeleccionCursosDTO seleccionCursosDTO) {
-
-        if (seleccionCursosDTO.getDocenteId() == null) {
+    public void guardarCursosSeleccionados(SeleccionCursosDTO dto) {
+        if (dto.getDocenteId() == null) {
             throw new IllegalArgumentException("No se encontró el docente.");
         }
-
-        if (seleccionCursosDTO.getCursosSeleccionados() == null ||
-                seleccionCursosDTO.getCursosSeleccionados().isEmpty()) {
+        if (dto.getCursosSeleccionados() == null || dto.getCursosSeleccionados().isEmpty()) {
             throw new IllegalArgumentException("Debe seleccionar al menos un curso.");
         }
 
-        Integer docenteId = seleccionCursosDTO.getDocenteId().intValue();
-
+        Long docenteId = dto.getDocenteId();
         Docente docente = docenteRepository.findById(docenteId)
                 .orElseThrow(() -> new IllegalArgumentException("El docente no existe."));
 
-        List<Integer> cursosIds = seleccionCursosDTO.getCursosSeleccionados()
-                .stream()
-                .map(Long::intValue)
-                .toList();
+        // Eliminar asignaciones previas
+        docenteCursoRepository.deleteByDocenteIdDocente(docenteId);
 
-        List<Curso> cursos = cursoRepository.findAllById(cursosIds);
-
+        // Crear nuevas asignaciones
+        List<Curso> cursos = cursoRepository.findAllById(dto.getCursosSeleccionados());
         if (cursos.isEmpty()) {
             throw new IllegalArgumentException("No se encontraron cursos válidos.");
         }
 
-        docente.setCursos(new java.util.HashSet<>(cursos));
-        docenteRepository.save(docente);
+        for (Curso curso : cursos) {
+            DocenteCurso dc = new DocenteCurso();
+            dc.setDocente(docente);
+            dc.setCurso(curso);
+            dc.setFechaCreacion(LocalDateTime.now());
+            docenteCursoRepository.save(dc);
+        }
     }
 }

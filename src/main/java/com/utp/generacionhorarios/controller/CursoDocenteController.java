@@ -34,7 +34,7 @@ public class CursoDocenteController {
         model.addAttribute("cursosGenerales", cursoDocenteService.obtenerCursosGenerales());
         model.addAttribute(
                 "cursosSeleccionados",
-                cursoDocenteService.obtenerCursosSeleccionadosPorDocente(docenteId.intValue()));
+                cursoDocenteService.obtenerCursosSeleccionadosPorDocente(docenteId));
         model.addAttribute("seleccionCursosDTO", new SeleccionCursosDTO());
 
         return "cursos";
@@ -75,7 +75,7 @@ public class CursoDocenteController {
 
             model.addAttribute(
                     "cursosSeleccionados",
-                    cursoDocenteService.obtenerCursosSeleccionadosPorDocente(docenteId.intValue()));
+                    cursoDocenteService.obtenerCursosSeleccionadosPorDocente(docenteId));
 
             model.addAttribute("seleccionCursosDTO", seleccionCursosDTO);
 
