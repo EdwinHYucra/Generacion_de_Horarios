@@ -1,15 +1,15 @@
-package com.utp.generacionhorarios.model;
+package com.utp.generacionhorarios.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "disponibilidad_docente",
-    uniqueConstraints = @UniqueConstraint(
-        columnNames = {"docente_id", "semestre_id", "dia_semana", "bloque_id"}
-    )
-)
-@Data @NoArgsConstructor @AllArgsConstructor @Builder
+@Table(name = "disponibilidad_docente", uniqueConstraints = @UniqueConstraint(columnNames = { "docente_id",
+        "semestre_id", "dia_semana", "bloque_id" }))
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class DisponibilidadDocente {
 
     @Id
@@ -33,6 +33,11 @@ public class DisponibilidadDocente {
     private BloqueHorario bloque;
 
     public enum DiaSemana {
-        LUNES, MARTES, MIERCOLES, JUEVES, VIERNES, SABADO
+        LUNES,
+        MARTES,
+        MIERCOLES,
+        JUEVES,
+        VIERNES,
+        SABADO
     }
 }

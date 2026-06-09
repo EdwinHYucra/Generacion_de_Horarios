@@ -1,4 +1,4 @@
-package com.utp.generacionhorarios.model;
+package com.utp.generacionhorarios.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -7,7 +7,10 @@ import java.util.List;
 
 @Entity
 @Table(name = "horario")
-@Data @NoArgsConstructor @AllArgsConstructor @Builder
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @ToString(exclude = "detalles")
 @EqualsAndHashCode(exclude = "detalles")
 public class Horario {
@@ -33,5 +36,7 @@ public class Horario {
     @OneToMany(mappedBy = "horario", cascade = CascadeType.ALL)
     private List<DetalleHorario> detalles;
 
-    public enum EstadoHorario { BORRADOR, GENERADO, APROBADO }
+    public enum EstadoHorario {
+        BORRADOR, GENERADO, APROBADO
+    }
 }

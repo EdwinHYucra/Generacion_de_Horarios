@@ -1,4 +1,4 @@
-package com.utp.generacionhorarios.model;
+package com.utp.generacionhorarios.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -6,7 +6,10 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "semestre")
-@Data @NoArgsConstructor @AllArgsConstructor @Builder
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Semestre {
 
     @Id
@@ -26,5 +29,7 @@ public class Semestre {
     @Column(nullable = false)
     private EstadoSemestre estado = EstadoSemestre.ACTIVO;
 
-    public enum EstadoSemestre { ACTIVO, CERRADO }
+    public enum EstadoSemestre {
+        ACTIVO, CERRADO
+    }
 }
