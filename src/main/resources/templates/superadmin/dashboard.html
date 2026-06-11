@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - Super Admin</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+
+<nav class="navbar">
+    <span class="navbar-brand">Sistema de Horarios</span>
+    <div class="navbar-links">
+        <a th:href="@{/superadmin/dashboard}">Dashboard</a>
+        <a th:href="@{/superadmin/admins}">Administradores</a>
+        <a th:href="@{/logout}">Cerrar sesión</a>
+    </div>
+</nav>
+
+<div class="contenido">
+    <h1>Panel de Super Administrador</h1>
+
+    <div th:if="${exito}" class="alerta alerta-exito" th:text="${exito}"></div>
+
+    <div class="tarjetas">
+        <div class="tarjeta">
+            <h3>Administradores</h3>
+            <p class="numero" th:text="${totalAdmins}">0</p>
+            <a th:href="@{/superadmin/admins}" class="btn-secondary">Ver todos</a>
+        </div>
+        <div class="tarjeta">
+            <h3>Registrar Admin</h3>
+            <p>Agregar un nuevo administrador al sistema</p>
+            <a th:href="@{/superadmin/admins/nuevo}" class="btn-primary">Nuevo Admin</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

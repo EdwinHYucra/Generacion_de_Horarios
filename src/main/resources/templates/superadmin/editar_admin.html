@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Administrador</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+
+<nav class="navbar">
+    <span class="navbar-brand">Sistema de Horarios</span>
+    <div class="navbar-links">
+        <a th:href="@{/superadmin/dashboard}">Dashboard</a>
+        <a th:href="@{/superadmin/admins}">Administradores</a>
+        <a th:href="@{/logout}">Cerrar sesión</a>
+    </div>
+</nav>
+
+<div class="contenido">
+    <h1>Editar Administrador</h1>
+
+    <div class="formulario-card">
+        <form th:action="@{/superadmin/admins/actualizar}"
+              th:object="${usuario}"
+              method="post">
+
+            <input type="hidden" th:field="*{id}">
+
+            <div class="campo">
+                <label>Nombre</label>
+                <input type="text" th:field="*{nombre}" placeholder="Nombre">
+            </div>
+
+            <div class="campo">
+                <label>Apellido</label>
+                <input type="text" th:field="*{apellido}" placeholder="Apellido">
+            </div>
+
+            <div class="campo">
+                <label>Email</label>
+                <input type="email" th:field="*{email}" placeholder="correo@ejemplo.com">
+            </div>
+
+            <div class="form-botones">
+                <a th:href="@{/superadmin/admins}" class="btn-secondary">Cancelar</a>
+                <button type="submit" class="btn-primary">Guardar cambios</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

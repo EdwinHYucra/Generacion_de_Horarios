@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Registrar Administrador</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+
+<nav class="navbar">
+    <span class="navbar-brand">Sistema de Horarios</span>
+    <div class="navbar-links">
+        <a th:href="@{/superadmin/dashboard}">Dashboard</a>
+        <a th:href="@{/superadmin/admins}">Administradores</a>
+        <a th:href="@{/logout}">Cerrar sesión</a>
+    </div>
+</nav>
+
+<div class="contenido">
+    <h1>Registrar Administrador</h1>
+
+    <div th:if="${error}" class="alerta alerta-error" th:text="${error}"></div>
+
+    <div class="formulario-card">
+        <form th:action="@{/superadmin/admins/guardar}"
+              th:object="${adminDTO}"
+              method="post">
+
+            <div class="campo">
+                <label>Nombre</label>
+                <input type="text" th:field="*{nombre}" placeholder="Nombre">
+                <span class="error-msg" th:if="${#fields.hasErrors('nombre')}"
+                      th:errors="*{nombre}"></span>
+            </div>
+
+            <div class="campo">
+                <label>Apellido</label>
+                <input type="text" th:field="*{apellido}" placeholder="Apellido">
+                <span class="error-msg" th:if="${#fields.hasErrors('apellido')}"
+                      th:errors="*{apellido}"></span>
+            </div>
+
+            <div class="campo">
+                <label>Email</label>
+                <input type="email" th:field="*{email}" placeholder="correo@ejemplo.com">
+                <span class="error-msg" th:if="${#fields.hasErrors('email')}"
+                      th:errors="*{email}"></span>
+            </div>
+
+            <div class="campo">
+                <label>Contraseña</label>
+                <input type="password" th:field="*{password}" placeholder="••••••••">
+                <span class="error-msg" th:if="${#fields.hasErrors('password')}"
+                      th:errors="*{password}"></span>
+            </div>
+
+            <div class="form-botones">
+                <a th:href="@{/superadmin/admins}" class="btn-secondary">Cancelar</a>
+                <button type="submit" class="btn-primary">Registrar</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+</body>
+</html>
