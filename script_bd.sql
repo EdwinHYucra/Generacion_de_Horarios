@@ -60,6 +60,81 @@ CREATE TABLE credencial_acceso (
         FOREIGN KEY (creado_por) REFERENCES super_admin(id)
 );
 
+-- ============================================
+-- Modulos de gestion academica portados desde la copia
+-- Persistencia JDBC/DAO, sin JPA/Hibernate
+-- ============================================
+
+CREATE TABLE sedes (
+    id_sede    BIGINT PRIMARY KEY AUTO_INCREMENT,
+    codigo     VARCHAR(30)  NOT NULL UNIQUE,
+    nombre     VARCHAR(120) NOT NULL UNIQUE,
+    direccion  VARCHAR(200),
+    estado     BOOLEAN      NOT NULL DEFAULT TRUE
+);
+
+CREATE TABLE carreras (
+    id_carrera BIGINT PRIMARY KEY AUTO_INCREMENT,
+    codigo     VARCHAR(20)  NOT NULL UNIQUE,
+    nombre     VARCHAR(120) NOT NULL UNIQUE,
+    estado     BOOLEAN      NOT NULL DEFAULT TRUE
+);
+
+CREATE TABLE cursos (
+    id_curso         BIGINT PRIMARY KEY AUTO_INCREMENT,
+    codigo           VARCHAR(30)  NOT NULL UNIQUE,
+    nombre           VARCHAR(150) NOT NULL UNIQUE,
+    horas_semanales  INT          NOT NULL,
+    tipo             VARCHAR(30)  NOT NULL,
+    estado           BOOLEAN      NOT NULL DEFAULT TRUE
+);
+
+CREATE TABLE docentes (
+    id_docente       BIGINT PRIMARY KEY AUTO_INCREMENT,
+    usuario_id       BIGINT       NOT NULL UNIQUE,
+    codigo           VARCHAR(20)  NOT NULL,
+    nombres          VARCHAR(80)  NOT NULL,
+    apellidos        VARCHAR(80)  NOT NULL,
+    dni              VARCHAR(8)   NOT NULL,
+    correo           VARCHAR(120) NOT NULL,
+    celular          VARCHAR(15),
+    especialidad     VARCHAR(100) NOT NULL,
+    carrera          VARCHAR(100),
+    grado_academico  VARCHAR(80),
+    tipo_contrato    VARCHAR(80),
+    observaciones    VARCHAR(300),
+    estado           BOOLEAN      NOT NULL DEFAULT TRUE,
+    CONSTRAINT fk_docentes_usuario
+        FOREIGN KEY (usuario_id) REFERENCES usuario(id)
+);
+
+CREATE TABLE aulas (
+    id_aula    BIGINT PRIMARY KEY AUTO_INCREMENT,
+    codigo     VARCHAR(30)  NOT NULL UNIQUE,
+    nombre     VARCHAR(120) NOT NULL,
+    tipo       VARCHAR(30)  NOT NULL,
+    capacidad  INT          NOT NULL,
+    ubicacion  VARCHAR(150),
+    id_sede    BIGINT       NOT NULL,
+    estado     BOOLEAN      NOT NULL DEFAULT TRUE,
+    CONSTRAINT fk_aulas_sedes
+        FOREIGN KEY (id_sede) REFERENCES sedes(id_sede)
+);
+
+CREATE TABLE carrera_curso (
+    id_carrera_curso BIGINT PRIMARY KEY AUTO_INCREMENT,
+    id_carrera       BIGINT  NOT NULL,
+    id_curso         BIGINT  NOT NULL,
+    ciclo            INT     NOT NULL,
+    estado           BOOLEAN NOT NULL DEFAULT TRUE,
+    CONSTRAINT uq_carrera_curso
+        UNIQUE (id_carrera, id_curso),
+    CONSTRAINT fk_carrera_curso_carrera
+        FOREIGN KEY (id_carrera) REFERENCES carreras(id_carrera),
+    CONSTRAINT fk_carrera_curso_curso
+        FOREIGN KEY (id_curso) REFERENCES cursos(id_curso)
+);
+
 -- SuperAdmin inicial
 -- Email: superadmin@sistema.com
 -- Password: Admin1234
@@ -75,3 +150,21 @@ VALUES (
 
 INSERT INTO super_admin (usuario_id)
 VALUES (LAST_INSERT_ID());
+
+SET @super_admin_id = LAST_INSERT_ID();
+
+-- Administrador inicial
+-- Email: admin@sistema.com
+-- Password: Admin1234
+INSERT INTO usuario (nombre, apellido, email, password, rol, estado)
+VALUES (
+    'Administrador',
+    'Sistema',
+    'admin@sistema.com',
+    '$2a$10$cxkso4pdNGypVJCtLNHlp.vpQBHCd1eCubTng5lIFZChMUC6.2JHe',
+    'ADMIN',
+    'ACTIVO'
+);
+
+INSERT INTO admin (usuario_id, creado_por)
+VALUES (LAST_INSERT_ID(), @super_admin_id);

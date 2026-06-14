@@ -1,0 +1,116 @@
+﻿<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Administrador</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+
+<div class="app">
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <div class="main">
+        <div th:replace="~{fragments/header :: header}"></div>
+
+        <main class="content">
+            <section class="dashboard-wrapper">
+
+                <section class="page-title">
+                    <h1>Bienvenido, Administrador</h1>
+                    <p>Panel de control principal. Selecciona una acción para gestionar los recursos académicos o revisa el estado actual del sistema.</p>
+                </section>
+
+                <section class="dashboard-grid">
+
+                    <article class="dashboard-card">
+                        <div class="dashboard-card__icon">
+                            <img th:src="@{/assets/IMG_3.svg}" alt="Docentes">
+                        </div>
+                        <h2>Gestionar docentes</h2>
+                        <p>Agrega, edita y revisa la disponibilidad de la plana docente de la institución.</p>
+                        <a th:href="@{/administrador/docentes}" class="btn btn--primary">Ir</a>
+                    </article>
+
+                    <article class="dashboard-card">
+                        <div class="dashboard-card__icon">
+                            <img th:src="@{/assets/IMG_4.svg}" alt="Cursos">
+                        </div>
+                        <h2>Gestionar cursos</h2>
+                        <p>Administra la malla curricular, secciones y créditos de los cursos activos.</p>
+                        <a th:href="@{/administrador/cursos}" class="btn btn--primary">Ir</a>
+                    </article>
+
+                    <article class="dashboard-card">
+                        <div class="dashboard-card__icon">
+                            <img th:src="@{/assets/IMG_6.svg}" alt="Aulas">
+                        </div>
+                        <h2>Gestionar aulas</h2>
+                        <p>Supervisa la capacidad y asignación de los laboratorios y aulas del campus.</p>
+                        <a th:href="@{/administrador/aulas}" class="btn btn--primary">Ir</a>
+                    </article>
+
+                    <article class="dashboard-card">
+                        <div class="dashboard-card__icon">
+                            <img th:src="@{/assets/IMG_7.svg}" alt="Validación">
+                        </div>
+                        <h2>Validación de horarios</h2>
+                        <p>Revisa, resuelve conflictos y aprueba los horarios generados automáticamente.</p>
+                        <a href="#" class="btn btn--primary">Ir</a>
+                    </article>
+
+                </section>
+
+                <section class="panel system-panel">
+                    <div class="panel__header">
+                        <div class="panel__title">
+                            <div>
+                                <h2>Estado del sistema</h2>
+                                <p>Resumen de registros activos en el ciclo académico actual.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="system-stats">
+                        <div class="system-stat">
+                            <div class="system-stat__icon">
+                                <img th:src="@{/assets/IMG_3.svg}" alt="Docentes">
+                            </div>
+                            <div>
+                                <strong>25</strong>
+                                <span>Docentes Registrados</span>
+                            </div>
+                        </div>
+
+                        <div class="system-stat">
+                            <div class="system-stat__icon">
+                                <img th:src="@{/assets/IMG_4.svg}" alt="Cursos">
+                            </div>
+                            <div>
+                                <strong>40</strong>
+                                <span>Cursos Activos</span>
+                            </div>
+                        </div>
+
+                        <div class="system-stat">
+                            <div class="system-stat__icon">
+                                <img th:src="@{/assets/IMG_7.svg}" alt="Pendientes">
+                            </div>
+                            <div>
+                                <strong>7</strong>
+                                <span>Horarios Pendientes</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </section>
+        </main>
+
+        <div th:replace="~{fragments/footer :: footer}"></div>
+    </div>
+</div>
+
+<script th:src="@{/js/admin.js}"></script>
+</body>
+</html>

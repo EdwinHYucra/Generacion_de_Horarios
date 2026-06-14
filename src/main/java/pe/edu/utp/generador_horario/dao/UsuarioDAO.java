@@ -7,5 +7,6 @@ public interface UsuarioDAO {
 
     Optional<Usuario> buscarPorEmail(String email);
     void guardar(Usuario usuario);
+    Long guardarRetornandoId(Usuario usuario);
     boolean existeEmail(String email);
 }

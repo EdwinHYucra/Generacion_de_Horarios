@@ -1,0 +1,155 @@
+﻿<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Asignación de Cursos a Carreras</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+
+<div class="app">
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <div class="main">
+        <div th:replace="~{fragments/header :: header}"></div>
+
+        <main class="content">
+
+            <section class="page-title">
+                <div class="page-title__row">
+                    <img class="page-title__icon" th:src="@{/assets/IMG_4.svg}" alt="Asignar cursos">
+                    <h1>Asignación de Cursos a Carreras</h1>
+                </div>
+                <p>Relaciona cursos con una o varias carreras y define el ciclo correspondiente.</p>
+            </section>
+
+            <div th:if="${mensajeExito}" class="alert alert--success">
+                <span th:text="${mensajeExito}"></span>
+            </div>
+
+            <div th:if="${mensajeError}" class="alert alert--error">
+                <span th:text="${mensajeError}"></span>
+            </div>
+
+            <section class="panel">
+                <div class="panel__header">
+                    <div class="panel__title">
+                        <div class="panel__title-icon">+</div>
+                        <div>
+                            <h2 th:text="${modoEdicion} ? 'Editar Asignación' : 'Nueva Asignación'">Nueva Asignación</h2>
+                            <p>Seleccione la carrera, el curso y el ciclo donde se dictará.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <form th:action="@{/administrador/carrera-cursos/guardar}" th:object="${carreraCurso}" method="post">
+                    <div class="panel__body">
+                        <input type="hidden" th:field="*{idCarreraCurso}">
+                        <input type="hidden" th:field="*{estado}">
+
+                        <div class="form-grid form-grid--3">
+                            <div class="form-group">
+                                <label>Carrera <span class="required">*</span></label>
+                                <select th:field="*{carrera.idCarrera}" class="form-control" required>
+                                    <option value="">Seleccione una carrera</option>
+                                    <option th:each="carrera : ${carreras}" th:value="${carrera.idCarrera}" th:text="${carrera.codigo + ' - ' + carrera.nombre}"></option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Curso <span class="required">*</span></label>
+                                <select th:field="*{curso.idCurso}" class="form-control" required>
+                                    <option value="">Seleccione un curso</option>
+                                    <option th:each="curso : ${cursos}" th:value="${curso.idCurso}" th:text="${curso.codigo + ' - ' + curso.nombre}"></option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Ciclo <span class="required">*</span></label>
+                                <input type="number" th:field="*{ciclo}" class="form-control" required min="1" max="10" placeholder="Ej. 1">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel__footer">
+                        <a th:href="@{/administrador/carrera-cursos}" class="btn btn--secondary">Cancelar</a>
+                        <button type="submit" class="btn btn--primary">Guardar Asignación</button>
+                    </div>
+                </form>
+            </section>
+
+            <section class="panel">
+                <div class="panel__header">
+                    <div class="panel__title">
+                        <div>
+                            <h2>Cursos Asignados a Carreras</h2>
+                            <p>Gestione la relación entre cursos generales, carreras y ciclos académicos.</p>
+                        </div>
+                    </div>
+
+                    <input id="inputBuscarAsignacion" type="text" class="form-control table-toolbar" placeholder="Buscar por carrera o curso...">
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                        <tr>
+                            <th>Carrera</th>
+                            <th>Código Curso</th>
+                            <th>Curso</th>
+                            <th>Horas</th>
+                            <th>Tipo</th>
+                            <th>Ciclo</th>
+                            <th>Estado</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <tr th:each="item : ${asignaciones}"
+                            class="asignacion-row"
+                            th:attr="data-carrera=${item.carrera.nombre}, data-curso=${item.curso.nombre}, data-codigo=${item.curso.codigo}">
+                            <td><strong th:text="${item.carrera.nombre}"></strong></td>
+                            <td><span class="badge badge--muted" th:text="${item.curso.codigo}"></span></td>
+                            <td th:text="${item.curso.nombre}"></td>
+                            <td th:text="${item.curso.horasSemanales}"></td>
+                            <td><span class="badge badge--muted" th:text="${item.curso.tipo}"></span></td>
+                            <td><strong th:text="${item.ciclo}"></strong></td>
+                            <td><span class="badge badge--active">Activo</span></td>
+                            <td>
+                                <div class="action-group">
+                                    <a th:href="@{/administrador/carrera-cursos/editar/{id}(id=${item.idCarreraCurso})}" class="action-link">
+                                        <img th:src="@{/assets/IMG_16.svg}" alt="Editar">
+                                    </a>
+
+                                    <form th:action="@{/administrador/carrera-cursos/eliminar/{id}(id=${item.idCarreraCurso})}" method="post" class="inline-form"
+                                          onsubmit="return confirm('¿Seguro que deseas desactivar esta asignación?');">
+                                        <button type="submit" class="action-button">
+                                            <img th:src="@{/assets/IMG_17.svg}" alt="Eliminar">
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr th:if="${#lists.isEmpty(asignaciones)}">
+                            <td colspan="8" class="empty-table">No hay cursos asignados a carreras.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="table-footer">
+                    <p>Mostrando <strong id="cantidadAsignaciones" th:text="${#lists.size(asignaciones)}">0</strong> asignaciones</p>
+                </div>
+            </section>
+
+        </main>
+
+        <div th:replace="~{fragments/footer :: footer}"></div>
+    </div>
+</div>
+
+<script th:src="@{/js/admin.js}"></script>
+</body>
+</html>

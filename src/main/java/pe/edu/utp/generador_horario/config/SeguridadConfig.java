@@ -50,14 +50,24 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
     http
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
+            .requestMatchers("/css/**", "/js/**", "/images/**", "/img/**", "/assets/**").permitAll()
             .requestMatchers("/login", "/logout").permitAll()
             .requestMatchers("/superadmin/**").hasRole("SUPERADMIN")
+            .requestMatchers("/administrador/**").hasRole("ADMIN")
             .anyRequest().authenticated()
         )
         .formLogin(form -> form
             .loginPage("/login")
-            .defaultSuccessUrl("/superadmin/dashboard", true)
+            .successHandler((request, response, authentication) -> {
+                boolean esSuperAdmin = authentication.getAuthorities().stream()
+                    .anyMatch(authority -> authority.getAuthority().equals("ROLE_SUPERADMIN"));
+
+                if (esSuperAdmin) {
+                    response.sendRedirect("/superadmin/dashboard");
+                } else {
+                    response.sendRedirect("/administrador/dashboard");
+                }
+            })
             .permitAll()
         )
         .logout(logout -> logout

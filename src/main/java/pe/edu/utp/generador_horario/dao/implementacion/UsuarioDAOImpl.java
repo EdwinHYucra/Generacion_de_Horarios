@@ -2,12 +2,16 @@ package pe.edu.utp.generador_horario.dao.implementacion;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import pe.edu.utp.generador_horario.dao.UsuarioDAO;
 import pe.edu.utp.generador_horario.entidad.Usuario;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,6 +58,26 @@ public class UsuarioDAOImpl implements UsuarioDAO {
             usuario.getRol(),
             usuario.getEstado()
         );
+    }
+
+    @Override
+    public Long guardarRetornandoId(Usuario usuario) {
+        String sql = "INSERT INTO usuario (nombre, apellido, email, password, rol, estado) " +
+                     "VALUES (?, ?, ?, ?, ?, ?)";
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, usuario.getNombre());
+            ps.setString(2, usuario.getApellido());
+            ps.setString(3, usuario.getEmail());
+            ps.setString(4, usuario.getPassword());
+            ps.setString(5, usuario.getRol());
+            ps.setString(6, usuario.getEstado());
+            return ps;
+        }, keyHolder);
+
+        return keyHolder.getKey().longValue();
     }
 
     @Override
