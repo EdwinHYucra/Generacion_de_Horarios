@@ -40,5 +40,6 @@ public interface CursoService {
      * @param id identificador del curso
      */
     void desactivarCurso(Long id);
-}
 
+    List<Curso> listarPorTipo(String tipo);
+}

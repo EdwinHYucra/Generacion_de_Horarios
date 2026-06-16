@@ -12,8 +12,10 @@ import java.util.List;
 /**
  * Implementa la logica de negocio para la administracion de cursos.
  *
- * <p>Valida horas semanales y evita duplicados de codigo o nombre antes
- * de guardar cambios en la base de datos.</p>
+ * <p>
+ * Valida horas semanales y evita duplicados de codigo o nombre antes
+ * de guardar cambios en la base de datos.
+ * </p>
  *
  * @author Edwin
  */
@@ -87,5 +89,9 @@ public class CursoServiceImpl implements CursoService {
             throw e;
         }
     }
-}
 
+    @Override
+    public List<Curso> listarPorTipo(String tipo) {
+        return cursoDAO.findByTipoAndEstadoTrue(tipo);
+    }
+}

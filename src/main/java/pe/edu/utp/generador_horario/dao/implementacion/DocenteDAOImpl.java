@@ -44,33 +44,57 @@ public class DocenteDAOImpl implements DocenteDAO {
         return jdbcTemplate.query("SELECT * FROM docentes ORDER BY id_docente DESC", mapper);
     }
 
+    @Override
     public Optional<Docente> findById(Long id) {
-        List<Docente> docentes = jdbcTemplate.query("SELECT * FROM docentes WHERE id_docente = ?", mapper, id);
-        return docentes.isEmpty() ? Optional.empty() : Optional.of(docentes.get(0));
+        List<Docente> docentes = jdbcTemplate.query(
+                "SELECT * FROM docentes WHERE id_docente = ?",
+                mapper,
+                id);
+
+        return docentes.isEmpty()
+                ? Optional.empty()
+                : Optional.of(docentes.get(0));
+    }
+
+    @Override
+    public Optional<Docente> findByUsuarioId(Long usuarioId) {
+        List<Docente> docentes = jdbcTemplate.query(
+                "SELECT * FROM docentes WHERE usuario_id = ?",
+                mapper,
+                usuarioId);
+
+        return docentes.isEmpty()
+                ? Optional.empty()
+                : Optional.of(docentes.get(0));
     }
 
     public Docente save(Docente docente) {
         if (docente.getIdDocente() == null) {
             KeyHolder keyHolder = new GeneratedKeyHolder();
             jdbcTemplate.update(connection -> {
-                PreparedStatement ps = connection.prepareStatement("""
+                PreparedStatement ps = connection.prepareStatement(
+                        """
                                 INSERT INTO docentes
                                 (usuario_id, codigo, nombres, apellidos, dni, correo, celular, especialidad, carrera, grado_academico, tipo_contrato, observaciones, estado)
                                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                                """, Statement.RETURN_GENERATED_KEYS);
+                                """,
+                        Statement.RETURN_GENERATED_KEYS);
                 setValues(ps, docente);
                 return ps;
             }, keyHolder);
             docente.setIdDocente(keyHolder.getKey().longValue());
         } else {
-            jdbcTemplate.update("""
+            jdbcTemplate.update(
+                    """
                             UPDATE docentes
                             SET usuario_id = ?, codigo = ?, nombres = ?, apellidos = ?, dni = ?, correo = ?, celular = ?, especialidad = ?,
                                 carrera = ?, grado_academico = ?, tipo_contrato = ?, observaciones = ?, estado = ?
                             WHERE id_docente = ?
                             """,
-                    docente.getUsuarioId(), docente.getCodigo(), docente.getNombres(), docente.getApellidos(), docente.getDni(),
-                    docente.getCorreo(), docente.getCelular(), docente.getEspecialidad(), docente.getCarrera(), docente.getGradoAcademico(),
+                    docente.getUsuarioId(), docente.getCodigo(), docente.getNombres(), docente.getApellidos(),
+                    docente.getDni(),
+                    docente.getCorreo(), docente.getCelular(), docente.getEspecialidad(), docente.getCarrera(),
+                    docente.getGradoAcademico(),
                     docente.getTipoContrato(), docente.getObservaciones(), Boolean.TRUE.equals(docente.getEstado()),
                     docente.getIdDocente());
         }

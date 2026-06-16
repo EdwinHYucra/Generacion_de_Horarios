@@ -1,0 +1,262 @@
+.disponibilidad-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.disponibilidad-title {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.title-calendar-icon {
+    width: 34px;
+    height: 34px;
+    border: 3px solid #e00000;
+    border-radius: 8px;
+    position: relative;
+    flex-shrink: 0;
+    margin-top: 4px;
+}
+
+.title-calendar-icon::before,
+.title-calendar-icon::after {
+    content: "";
+    position: absolute;
+    top: -8px;
+    width: 5px;
+    height: 12px;
+    background: #e00000;
+    border-radius: 3px;
+}
+
+.title-calendar-icon::before {
+    left: 7px;
+}
+
+.title-calendar-icon::after {
+    right: 7px;
+}
+
+.disponibilidad-title h1 {
+    margin: 0 0 8px;
+    font-size: 30px;
+    font-weight: 800;
+    color: #23262f;
+}
+
+.disponibilidad-title p {
+    margin: 0;
+    color: #777b86;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.interval-pill {
+    min-width: 220px;
+    height: 42px;
+    padding: 0 18px;
+    border: 1px solid #d9dce3;
+    border-radius: 999px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-weight: 600;
+}
+
+.interval-icon {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #6b7280;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.schedule-card {
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #d8dbe3;
+}
+
+.schedule-grid {
+    display: grid;
+    grid-template-columns: 80px repeat(7, 1fr);
+}
+
+.cell {
+    border: 1px solid #ececec;
+    min-height: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 13px;
+}
+
+.header-cell,
+.time-cell {
+    background: #fafafa;
+    font-weight: 700;
+}
+
+.slot {
+    cursor: pointer;
+    background: white;
+}
+
+.slot:hover {
+    background: #ffe5e5;
+}
+
+.slot.selected {
+    background: #e00000;
+}
+
+.schedule-footer {
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    border: none;
+    padding: 12px 22px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 800;
+}
+
+.btn-light {
+    background: #ececec;
+}
+
+.btn-red {
+    background: #e00000;
+    color: white;
+}
+
+.schedule-grid,
+.slot {
+    user-select: none;
+}
+
+.turnos-rapidos {
+    margin-bottom: 22px;
+    padding: 18px 20px;
+    border: 1px solid #d8dbe3;
+    border-radius: 12px;
+    background: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+}
+
+.turnos-rapidos h3 {
+    margin: 0 0 5px;
+    font-size: 16px;
+    color: #2a2d35;
+}
+
+.turnos-rapidos p {
+    margin: 0;
+    font-size: 13px;
+    color: #777b86;
+    font-weight: 600;
+}
+
+.turnos-botones {
+    display: flex;
+    gap: 10px;
+}
+
+.turno-btn {
+    border: 1px solid #d8dbe3;
+    background: #ffffff;
+    color: #30333b;
+    border-radius: 10px;
+    padding: 11px 18px;
+    cursor: pointer;
+    font-weight: 800;
+}
+
+.turno-btn:hover {
+    background: #ffe5e5;
+    border-color: #e00000;
+    color: #e00000;
+}
+
+.notification-icon {
+    width: 18px;
+    height: 16px;
+    border: 2px solid #6b7280;
+    border-radius: 10px 10px 6px 6px;
+    position: relative;
+    display: inline-block;
+}
+
+.notification-icon::before {
+    content: "";
+    position: absolute;
+    top: -5px;
+    left: 5px;
+    width: 4px;
+    height: 4px;
+    border: 2px solid #6b7280;
+    border-radius: 50%;
+    background: #f3f4f8;
+}
+
+.notification-icon::after {
+    content: "";
+    position: absolute;
+    bottom: -5px;
+    left: 6px;
+    width: 4px;
+    height: 4px;
+    background: #6b7280;
+    border-radius: 50%;
+}
+
+.icon-bell {
+    border: 2px solid currentColor;
+    border-radius: 10px 10px 6px 6px;
+}
+
+.icon-bell::before {
+    content: "";
+    position: absolute;
+    top: -5px;
+    left: 7px;
+    width: 4px;
+    height: 4px;
+    border: 2px solid currentColor;
+    border-radius: 50%;
+}
+
+.icon-bell::after {
+    content: "";
+    position: absolute;
+    bottom: -4px;
+    left: 8px;
+    width: 4px;
+    height: 4px;
+    background: currentColor;
+    border-radius: 50%;
+}

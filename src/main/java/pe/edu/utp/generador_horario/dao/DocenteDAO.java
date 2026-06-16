@@ -7,6 +7,10 @@ import java.util.Optional;
 
 public interface DocenteDAO {
     List<Docente> findAll();
+
     Optional<Docente> findById(Long id);
+
+    Optional<Docente> findByUsuarioId(Long usuarioId);
+
     Docente save(Docente docente);
 }

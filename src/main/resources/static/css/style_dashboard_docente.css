@@ -1,0 +1,568 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #ffffff;
+    color: #24262d;
+}
+
+.docente-app {
+    min-height: 100vh;
+    display: flex;
+}
+
+.docente-sidebar {
+    width: 250px;
+    background: #07080d;
+    color: #ffffff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.docente-brand {
+    height: 58px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 20px;
+    font-weight: 800;
+    font-size: 18px;
+}
+
+.docente-brand__icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    background: #ffffff;
+    color: #111111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.docente-nav {
+    padding: 18px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.docente-nav__link {
+    text-decoration: none;
+    color: #a6a8b3;
+    min-height: 44px;
+    border-radius: 8px;
+    padding: 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    font-size: 14px;
+}
+
+.docente-nav__link strong {
+    font-weight: 600;
+}
+
+.docente-nav__link.active,
+.docente-nav__link:hover {
+    background: #272830;
+    color: #ffffff;
+}
+
+.docente-logout {
+    margin-top: auto;
+    padding: 16px;
+    border-top: 1px solid #1f2028;
+}
+
+.docente-logout button {
+    width: 100%;
+    border: none;
+    background: transparent;
+    color: #a6a8b3;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 10px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.docente-logout button:hover {
+    color: #ffffff;
+}
+
+.docente-main {
+    margin-left: 250px;
+    width: calc(100% - 250px);
+    min-height: 100vh;
+    background: #ffffff;
+}
+
+.docente-topbar {
+    height: 58px;
+    background: #f3f4f8;
+    border-bottom: 1px solid #dedfe5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 34px;
+}
+
+.docente-user-area {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.docente-notification {
+    position: relative;
+    color: #5d606b;
+    font-size: 16px;
+}
+
+.docente-notification i {
+    width: 7px;
+    height: 7px;
+    background: #d50000;
+    border-radius: 50%;
+    position: absolute;
+    top: 0;
+    right: -2px;
+}
+
+.docente-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.docente-user__text {
+    text-align: right;
+}
+
+.docente-user__text strong {
+    display: block;
+    font-size: 13px;
+    color: #1e2027;
+}
+
+.docente-user__text small {
+    display: block;
+    margin-top: 2px;
+    font-size: 11px;
+    color: #727682;
+}
+
+.docente-avatar {
+    position: relative;
+    width: 36px;
+    height: 36px;
+    background: #dfe6f3;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.docente-avatar span {
+    font-weight: 800;
+    color: #20242d;
+}
+
+.docente-avatar i {
+    width: 9px;
+    height: 9px;
+    background: #16b364;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    position: absolute;
+    right: 0;
+    bottom: 1px;
+}
+
+.docente-content {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 42px 34px 34px;
+}
+
+.docente-heading h1 {
+    margin: 0 0 10px;
+    font-size: 30px;
+    font-weight: 800;
+    color: #23262f;
+}
+
+.docente-heading p {
+    margin: 0;
+    color: #777b86;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.docente-card-grid {
+    margin-top: 38px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(280px, 1fr));
+    gap: 22px;
+}
+
+.docente-action-card {
+    min-height: 235px;
+    border: 1px solid #d8dbe3;
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 2px 4px rgba(16, 24, 40, 0.06);
+    padding: 34px 28px 26px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.docente-action-card__icon {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background: #ffdfe1;
+    color: #e00000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    margin-bottom: 24px;
+}
+
+.docente-action-card h2 {
+    margin: 0 0 12px;
+    font-size: 18px;
+    color: #2a2d35;
+}
+
+.docente-action-card p {
+    margin: 0 auto 25px;
+    max-width: 390px;
+    color: #7b7f8c;
+    font-size: 13px;
+    line-height: 1.35;
+    font-weight: 600;
+}
+
+.docente-btn {
+    margin-top: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #d90000;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 10px;
+    padding: 12px 22px;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.docente-btn:hover {
+    background: #bb0000;
+}
+
+.docente-status-panel {
+    margin-top: 34px;
+    border: 1px solid #d8dbe3;
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 2px 4px rgba(16, 24, 40, 0.06);
+    overflow: hidden;
+}
+
+.docente-status-panel__header {
+    height: 52px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid #dedfe5;
+    padding: 0 24px;
+}
+
+.docente-status-panel__header span {
+    width: 6px;
+    height: 24px;
+    border-radius: 10px;
+    background: #e00000;
+}
+
+.docente-status-panel__header h2 {
+    margin: 0;
+    font-size: 16px;
+    color: #30333b;
+}
+
+.docente-status-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    padding: 36px 40px;
+    gap: 28px;
+}
+
+.docente-status-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.docente-status-item__icon {
+    width: 22px;
+    height: 22px;
+    border: 2px solid #333842;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}
+
+.docente-status-item strong {
+    display: block;
+    font-size: 13px;
+    color: #2d3038;
+}
+
+.docente-status-item p {
+    margin: 2px 0 0;
+    font-size: 13px;
+    color: #2d3038;
+    font-weight: 800;
+}
+
+@media (max-width: 900px) {
+    .docente-sidebar {
+        width: 210px;
+    }
+
+    .docente-main {
+        margin-left: 210px;
+        width: calc(100% - 210px);
+    }
+
+    .docente-card-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .docente-status-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.card-icon,
+.nav-icon {
+    width: 24px;
+    height: 24px;
+    position: relative;
+    display: inline-block;
+    color: currentColor;
+}
+
+/* Logo Generador UTP */
+.brand-calendar {
+    width: 16px;
+    height: 14px;
+    border: 2px solid #4b5563;
+    border-radius: 4px;
+    position: relative;
+}
+
+.brand-calendar::before {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 0;
+    width: 100%;
+    border-top: 2px solid #4b5563;
+}
+
+.brand-calendar::after {
+    content: "";
+    position: absolute;
+    top: -5px;
+    left: 3px;
+    width: 6px;
+    height: 5px;
+    border-left: 2px solid #4b5563;
+    border-right: 2px solid #4b5563;
+}
+
+/* Dashboard */
+.icon-dashboard {
+    position: relative;
+}
+
+/* Calendario */
+.icon-calendar,
+.icon-mycalendar {
+    border: 2px solid currentColor;
+    border-radius: 4px;
+}
+
+.icon-calendar::before,
+.icon-mycalendar::before {
+    content: "";
+    position: absolute;
+    top: 4px;
+    left: 0;
+    width: 100%;
+    border-top: 2px solid currentColor;
+}
+
+.icon-calendar::after,
+.icon-mycalendar::after {
+    content: "";
+    position: absolute;
+    top: -5px;
+    left: 5px;
+    width: 9px;
+    height: 6px;
+    border-left: 2px solid currentColor;
+    border-right: 2px solid currentColor;
+}
+
+/* Cursos */
+.icon-books {
+    border-left: 3px solid currentColor;
+    border-right: 3px solid currentColor;
+}
+
+.icon-books::before {
+    content: "";
+    position: absolute;
+    left: 7px;
+    top: 1px;
+    width: 5px;
+    height: 20px;
+    border-left: 2px solid currentColor;
+    border-right: 2px solid currentColor;
+}
+
+/* Engranaje */
+.icon-gear {
+    border: 2px solid currentColor;
+    border-radius: 50%;
+}
+
+.icon-gear::before {
+    content: "";
+    position: absolute;
+    inset: 5px;
+    border: 2px solid currentColor;
+    border-radius: 50%;
+}
+
+/* Mensaje */
+.icon-message {
+    border: 2px solid currentColor;
+    border-radius: 4px;
+}
+
+.icon-message::after {
+    content: "";
+    position: absolute;
+    bottom: -5px;
+    left: 5px;
+    width: 6px;
+    height: 6px;
+    border-left: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(-45deg);
+}
+
+.icon-dashboard::before,
+.icon-dashboard::after {
+    content: "";
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border: 2px solid currentColor;
+    border-radius: 3px;
+}
+
+.icon-dashboard::before {
+    top: 2px;
+    left: 2px;
+    box-shadow: 12px 0 0 -2px #07080d,
+                12px 0 0 0 currentColor;
+}
+
+.icon-dashboard::after {
+    top: 14px;
+    left: 2px;
+    box-shadow: 12px 0 0 -2px #07080d,
+                12px 0 0 0 currentColor;
+}
+
+.notification-icon {
+    width: 20px;
+    height: 20px;
+    position: relative;
+    display: inline-block;
+    border: 2px solid #6b7280;
+    border-radius: 10px 10px 8px 8px;
+}
+
+.notification-icon::before {
+    content: "";
+    position: absolute;
+    top: -5px;
+    left: 6px;
+    width: 4px;
+    height: 4px;
+    border: 2px solid #6b7280;
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+}
+
+.notification-icon::after {
+    content: "";
+    position: absolute;
+    bottom: -4px;
+    left: 7px;
+    width: 4px;
+    height: 4px;
+    background: #6b7280;
+    border-radius: 50%;
+}
+
+.icon-bell {
+    border: 2px solid currentColor;
+    border-radius: 10px 10px 6px 6px;
+}
+
+.icon-bell::before {
+    content: "";
+    position: absolute;
+    top: -5px;
+    left: 7px;
+    width: 4px;
+    height: 4px;
+    border: 2px solid currentColor;
+    border-radius: 50%;
+}
+
+.icon-bell::after {
+    content: "";
+    position: absolute;
+    bottom: -4px;
+    left: 8px;
+    width: 4px;
+    height: 4px;
+    background: currentColor;
+    border-radius: 50%;
+}

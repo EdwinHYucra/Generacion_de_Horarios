@@ -32,47 +32,55 @@ public class SeguridadConfig {
     public UserDetailsService userDetailsService() {
         return email -> {
             Optional<Usuario> opcional = usuarioDAO.buscarPorEmail(email);
-            Usuario usuario = opcional.orElseThrow(() ->
-                new org.springframework.security.core.userdetails.UsernameNotFoundException(
-                    "Usuario no encontrado: " + email
-                )
-            );
+            Usuario usuario = opcional
+                    .orElseThrow(() -> new org.springframework.security.core.userdetails.UsernameNotFoundException(
+                            "Usuario no encontrado: " + email));
             return org.springframework.security.core.userdetails.User
-                .withUsername(usuario.getEmail())
-                .password(usuario.getPassword())
-                .roles(usuario.getRol())
-                .build();
+                    .withUsername(usuario.getEmail())
+                    .password(usuario.getPassword())
+                    .roles(usuario.getRol())
+                    .build();
         };
     }
 
-@Bean
-public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    http
-        .csrf(csrf -> csrf.disable())
-        .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/css/**", "/js/**", "/images/**", "/img/**", "/assets/**").permitAll()
-            .requestMatchers("/login", "/logout").permitAll()
-            .requestMatchers("/superadmin/**").hasRole("SUPERADMIN")
-            .requestMatchers("/administrador/**").hasRole("ADMIN")
-            .anyRequest().authenticated()
-        )
-        .formLogin(form -> form
-            .loginPage("/login")
-            .successHandler((request, response, authentication) -> {
-                boolean esSuperAdmin = authentication.getAuthorities().stream()
-                    .anyMatch(authority -> authority.getAuthority().equals("ROLE_SUPERADMIN"));
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/css/**", "/js/**", "/images/**", "/img/**", "/assets/**").permitAll()
+                        .requestMatchers("/login", "/logout").permitAll()
+                        .requestMatchers("/superadmin/**").hasRole("SUPERADMIN")
+                        .requestMatchers("/administrador/**").hasRole("ADMIN")
+                        .requestMatchers("/docente/**").hasRole("DOCENTE")
+                        .anyRequest().authenticated())
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .successHandler((request, response, authentication) -> {
+                            boolean esSuperAdmin = authentication.getAuthorities().stream()
+                                    .anyMatch(authority -> authority.getAuthority().equals("ROLE_SUPERADMIN"));
 
-                if (esSuperAdmin) {
-                    response.sendRedirect("/superadmin/dashboard");
-                } else {
-                    response.sendRedirect("/administrador/dashboard");
-                }
-            })
-            .permitAll()
-        )
-        .logout(logout -> logout
-            .logoutSuccessUrl("/login?logout")
-            .permitAll()
-        );
-    return http.build();
-}}
+                            boolean esAdmin = authentication.getAuthorities().stream()
+                                    .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
+
+                            boolean esDocente = authentication.getAuthorities().stream()
+                                    .anyMatch(authority -> authority.getAuthority().equals("ROLE_DOCENTE"));
+
+                            if (esSuperAdmin) {
+                                response.sendRedirect("/superadmin/dashboard");
+                            } else if (esAdmin) {
+                                response.sendRedirect("/administrador/dashboard");
+                            } else if (esDocente) {
+                                response.sendRedirect("/docente/dashboard");
+                            } else {
+                                response.sendRedirect("/login?error");
+                            }
+                        })
+                        .permitAll())
+                .logout(logout -> logout
+                        .logoutSuccessUrl("/login?logout")
+                        .permitAll());
+
+        return http.build();
+    }
+}

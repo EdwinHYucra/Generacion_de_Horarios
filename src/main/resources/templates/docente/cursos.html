@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Selección de Cursos</title>
+    <link rel="stylesheet" th:href="@{/css/style_dashboard_docente.css}">
+    <link rel="stylesheet" th:href="@{/css/cursos_docente.css}">
+</head>
+<body>
+
+<div class="docente-app">
+
+    <aside class="docente-sidebar">
+        <div class="docente-brand">
+            <div class="docente-brand__icon">
+                <span class="brand-calendar"></span>
+            </div>
+            <span>Generador UTP</span>
+        </div>
+
+        <nav class="docente-nav">
+            <a th:href="@{/docente/dashboard}" class="docente-nav__link">
+                <span class="nav-icon icon-dashboard"></span>
+                <strong>Dashboard</strong>
+            </a>
+
+            <a th:href="@{/docente/disponibilidad}" class="docente-nav__link">
+                <span class="nav-icon icon-calendar"></span>
+                <strong>Disponibilidad</strong>
+            </a>
+
+            <a th:href="@{/docente/cursos}" class="docente-nav__link active">
+                <span class="nav-icon icon-books"></span>
+                <strong>Cursos</strong>
+            </a>
+
+            <a href="#" class="docente-nav__link">
+                <span class="nav-icon icon-gear"></span>
+                <strong>Opciones de horario</strong>
+            </a>
+
+            <a href="#" class="docente-nav__link">
+                <span class="nav-icon icon-message"></span>
+                <strong>Solicitudes</strong>
+            </a>
+
+            <a href="#" class="docente-nav__link">
+                <span class="nav-icon icon-mycalendar"></span>
+                <strong>Mi Horario</strong>
+            </a>
+        </nav>
+
+        <form th:action="@{/logout}" method="post" class="docente-logout">
+            <button type="submit">
+                <span>↪</span>
+                Cerrar sesión
+            </button>
+        </form>
+    </aside>
+
+    <div class="docente-main">
+
+        <header class="docente-topbar">
+            <div></div>
+
+            <div class="docente-user-area">
+                <div class="docente-notification">
+                    <span>🔔</span>
+                    <i></i>
+                </div>
+
+                <div class="docente-user">
+                    <div class="docente-user__text">
+                        <strong th:text="${nombreUsuario}">Juan Pérez</strong>
+                        <small th:text="${rolUsuario}">Docente</small>
+                    </div>
+
+                    <div class="docente-avatar">
+                        <span th:text="${#strings.substring(nombreUsuario, 0, 1)}">J</span>
+                        <i></i>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="docente-content">
+
+            <section class="cursos-header">
+                <div class="cursos-title">
+                    <span class="title-books-icon"></span>
+                    <div>
+                        <h1>Selección de Cursos</h1>
+                        <p>Seleccione los cursos que puede dictar durante el ciclo académico.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="cursos-layout">
+
+                <div class="cursos-listas">
+
+                    <article class="curso-card">
+                        <div class="curso-card-header">
+                            <h2>Cursos de Carrera</h2>
+                            <span th:text="${#lists.size(cursosCarrera)} + ' cursos'">0 cursos</span>
+                        </div>
+
+                        <div class="curso-list">
+                            <label class="curso-item" th:each="curso : ${cursosCarrera}">
+                                <input type="checkbox"
+                                       class="curso-check"
+                                       th:value="${curso.idCurso}"
+                                       th:data-nombre="${curso.nombre}"
+                                       th:data-horas="${curso.horasSemanales}"
+                                       th:checked="${#lists.contains(cursosSeleccionados, curso.idCurso)}">
+
+                                <span class="curso-check-custom"></span>
+
+                                <div class="curso-info">
+                                    <strong th:text="${curso.nombre}">Base de Datos</strong>
+                                    <small>
+                                        <span th:text="${curso.codigo}">CUR001</span>
+                                        ·
+                                        <span th:text="${curso.horasSemanales}">4</span> horas semanales
+                                    </small>
+                                </div>
+                            </label>
+                        </div>
+                    </article>
+
+                    <article class="curso-card">
+                        <div class="curso-card-header">
+                            <h2>Cursos Generales</h2>
+                            <span th:text="${#lists.size(cursosGenerales)} + ' cursos'">0 cursos</span>
+                        </div>
+
+                        <div class="curso-list">
+                            <label class="curso-item" th:each="curso : ${cursosGenerales}">
+                                <input type="checkbox"
+                                       class="curso-check"
+                                       th:value="${curso.idCurso}"
+                                       th:data-nombre="${curso.nombre}"
+                                       th:data-horas="${curso.horasSemanales}"
+                                       th:checked="${#lists.contains(cursosSeleccionados, curso.idCurso)}">
+
+                                <span class="curso-check-custom"></span>
+
+                                <div class="curso-info">
+                                    <strong th:text="${curso.nombre}">Comunicación</strong>
+                                    <small>
+                                        <span th:text="${curso.codigo}">GEN001</span>
+                                        ·
+                                        <span th:text="${curso.horasSemanales}">3</span> horas semanales
+                                    </small>
+                                </div>
+                            </label>
+                        </div>
+                    </article>
+
+                </div>
+
+                <aside class="resumen-card">
+                    <h2>Resumen de selección</h2>
+                    <p class="resumen-subtitle">Cursos seleccionados por el docente.</p>
+
+                    <div id="resumenLista" class="resumen-lista">
+                        <p class="resumen-vacio">Aún no seleccionaste cursos.</p>
+                    </div>
+
+                    <div class="resumen-totales">
+                        <div>
+                            <span>Total cursos</span>
+                            <strong id="totalCursos">0</strong>
+                        </div>
+
+                        <div>
+                            <span>Horas semanales</span>
+                            <strong id="totalHoras">0</strong>
+                        </div>
+                    </div>
+
+                    <button type="button" id="btnGuardarCursos" class="btn-guardar-cursos">
+                        Confirmar selección
+                    </button>
+                </aside>
+
+            </section>
+
+        </main>
+
+    </div>
+</div>
+
+<script th:src="@{/js/cursos_docente.js}"></script>
+</body>
+</html>
