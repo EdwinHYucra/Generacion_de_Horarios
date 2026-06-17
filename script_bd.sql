@@ -168,3 +168,104 @@ VALUES (
 
 INSERT INTO admin (usuario_id, creado_por)
 VALUES (LAST_INSERT_ID(), @super_admin_id);
+
+
+-- ============================================
+--              DOCENTE
+--              MODULOS
+-- ============================================
+
+USE generador_horario;
+
+SELECT*FROM usuario;
+SELECT*FROM docente;
+SELECT*FROM docentes;
+SELECT*FROM disponibilidad_docente;
+
+
+-- Correo: percy@utp.edu.pe
+-- Contraseña: Admin1234
+INSERT INTO usuario (nombre, apellido, email, password, rol, estado)
+VALUES (
+    'Percy',
+    'Maldonado',
+    'percy@utp.edu.pe',
+    '$2a$10$cxkso4pdNGypVJCtLNHlp.vpQBHCd1eCubTng5lIFZChMUC6.2JHe',
+    'DOCENTE',
+    'ACTIVO'
+);
+
+INSERT INTO docente (usuario_id, codigo_docente, especialidad)
+VALUES (
+    (SELECT id FROM usuario WHERE email = 'percy@utp.edu.pe'),
+    'DOC001',
+    'Ingeniería de Sistemas'
+);
+
+INSERT INTO docentes (
+    usuario_id, codigo, nombres, apellidos, dni, correo, celular,
+    especialidad, carrera, grado_academico, tipo_contrato, observaciones, estado
+)
+VALUES (
+    (SELECT id FROM usuario WHERE email = 'percy@utp.edu.pe'),
+    'DOC001',
+    'Percy',
+    'Maldonado',
+    '00000000',
+    'percy@utp.edu.pe',
+    '999999999',
+    'Ingeniería de Sistemas',
+    'Ingeniería de Sistemas',
+    'Magíster',
+    'Tiempo parcial',
+    '',
+    TRUE
+);
+
+INSERT INTO docentes (
+    usuario_id, codigo, nombres, apellidos, dni, correo, celular,
+    especialidad, carrera, grado_academico, tipo_contrato, observaciones, estado
+)
+VALUES (
+    (SELECT id FROM usuario WHERE email = 'percy@utp.edu.pe'),
+    'DOC001',
+    'Percy',
+    'Maldonado',
+    '00000000',
+    'percy@utp.edu.pe',
+    '999999999',
+    'Ingeniería de Sistemas',
+    'Ingeniería de Sistemas',
+    'Magíster',
+    'Tiempo parcial',
+    '',
+    TRUE
+);
+
+
+-----------  DISPONIBILDAD DEL DOCENTE    -------------
+CREATE TABLE disponibilidad_docente (
+    id_disponibilidad BIGINT PRIMARY KEY AUTO_INCREMENT,
+    id_docente BIGINT NOT NULL,
+    dia_semana VARCHAR(20) NOT NULL,
+    hora_inicio TIME NOT NULL,
+    hora_fin TIME NOT NULL,
+    estado BOOLEAN NOT NULL DEFAULT TRUE,
+    creado_en DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_disponibilidad_docente
+        FOREIGN KEY (id_docente) REFERENCES docentes(id_docente)
+);
+
+CREATE TABLE docente_curso (
+    id_docente_curso BIGINT PRIMARY KEY AUTO_INCREMENT,
+    id_docente BIGINT NOT NULL,
+    id_curso BIGINT NOT NULL,
+    creado_en DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_docente_curso_docente
+        FOREIGN KEY (id_docente) REFERENCES docentes(id_docente),
+    CONSTRAINT fk_docente_curso_curso
+        FOREIGN KEY (id_curso) REFERENCES cursos(id_curso),
+    CONSTRAINT uq_docente_curso UNIQUE (id_docente, id_curso)
+);
+
+
