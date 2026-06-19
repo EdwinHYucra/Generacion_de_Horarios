@@ -94,4 +94,24 @@ public class CursoServiceImpl implements CursoService {
     public List<Curso> listarPorTipo(String tipo) {
         return cursoDAO.findByTipoAndEstadoTrue(tipo);
     }
+
+    @Override
+    public List<Curso> listarCursosDeCarrera() {
+        return cursoDAO.findCursosDeCarrera();
+    }
+
+    @Override
+    public List<Curso> listarCursosGenerales() {
+        return cursoDAO.findCursosGenerales();
+    }
+
+    @Override
+    public List<Curso> listarCursosDeCarreraPorCarrera(String carrera) {
+        return cursoDAO.findCursosDeCarreraPorCarrera(carrera);
+    }
+
+    @Override
+    public List<Curso> listarCursosGeneralesPorCarrera(String carrera) {
+        return cursoDAO.findCursosGeneralesPorCarrera(carrera);
+    }
 }

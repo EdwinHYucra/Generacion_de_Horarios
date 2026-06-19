@@ -43,9 +43,18 @@ public class CursoDocenteController {
 
         model.addAttribute("nombreUsuario", usuario.getNombre() + " " + usuario.getApellido());
         model.addAttribute("rolUsuario", "Docente");
+        String carreraDocente = docente.getCarrera();
 
-        model.addAttribute("cursosCarrera", cursoService.listarPorTipo("CARRERA"));
-        model.addAttribute("cursosGenerales", cursoService.listarPorTipo("GENERAL"));
+        String palabraCarrera = carreraDocente;
+
+        if (carreraDocente != null && carreraDocente.toLowerCase().contains("sistemas")) {
+            palabraCarrera = "Sistemas";
+        } else if (carreraDocente != null && carreraDocente.toLowerCase().contains("civil")) {
+            palabraCarrera = "Civil";
+        }
+
+        model.addAttribute("cursosCarrera", cursoService.listarCursosDeCarreraPorCarrera(palabraCarrera));
+        model.addAttribute("cursosGenerales", cursoService.listarCursosGeneralesPorCarrera(palabraCarrera));
         model.addAttribute("cursosSeleccionados", docenteCursoDAO.findCursoIdsByDocenteId(docente.getIdDocente()));
 
         return "docente/cursos";

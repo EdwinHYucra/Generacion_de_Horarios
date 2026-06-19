@@ -37,7 +37,32 @@ public class CursoDAOImpl implements CursoDAO {
     }
 
     public List<Curso> findByTipoAndEstadoTrue(String tipo) {
-        return jdbcTemplate.query("SELECT * FROM cursos WHERE tipo = ? AND estado = TRUE ORDER BY nombre", mapper, tipo);
+        return jdbcTemplate.query("SELECT * FROM cursos WHERE tipo = ? AND estado = TRUE ORDER BY nombre", mapper,
+                tipo);
+    }
+
+    public List<Curso> findCursosDeCarrera() {
+        return jdbcTemplate.query("""
+                SELECT c.*
+                FROM cursos c
+                JOIN carrera_curso cc ON c.id_curso = cc.id_curso
+                WHERE c.estado = TRUE AND cc.estado = TRUE
+                GROUP BY c.id_curso
+                HAVING COUNT(cc.id_carrera) = 1
+                ORDER BY c.nombre
+                """, mapper);
+    }
+
+    public List<Curso> findCursosGenerales() {
+        return jdbcTemplate.query("""
+                SELECT c.*
+                FROM cursos c
+                JOIN carrera_curso cc ON c.id_curso = cc.id_curso
+                WHERE c.estado = TRUE AND cc.estado = TRUE
+                GROUP BY c.id_curso
+                HAVING COUNT(cc.id_carrera) >= 2
+                ORDER BY c.nombre
+                """, mapper);
     }
 
     public Optional<Curso> findById(Long id) {
@@ -61,7 +86,8 @@ public class CursoDAOImpl implements CursoDAO {
             }, keyHolder);
             curso.setIdCurso(keyHolder.getKey().longValue());
         } else {
-            jdbcTemplate.update("UPDATE cursos SET codigo = ?, nombre = ?, horas_semanales = ?, tipo = ?, estado = ? WHERE id_curso = ?",
+            jdbcTemplate.update(
+                    "UPDATE cursos SET codigo = ?, nombre = ?, horas_semanales = ?, tipo = ?, estado = ? WHERE id_curso = ?",
                     curso.getCodigo(), curso.getNombre(), curso.getHorasSemanales(), curso.getTipo(),
                     Boolean.TRUE.equals(curso.getEstado()), curso.getIdCurso());
         }
@@ -88,4 +114,43 @@ public class CursoDAOImpl implements CursoDAO {
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, args);
         return count != null && count > 0;
     }
+
+    public List<Curso> findCursosDeCarreraPorCarrera(String carrera) {
+        return jdbcTemplate.query("""
+                SELECT c.*
+                FROM cursos c
+                JOIN carrera_curso cc ON c.id_curso = cc.id_curso
+                JOIN carreras ca ON cc.id_carrera = ca.id_carrera
+                WHERE c.estado = TRUE
+                  AND cc.estado = TRUE
+                  AND LOWER(ca.nombre) LIKE CONCAT('%', LOWER(?), '%')
+                  AND (
+                      SELECT COUNT(*)
+                      FROM carrera_curso cc2
+                      WHERE cc2.id_curso = c.id_curso
+                        AND cc2.estado = TRUE
+                  ) = 1
+                ORDER BY c.nombre
+                """, mapper, carrera);
+    }
+
+    public List<Curso> findCursosGeneralesPorCarrera(String carrera) {
+        return jdbcTemplate.query("""
+                SELECT c.*
+                FROM cursos c
+                JOIN carrera_curso cc ON c.id_curso = cc.id_curso
+                JOIN carreras ca ON cc.id_carrera = ca.id_carrera
+                WHERE c.estado = TRUE
+                  AND cc.estado = TRUE
+                  AND LOWER(ca.nombre) LIKE CONCAT('%', LOWER(?), '%')
+                  AND (
+                      SELECT COUNT(*)
+                      FROM carrera_curso cc2
+                      WHERE cc2.id_curso = c.id_curso
+                        AND cc2.estado = TRUE
+                  ) >= 2
+                ORDER BY c.nombre
+                """, mapper, carrera);
+    }
+
 }

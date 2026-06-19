@@ -42,4 +42,12 @@ public interface CursoService {
     void desactivarCurso(Long id);
 
     List<Curso> listarPorTipo(String tipo);
+
+    List<Curso> listarCursosDeCarrera();
+
+    List<Curso> listarCursosGenerales();
+
+    List<Curso> listarCursosDeCarreraPorCarrera(String carrera);
+
+    List<Curso> listarCursosGeneralesPorCarrera(String carrera);
 }
