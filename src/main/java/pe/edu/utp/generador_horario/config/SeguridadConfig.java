@@ -50,7 +50,7 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
     http
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
+            .requestMatchers("/css/**", "/js/**", "/img/**", "/images/**").permitAll()
             .requestMatchers("/login", "/logout").permitAll()
             .requestMatchers("/superadmin/**").hasRole("SUPERADMIN")
             .anyRequest().authenticated()
