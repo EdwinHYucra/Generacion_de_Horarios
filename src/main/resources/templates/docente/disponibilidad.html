@@ -10,52 +10,7 @@
 
 <div class="docente-app">
 
-    <aside class="docente-sidebar">
-<div class="docente-brand">
-    <div class="docente-brand__icon">
-        <span class="brand-calendar"></span>
-    </div>
-    <span>Generador UTP</span>
-</div>
-
-<nav class="docente-nav">
-    <a th:href="@{/docente/dashboard}" class="docente-nav__link">
-        <span class="nav-icon icon-dashboard"></span>
-        <strong>Dashboard</strong>
-    </a>
-
-    <a th:href="@{/docente/disponibilidad}" class="docente-nav__link active">
-        <span class="nav-icon icon-calendar"></span>
-        <strong>Disponibilidad</strong>
-    </a>
-
-<a th:href="@{/docente/cursos}" class="docente-nav__link">
-    <span class="nav-icon icon-books"></span>
-    <strong>Cursos</strong>
-</a>
-
-    <a href="#" class="docente-nav__link">
-        <span class="nav-icon icon-gear"></span>
-        <strong>Opciones de horario</strong>
-    </a>
-
-    <a href="#" class="docente-nav__link">
-        <span class="nav-icon icon-message"></span>
-        <strong>Solicitudes</strong>
-    </a>
-
-    <a href="#" class="docente-nav__link">
-        <span class="nav-icon icon-mycalendar"></span>
-        <strong>Mi Horario</strong>
-    </a>
-</nav>
-        <form th:action="@{/logout}" method="post" class="docente-logout">
-            <button type="submit">
-                <span>↪</span>
-                Cerrar sesión
-            </button>
-        </form>
-    </aside>
+    <div th:replace="~{fragments/sidebar_docente :: sidebarDocente}"></div>
 
     <div class="docente-main">
 
@@ -63,10 +18,10 @@
             <div></div>
 
             <div class="docente-user-area">
-<div class="docente-notification">
-    <span class="nav-icon icon-bell"></span>
-    <i></i>
-</div>
+                <div class="docente-notification">
+                    <span class="nav-icon icon-bell"></span>
+                    <i></i>
+                </div>
 
                 <div class="docente-user">
                     <div class="docente-user__text">
@@ -75,56 +30,56 @@
                     </div>
 
                     <div class="docente-avatar">
-    <span th:text="${#strings.substring(nombreUsuario, 0, 1)}">J</span>
-    <i></i>
-</div>
+                        <span th:text="${#strings.substring(nombreUsuario, 0, 1)}">J</span>
+                        <i></i>
+                    </div>
                 </div>
             </div>
         </header>
 
         <main class="docente-content">
 
-<section class="disponibilidad-header">
-    <div class="disponibilidad-title">
-        <span class="title-calendar-icon"></span>
+            <section class="disponibilidad-header">
+                <div class="disponibilidad-title">
+                    <span class="title-calendar-icon"></span>
 
-        <div>
-            <h1>Disponibilidad</h1>
-            <p>
-                Define tus rangos de hora disponibles para el ciclo académico.<br>
-                Haz clic o arrastra sobre la cuadrícula para seleccionar tus horas preferidas.
-            </p>
-        </div>
-        </div>
+                    <div>
+                        <h1>Disponibilidad</h1>
+                        <p>
+                            Define tus rangos de hora disponibles para el ciclo académico.<br>
+                            Haz clic o arrastra sobre la cuadrícula para seleccionar tus horas preferidas.
+                        </p>
+                    </div>
+                </div>
 
-        <div class="interval-pill">
-            <span class="interval-icon">i</span>
-            <span>Intervalos de 15 minutos</span>
-        </div>
-    </section>
+                <div class="interval-pill">
+                    <span class="interval-icon">i</span>
+                    <span>Intervalos de 15 minutos</span>
+                </div>
+            </section>
 
-    <section class="turnos-rapidos">
-    <div>
-        <h3>Selección rápida por turno</h3>
-        <p>Marca un turno completo y luego ajusta bloques manualmente si deseas.</p>
-    </div>
+            <section class="turnos-rapidos">
+                <div>
+                    <h3>Selección rápida por turno</h3>
+                    <p>Marca un turno completo y luego ajusta bloques manualmente si deseas.</p>
+                </div>
 
-    <div class="turnos-botones">
-        <button type="button" class="turno-btn" data-inicio="07:00" data-fin="12:00">
-            Mañana
-        </button>
+                <div class="turnos-botones">
+                    <button type="button" class="turno-btn" data-inicio="07:00" data-fin="12:00">
+                        Mañana
+                    </button>
 
-        <button type="button" class="turno-btn" data-inicio="12:00" data-fin="17:00">
-            Tarde
-        </button>
+                    <button type="button" class="turno-btn" data-inicio="12:00" data-fin="17:00">
+                        Tarde
+                    </button>
 
-        <button type="button" class="turno-btn" data-inicio="17:00" data-fin="22:30">
-            Noche
-        </button>
-    </div>
-</section>
+                    <button type="button" class="turno-btn" data-inicio="17:00" data-fin="22:30">
+                        Noche
+                    </button>
+                </div>
+            </section>
 
-    <section class="schedule-card">
+            <section class="schedule-card">
                 <div class="schedule-grid" id="scheduleGrid">
                     <div class="cell header-cell">Horario</div>
                     <div class="cell header-cell">Lunes</div>
@@ -144,8 +99,13 @@
                     </p>
 
                     <div class="actions">
-                        <button type="button" id="btnLimpiar" class="btn btn-light">Limpiar</button>
-                        <button type="button" id="btnConfirmar" class="btn btn-red">Confirmar</button>
+                        <button type="button" id="btnLimpiar" class="btn btn-light">
+                            Limpiar
+                        </button>
+
+                        <button type="button" id="btnConfirmar" class="btn btn-red">
+                            Confirmar
+                        </button>
                     </div>
                 </div>
             </section>
@@ -153,6 +113,7 @@
         </main>
 
     </div>
+
 </div>
 
 <script th:src="@{/js/disponibilidad_docente.js}"></script>

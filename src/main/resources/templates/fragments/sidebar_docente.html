@@ -1,0 +1,56 @@
+<aside th:fragment="sidebarDocente" class="docente-sidebar">
+
+    <div class="docente-brand">
+        <div class="docente-brand__icon">
+            <span class="brand-calendar"></span>
+        </div>
+        <span>Generador UTP</span>
+    </div>
+
+    <nav class="docente-nav">
+
+        <a th:href="@{/docente/dashboard}"
+           class="docente-nav__link"
+           th:classappend="${moduloActivo == 'dashboard'} ? ' active' : ''">
+            <span class="nav-icon icon-dashboard"></span>
+            <strong>Dashboard</strong>
+        </a>
+
+        <a th:href="@{/docente/disponibilidad}"
+           class="docente-nav__link"
+           th:classappend="${moduloActivo == 'disponibilidad'} ? ' active' : ''">
+            <span class="nav-icon icon-calendar"></span>
+            <strong>Disponibilidad</strong>
+        </a>
+
+        <a th:href="@{/docente/cursos}"
+           class="docente-nav__link"
+           th:classappend="${moduloActivo == 'cursos'} ? ' active' : ''">
+            <span class="nav-icon icon-books"></span>
+            <strong>Cursos</strong>
+        </a>
+
+        <a th:href="@{/docente/opciones_horario}"
+           class="docente-nav__link"
+           th:classappend="${moduloActivo == 'opciones_horario'} ? ' active' : ''">
+            <span class="nav-icon icon-gear"></span>
+            <strong>Opciones de horario</strong>
+        </a>
+
+        <a th:href="@{/docente/solicitudes}"
+           class="docente-nav__link"
+           th:classappend="${moduloActivo == 'solicitudes'} ? ' active' : ''">
+            <span class="nav-icon icon-message"></span>
+            <strong>Solicitudes</strong>
+        </a>
+
+        <a th:href="@{/docente/mi-horario}"
+           class="docente-nav__link"
+           th:classappend="${moduloActivo == 'mi-horario'} ? ' active' : ''">
+            <span class="nav-icon icon-mycalendar"></span>
+            <strong>Mi Horario</strong>
+        </a>
+
+    </nav>
+
+</aside>

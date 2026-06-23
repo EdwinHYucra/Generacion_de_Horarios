@@ -135,6 +135,148 @@ CREATE TABLE carrera_curso (
         FOREIGN KEY (id_curso) REFERENCES cursos(id_curso)
 );
 
+-----------  DISPONIBILDAD DEL DOCENTE    -------------
+CREATE TABLE disponibilidad_docente (
+    id_disponibilidad BIGINT PRIMARY KEY AUTO_INCREMENT,
+    id_docente BIGINT NOT NULL,
+    dia_semana VARCHAR(20) NOT NULL,
+    hora_inicio TIME NOT NULL,
+    hora_fin TIME NOT NULL,
+    estado BOOLEAN NOT NULL DEFAULT TRUE,
+    creado_en DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_disponibilidad_docente
+        FOREIGN KEY (id_docente) REFERENCES docentes(id_docente)
+);
+
+CREATE TABLE docente_curso (
+    id_docente_curso BIGINT PRIMARY KEY AUTO_INCREMENT,
+    id_docente BIGINT NOT NULL,
+    id_curso BIGINT NOT NULL,
+    creado_en DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_docente_curso_docente
+        FOREIGN KEY (id_docente) REFERENCES docentes(id_docente),
+    CONSTRAINT fk_docente_curso_curso
+        FOREIGN KEY (id_curso) REFERENCES cursos(id_curso),
+    CONSTRAINT uq_docente_curso UNIQUE (id_docente, id_curso)
+);
+
+-- ============================================
+-- HORARIOS GENERADOS
+-- ============================================
+
+CREATE TABLE horario_generado (
+    id_horario BIGINT PRIMARY KEY AUTO_INCREMENT,
+    id_docente BIGINT NOT NULL,
+    opcion INT NOT NULL,
+    estado VARCHAR(20) NOT NULL DEFAULT 'PENDIENTE',
+    fecha_generacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_horario_docente
+        FOREIGN KEY (id_docente)
+        REFERENCES docentes(id_docente)
+);
+-- ============================================
+-- DETALLE DEL HORARIO
+-- ============================================
+
+CREATE TABLE horario_generado_detalle (
+    id_detalle BIGINT PRIMARY KEY AUTO_INCREMENT,
+
+    id_horario BIGINT NOT NULL,
+    id_curso BIGINT NOT NULL,
+    id_aula BIGINT NOT NULL,
+
+    dia_semana VARCHAR(20) NOT NULL,
+
+    hora_inicio TIME NOT NULL,
+    hora_fin TIME NOT NULL,
+
+    CONSTRAINT fk_detalle_horario
+        FOREIGN KEY (id_horario)
+        REFERENCES horario_generado(id_horario),
+
+    CONSTRAINT fk_detalle_curso
+        FOREIGN KEY (id_curso)
+        REFERENCES cursos(id_curso),
+
+    CONSTRAINT fk_detalle_aula
+        FOREIGN KEY (id_aula)
+        REFERENCES aulas(id_aula)
+);
+-- ============================================
+-- COMENTARIOS DEL DOCENTE
+-- ============================================
+
+CREATE TABLE comentario_horario (
+    id_comentario BIGINT PRIMARY KEY AUTO_INCREMENT,
+
+    id_horario BIGINT NOT NULL,
+    id_docente BIGINT NOT NULL,
+
+    comentario VARCHAR(500) NOT NULL,
+
+    fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_comentario_horario
+        FOREIGN KEY (id_horario)
+        REFERENCES horario_generado(id_horario),
+
+    CONSTRAINT fk_comentario_docente
+        FOREIGN KEY (id_docente)
+        REFERENCES docentes(id_docente)
+);
+
+CREATE TABLE restriccion_sede (
+    id_restriccion BIGINT PRIMARY KEY AUTO_INCREMENT,
+
+    sede_origen BIGINT NOT NULL,
+    sede_destino BIGINT NOT NULL,
+
+    tiempo_minimo_minutos INT NOT NULL
+);
+
+CREATE TABLE historial_calificacion_docente (
+    id_historial BIGINT PRIMARY KEY AUTO_INCREMENT,
+
+    id_docente BIGINT NOT NULL,
+    id_curso BIGINT NOT NULL,
+
+    periodo VARCHAR(20) NOT NULL,
+
+    promedio DECIMAL(4,2) NOT NULL,
+
+    fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_hist_docente
+        FOREIGN KEY(id_docente)
+        REFERENCES docentes(id_docente),
+
+    CONSTRAINT fk_hist_curso
+        FOREIGN KEY(id_curso)
+        REFERENCES cursos(id_curso)
+);
+
+CREATE TABLE preferencia_curso_docente (
+    id_preferencia BIGINT PRIMARY KEY AUTO_INCREMENT,
+
+    id_docente BIGINT NOT NULL,
+    id_curso BIGINT NOT NULL,
+
+    fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_pref_docente
+        FOREIGN KEY(id_docente)
+        REFERENCES docentes(id_docente),
+
+    CONSTRAINT fk_pref_curso
+        FOREIGN KEY(id_curso)
+        REFERENCES cursos(id_curso),
+
+    CONSTRAINT uq_pref_docente_curso
+        UNIQUE(id_docente,id_curso)
+);
+
+
 -- SuperAdmin inicial
 -- Email: superadmin@sistema.com
 -- Password: Admin1234
@@ -175,14 +317,6 @@ VALUES (LAST_INSERT_ID(), @super_admin_id);
 --              MODULOS
 -- ============================================
 
-USE generador_horario;
-
-SELECT*FROM usuario;
-SELECT*FROM docente;
-SELECT*FROM docentes;
-SELECT*FROM disponibilidad_docente;
-
-
 -- Correo: percy@utp.edu.pe
 -- Contraseña: Admin1234
 INSERT INTO usuario (nombre, apellido, email, password, rol, estado)
@@ -222,50 +356,9 @@ VALUES (
     TRUE
 );
 
-INSERT INTO docentes (
-    usuario_id, codigo, nombres, apellidos, dni, correo, celular,
-    especialidad, carrera, grado_academico, tipo_contrato, observaciones, estado
-)
-VALUES (
-    (SELECT id FROM usuario WHERE email = 'percy@utp.edu.pe'),
-    'DOC001',
-    'Percy',
-    'Maldonado',
-    '00000000',
-    'percy@utp.edu.pe',
-    '999999999',
-    'Ingeniería de Sistemas',
-    'Ingeniería de Sistemas',
-    'Magíster',
-    'Tiempo parcial',
-    '',
-    TRUE
-);
 
 
------------  DISPONIBILDAD DEL DOCENTE    -------------
-CREATE TABLE disponibilidad_docente (
-    id_disponibilidad BIGINT PRIMARY KEY AUTO_INCREMENT,
-    id_docente BIGINT NOT NULL,
-    dia_semana VARCHAR(20) NOT NULL,
-    hora_inicio TIME NOT NULL,
-    hora_fin TIME NOT NULL,
-    estado BOOLEAN NOT NULL DEFAULT TRUE,
-    creado_en DATETIME DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_disponibilidad_docente
-        FOREIGN KEY (id_docente) REFERENCES docentes(id_docente)
-);
 
-CREATE TABLE docente_curso (
-    id_docente_curso BIGINT PRIMARY KEY AUTO_INCREMENT,
-    id_docente BIGINT NOT NULL,
-    id_curso BIGINT NOT NULL,
-    creado_en DATETIME DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_docente_curso_docente
-        FOREIGN KEY (id_docente) REFERENCES docentes(id_docente),
-    CONSTRAINT fk_docente_curso_curso
-        FOREIGN KEY (id_curso) REFERENCES cursos(id_curso),
-    CONSTRAINT uq_docente_curso UNIQUE (id_docente, id_curso)
-);
+
 
 

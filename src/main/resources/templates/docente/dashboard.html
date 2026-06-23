@@ -9,53 +9,7 @@
 
 <div class="docente-app">
 
-    <aside class="docente-sidebar">
-<div class="docente-brand">
-    <div class="docente-brand__icon">
-        <span class="brand-calendar"></span>
-    </div>
-    <span>Generador UTP</span>
-</div>
-
-        <nav class="docente-nav">
-    <a th:href="@{/docente/dashboard}" class="docente-nav__link active">
-        <span class="nav-icon icon-dashboard"></span>
-        <strong>Dashboard</strong>
-    </a>
-
-    <a th:href="@{/docente/disponibilidad}" class="docente-nav__link">
-        <span class="nav-icon icon-calendar"></span>
-        <strong>Disponibilidad</strong>
-    </a>
-
-<a th:href="@{/docente/cursos}" class="docente-nav__link">
-    <span class="nav-icon icon-books"></span>
-    <strong>Cursos</strong>
-</a>
-
-    <a href="#" class="docente-nav__link">
-        <span class="nav-icon icon-gear"></span>
-        <strong>Opciones de horario</strong>
-    </a>
-
-    <a href="#" class="docente-nav__link">
-        <span class="nav-icon icon-message"></span>
-        <strong>Solicitudes</strong>
-    </a>
-
-    <a href="#" class="docente-nav__link">
-        <span class="nav-icon icon-mycalendar"></span>
-        <strong>Mi Horario</strong>
-    </a>
-</nav>
-
-        <form th:action="@{/logout}" method="post" class="docente-logout">
-            <button type="submit">
-                <span>↪</span>
-                Cerrar sesión
-            </button>
-        </form>
-    </aside>
+    <div th:replace="~{fragments/sidebar_docente :: sidebarDocente}"></div>
 
     <div class="docente-main">
 
@@ -83,54 +37,60 @@
         </header>
 
         <main class="docente-content">
+
             <section class="docente-heading">
-    <h1>Bienvenido, <span th:text="${rolUsuario}">Docente</span></h1>
-    <p>Gestione su disponibilidad y revise su horario asignado para el período académico actual.</p>
-</section>
+                <h1>Bienvenido, <span th:text="${rolUsuario}">Docente</span></h1>
+                <p>Gestione su disponibilidad y revise su horario asignado para el período académico actual.</p>
+            </section>
 
-<section class="docente-card-grid">
+            <section class="docente-card-grid">
 
-    <article class="docente-action-card">
-        <div class="docente-action-card__icon">
-            <span class="card-icon icon-calendar"></span>
-        </div>
-        <h2>Registrar disponibilidad</h2>
-        <p>Indique los rangos de horas y días en los que se encuentra disponible para dictar clases.</p>
-        <a th:href="@{/docente/disponibilidad}" class="docente-btn">
-            Ir a Disponibilidad <span>➜</span>
-        </a>
-    </article>
+                <article class="docente-action-card">
+                    <div class="docente-action-card__icon">
+                        <span class="card-icon icon-calendar"></span>
+                    </div>
+                    <h2>Registrar disponibilidad</h2>
+                    <p>Indique los rangos de horas y días en los que se encuentra disponible para dictar clases.</p>
+                    <a th:href="@{/docente/disponibilidad}" class="docente-btn">
+                        Ir a Disponibilidad <span>➜</span>
+                    </a>
+                </article>
 
-    <article class="docente-action-card">
-        <div class="docente-action-card__icon">
-            <span class="card-icon icon-books"></span>
-        </div>
-        <h2>Seleccionar cursos</h2>
-        <p>Elija las materias o asignaturas que desea y está capacitado para dictar este ciclo.</p>
-<a th:href="@{/docente/cursos}" class="docente-btn">
-    Ver Cursos <span>➜</span>
-</a>
-    </article>
+                <article class="docente-action-card">
+                    <div class="docente-action-card__icon">
+                        <span class="card-icon icon-books"></span>
+                    </div>
+                    <h2>Seleccionar cursos</h2>
+                    <p>Elija las materias o asignaturas que desea y está capacitado para dictar este ciclo.</p>
+                    <a th:href="@{/docente/cursos}" class="docente-btn">
+                        Ver Cursos <span>➜</span>
+                    </a>
+                </article>
 
-    <article class="docente-action-card">
-        <div class="docente-action-card__icon">
-            <span class="card-icon icon-gear"></span>
-        </div>
-        <h2>Ver opciones generales</h2>
-        <p>Revise las opciones generales de configuración y notificaciones enviadas por el sistema.</p>
-        <a href="#" class="docente-btn">Ver Opciones <span>➜</span></a>
-    </article>
+                <article class="docente-action-card">
+                    <div class="docente-action-card__icon">
+                        <span class="card-icon icon-gear"></span>
+                    </div>
+                    <h2>Ver opciones generales</h2>
+                    <p>Revise las opciones generales de configuración y notificaciones enviadas por el sistema.</p>
+                    <a th:href="@{/docente/opciones_horario}" class="docente-btn">
+                        Ver Opciones <span>➜</span>
+                    </a>
+                </article>
 
-    <article class="docente-action-card">
-        <div class="docente-action-card__icon">
-            <span class="card-icon icon-mycalendar"></span>
-        </div>
-        <h2>Mi horario</h2>
-        <p>Visualice su horario final asignado y confirmado una vez finalizado el proceso.</p>
-        <a href="#" class="docente-btn">Ver Horario <span>➜</span></a>
-    </article>
+                <article class="docente-action-card">
+                    <div class="docente-action-card__icon">
+                        <span class="card-icon icon-mycalendar"></span>
+                    </div>
+                    <h2>Mi horario</h2>
+                    <p>Visualice su horario final asignado y confirmado una vez finalizado el proceso.</p>
+                    <a href="#" class="docente-btn">
+                        Ver Horario <span>➜</span>
+                    </a>
+                </article>
 
-</section>
+            </section>
+
             <section class="docente-status-panel">
                 <div class="docente-status-panel__header">
                     <span></span>
@@ -138,6 +98,7 @@
                 </div>
 
                 <div class="docente-status-grid">
+
                     <div class="docente-status-item">
                         <div class="docente-status-item__icon">✓</div>
                         <div>
@@ -161,12 +122,14 @@
                             <p>Pendiente de asignación</p>
                         </div>
                     </div>
+
                 </div>
             </section>
 
         </main>
 
     </div>
+
 </div>
 
 </body>
