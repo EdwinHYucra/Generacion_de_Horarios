@@ -74,7 +74,7 @@ body {
 
 .docente-nav__link.active,
 .docente-nav__link:hover {
-    background: #272830;
+    background: rgba(224, 0, 0, 0.18);
     color: #ffffff;
 }
 
@@ -82,6 +82,10 @@ body {
     margin-top: auto;
     padding: 16px;
     border-top: 1px solid #1f2028;
+}
+
+.docente-logout form {
+    margin: 0;
 }
 
 .docente-logout button {
@@ -105,7 +109,7 @@ body {
     margin-left: 250px;
     width: calc(100% - 250px);
     min-height: 100vh;
-    background: #ffffff;
+    background: #f4f4f6;
 }
 
 .docente-topbar {
@@ -220,7 +224,7 @@ body {
 .docente-action-card {
     min-height: 235px;
     border: 1px solid #d8dbe3;
-    border-radius: 12px;
+    border-radius: 8px;
     background: #ffffff;
     box-shadow: 0 2px 4px rgba(16, 24, 40, 0.06);
     padding: 34px 28px 26px;
@@ -266,8 +270,10 @@ body {
     background: #d90000;
     color: #ffffff;
     text-decoration: none;
-    border-radius: 10px;
-    padding: 12px 22px;
+    border-radius: 6px;
+    min-width: 120px;
+    justify-content: center;
+    padding: 10px 22px;
     font-size: 13px;
     font-weight: 800;
 }
@@ -279,7 +285,7 @@ body {
 .docente-status-panel {
     margin-top: 34px;
     border: 1px solid #d8dbe3;
-    border-radius: 12px;
+    border-radius: 8px;
     background: #ffffff;
     box-shadow: 0 2px 4px rgba(16, 24, 40, 0.06);
     overflow: hidden;

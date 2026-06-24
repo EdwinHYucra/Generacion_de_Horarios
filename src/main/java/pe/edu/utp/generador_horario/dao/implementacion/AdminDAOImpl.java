@@ -5,6 +5,8 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import pe.edu.utp.generador_horario.config.EstadoUsuario;
+import pe.edu.utp.generador_horario.config.RolSistema;
 import pe.edu.utp.generador_horario.dao.AdminDAO;
 import pe.edu.utp.generador_horario.entidad.Usuario;
 
@@ -40,9 +42,9 @@ public class AdminDAOImpl implements AdminDAO {
 
     @Override
     public void guardar(Usuario usuario, Long superAdminId) {
-        // 1. Insertar en tabla usuario y obtener el ID generado
+        // DAO: solo persiste; la construccion del usuario queda en UsuarioFactory.
         String sqlUsuario = "INSERT INTO usuario (nombre, apellido, email, password, rol, estado) " +
-                            "VALUES (?, ?, ?, ?, 'ADMIN', 'ACTIVO')";
+                "VALUES (?, ?, ?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
@@ -51,12 +53,12 @@ public class AdminDAOImpl implements AdminDAO {
             ps.setString(2, usuario.getApellido());
             ps.setString(3, usuario.getEmail());
             ps.setString(4, usuario.getPassword());
+            ps.setString(5, usuario.getRol() == null ? RolSistema.ADMIN : usuario.getRol());
+            ps.setString(6, usuario.getEstado() == null ? EstadoUsuario.ACTIVO : usuario.getEstado());
             return ps;
         }, keyHolder);
 
         Long usuarioId = keyHolder.getKey().longValue();
-
-        // 2. Insertar en tabla admin con referencia al superAdmin que lo creó
         String sqlAdmin = "INSERT INTO admin (usuario_id, creado_por) VALUES (?, ?)";
         jdbcTemplate.update(sqlAdmin, usuarioId, superAdminId);
     }

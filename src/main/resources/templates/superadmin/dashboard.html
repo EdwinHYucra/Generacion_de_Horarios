@@ -1,37 +1,55 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard - Super Admin</title>
+    <title>Dashboard - SuperAdmin</title>
     <link rel="stylesheet" th:href="@{/css/estilos.css}">
 </head>
 <body>
 
-<nav class="navbar">
-    <span class="navbar-brand">Sistema de Horarios</span>
-    <div class="navbar-links">
-        <a th:href="@{/superadmin/dashboard}">Dashboard</a>
-        <a th:href="@{/superadmin/admins}">Administradores</a>
-        <a th:href="@{/logout}">Cerrar sesión</a>
-    </div>
-</nav>
+<div class="superadmin-app">
+    <div th:replace="~{fragments/sidebar_superadmin :: sidebarSuperadmin}"></div>
 
-<div class="contenido">
-    <h1>Panel de Super Administrador</h1>
+    <div class="superadmin-main">
+        <header class="superadmin-topbar">
+            <div class="superadmin-user">
+                <div>
+                    <strong>Hola, SuperAdmin</strong><br>
+                    <span>Super administrador</span>
+                </div>
+                <div class="superadmin-avatar"></div>
+            </div>
+        </header>
 
-    <div th:if="${exito}" class="alerta alerta-exito" th:text="${exito}"></div>
+        <main class="superadmin-content">
+            <section class="superadmin-title">
+                <h1>Bienvenido, SuperAdmin</h1>
+                <p>Administra las cuentas de administradores que operan los modulos academicos.</p>
+            </section>
 
-    <div class="tarjetas">
-        <div class="tarjeta">
-            <h3>Administradores</h3>
-            <p class="numero" th:text="${totalAdmins}">0</p>
-            <a th:href="@{/superadmin/admins}" class="btn-secondary">Ver todos</a>
-        </div>
-        <div class="tarjeta">
-            <h3>Registrar Admin</h3>
-            <p>Agregar un nuevo administrador al sistema</p>
-            <a th:href="@{/superadmin/admins/nuevo}" class="btn-primary">Nuevo Admin</a>
-        </div>
+            <div th:if="${exito}" class="alerta alerta-exito" th:text="${exito}"></div>
+
+            <section class="superadmin-grid">
+                <article class="superadmin-card">
+                    <div class="superadmin-card__icon">ADM</div>
+                    <h2>Administradores</h2>
+                    <strong th:text="${totalAdmins}">0</strong>
+                    <p>Usuarios con acceso a la gestion academica.</p>
+                    <a th:href="@{/superadmin/admins}" class="btn-secondary">Ver todos</a>
+                </article>
+
+                <article class="superadmin-card">
+                    <div class="superadmin-card__icon">+</div>
+                    <h2>Registrar admin</h2>
+                    <p>Crea una cuenta administrativa para gestionar docentes, cursos, aulas y sedes.</p>
+                    <a th:href="@{/superadmin/admins/nuevo}" class="btn-primary">Nuevo Admin</a>
+                </article>
+            </section>
+        </main>
+
+        <footer class="superadmin-footer">
+            © 2026 Generador de Horarios Automatico UTP - Universidad Tecnologica.
+        </footer>
     </div>
 </div>
 

@@ -18,13 +18,13 @@
 
             <div class="docente-user-area">
                 <div class="docente-notification">
-                    <span>🔔</span>
+                    <span>!</span>
                     <i></i>
                 </div>
 
                 <div class="docente-user">
                     <div class="docente-user__text">
-                        <strong th:text="${nombreUsuario}">Juan Pérez</strong>
+                        <strong th:text="${nombreUsuario}">Juan Perez</strong>
                         <small th:text="${rolUsuario}">Docente</small>
                     </div>
 
@@ -40,7 +40,7 @@
 
             <section class="docente-heading">
                 <h1>Bienvenido, <span th:text="${rolUsuario}">Docente</span></h1>
-                <p>Gestione su disponibilidad y revise su horario asignado para el período académico actual.</p>
+                <p>Gestione su disponibilidad, cursos y opciones de horario para el ciclo academico actual.</p>
             </section>
 
             <section class="docente-card-grid">
@@ -50,10 +50,8 @@
                         <span class="card-icon icon-calendar"></span>
                     </div>
                     <h2>Registrar disponibilidad</h2>
-                    <p>Indique los rangos de horas y días en los que se encuentra disponible para dictar clases.</p>
-                    <a th:href="@{/docente/disponibilidad}" class="docente-btn">
-                        Ir a Disponibilidad <span>➜</span>
-                    </a>
+                    <p>Indique los rangos de horas y dias en los que se encuentra disponible para dictar clases.</p>
+                    <a th:href="@{/docente/disponibilidad}" class="docente-btn">Ir</a>
                 </article>
 
                 <article class="docente-action-card">
@@ -61,21 +59,17 @@
                         <span class="card-icon icon-books"></span>
                     </div>
                     <h2>Seleccionar cursos</h2>
-                    <p>Elija las materias o asignaturas que desea y está capacitado para dictar este ciclo.</p>
-                    <a th:href="@{/docente/cursos}" class="docente-btn">
-                        Ver Cursos <span>➜</span>
-                    </a>
+                    <p>Elija las materias o asignaturas que desea y esta capacitado para dictar este ciclo.</p>
+                    <a th:href="@{/docente/cursos}" class="docente-btn">Ir</a>
                 </article>
 
                 <article class="docente-action-card">
                     <div class="docente-action-card__icon">
                         <span class="card-icon icon-gear"></span>
                     </div>
-                    <h2>Ver opciones generales</h2>
-                    <p>Revise las opciones generales de configuración y notificaciones enviadas por el sistema.</p>
-                    <a th:href="@{/docente/opciones_horario}" class="docente-btn">
-                        Ver Opciones <span>➜</span>
-                    </a>
+                    <h2>Opciones de horario</h2>
+                    <p>Revise las propuestas generadas y confirme la opcion que mejor se ajusta a su disponibilidad.</p>
+                    <a th:href="@{/docente/opciones_horario}" class="docente-btn">Ir</a>
                 </article>
 
                 <article class="docente-action-card">
@@ -84,9 +78,7 @@
                     </div>
                     <h2>Mi horario</h2>
                     <p>Visualice su horario final asignado y confirmado una vez finalizado el proceso.</p>
-                    <a href="#" class="docente-btn">
-                        Ver Horario <span>➜</span>
-                    </a>
+                    <a th:href="@{/docente/mi-horario}" class="docente-btn">Ir</a>
                 </article>
 
             </section>
@@ -94,13 +86,13 @@
             <section class="docente-status-panel">
                 <div class="docente-status-panel__header">
                     <span></span>
-                    <h2>Estado Actual del Proceso</h2>
+                    <h2>Estado actual del proceso</h2>
                 </div>
 
                 <div class="docente-status-grid">
 
                     <div class="docente-status-item">
-                        <div class="docente-status-item__icon">✓</div>
+                        <div class="docente-status-item__icon">OK</div>
                         <div>
                             <strong>Disponibilidad</strong>
                             <p>Registrada</p>
@@ -108,7 +100,7 @@
                     </div>
 
                     <div class="docente-status-item">
-                        <div class="docente-status-item__icon">✓</div>
+                        <div class="docente-status-item__icon">OK</div>
                         <div>
                             <strong>Cursos</strong>
                             <p>Seleccionados</p>
@@ -116,10 +108,10 @@
                     </div>
 
                     <div class="docente-status-item">
-                        <div class="docente-status-item__icon">⌛</div>
+                        <div class="docente-status-item__icon">...</div>
                         <div>
-                            <strong>Horario Final</strong>
-                            <p>Pendiente de asignación</p>
+                            <strong>Horario final</strong>
+                            <p>Pendiente de asignacion</p>
                         </div>
                     </div>
 

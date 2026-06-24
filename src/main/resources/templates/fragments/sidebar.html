@@ -55,7 +55,8 @@
             <span>Aulas</span>
         </a>
 
-        <a href="#" class="sidebar__link">
+        <a th:href="@{/administrador/horarios}" class="sidebar__link"
+           th:classappend="${moduloActivo == 'horarios'} ? ' sidebar__link--active' : ''">
             <img th:src="@{/assets/IMG_7.svg}" alt="Validación">
             <span>Validación</span>
         </a>
@@ -63,10 +64,12 @@
     </nav>
 
     <div class="sidebar__logout">
-        <button type="button" class="sidebar__logout-button">
+        <form th:action="@{/logout}" method="post" class="sidebar__logout-form">
+        <button type="submit" class="sidebar__logout-button">
             <img th:src="@{/assets/IMG_8.svg}" alt="Cerrar sesión">
             <span>Cerrar sesión</span>
         </button>
+        </form>
     </div>
 
 </aside>

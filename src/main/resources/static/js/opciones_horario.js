@@ -161,7 +161,7 @@ document.addEventListener("DOMContentLoaded", () => {
    DETALLE DE HORARIO
    ========================================== */
 
-function abrirDetalle(idOpcion) {
+function abrirDetalle(idHorario) {
 
     const modalDetalle =
         document.getElementById("modalDetalle");
@@ -191,10 +191,10 @@ function abrirDetalle(idOpcion) {
         document.getElementById("idOpcionObservacion");
 
     tituloDetalle.textContent =
-        "Detalle Opción " + idOpcion;
+        "Detalle opcion " + idHorario;
 
     idOpcionObservacion.value =
-        idOpcion;
+        idHorario;
 
     detalleBody.innerHTML = "";
 
@@ -208,7 +208,7 @@ function abrirDetalle(idOpcion) {
 
         const opcion =
             opcionesHorarioData.find(
-                o => String(o.idOpcion) === String(idOpcion)
+                o => String(o.idHorario) === String(idHorario)
             );
 
         if (opcion) {
@@ -225,14 +225,13 @@ function abrirDetalle(idOpcion) {
             detalleAulas.textContent =
                 opcion.aulas || 0;
 
-            if (opcion.cursos) {
-
-                opcion.cursos.forEach(curso => {
+            if (opcion.bloques) {
+                const cursos = [...new Set(opcion.bloques.map(bloque => bloque.curso))];
+                cursos.forEach(curso => {
 
                     detalleCursos.innerHTML += `
                         <div class="curso-detalle">
-                            <strong>${curso.nombre}</strong>
-                            <span>${curso.codigo}</span>
+                            <strong>${curso}</strong>
                         </div>
                     `;
 
@@ -240,38 +239,23 @@ function abrirDetalle(idOpcion) {
 
             }
 
+            opcion.bloques.forEach(bloque => {
+                detalleBody.innerHTML += `
+                    <tr>
+                        <td>${bloque.horaInicio} - ${bloque.horaFin}</td>
+                        <td>${bloque.dia === "Lunes" ? bloque.curso : ""}</td>
+                        <td>${bloque.dia === "Martes" ? bloque.curso : ""}</td>
+                        <td>${bloque.dia === "Miercoles" ? bloque.curso : ""}</td>
+                        <td>${bloque.dia === "Jueves" ? bloque.curso : ""}</td>
+                        <td>${bloque.dia === "Viernes" ? bloque.curso : ""}</td>
+                        <td>${bloque.dia === "Sabado" ? bloque.curso : ""}</td>
+                    </tr>
+                `;
+            });
+
         }
 
     }
-
-    /* ==================================
-       DEMO TABLA
-       ================================== */
-
-    const horasDemo = [
-        "07:00",
-        "09:00",
-        "11:00",
-        "13:00",
-        "15:00",
-        "17:00"
-    ];
-
-    horasDemo.forEach(hora => {
-
-        detalleBody.innerHTML += `
-            <tr>
-                <td>${hora}</td>
-                <td></td>
-                <td class="mini-bloque">BD</td>
-                <td></td>
-                <td class="mini-bloque">RED</td>
-                <td></td>
-                <td></td>
-            </tr>
-        `;
-
-    });
 
     modalDetalle.classList.remove("hidden");
 

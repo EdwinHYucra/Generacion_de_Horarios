@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Mi Horario</title>
+    <link rel="stylesheet" th:href="@{/css/style_dashboard_docente.css}">
+    <link rel="stylesheet" th:href="@{/css/opciones_horario.css}">
+</head>
+<body>
+
+<div class="docente-app">
+    <div th:replace="~{fragments/sidebar_docente :: sidebarDocente}"></div>
+
+    <div class="docente-main">
+        <header class="docente-topbar">
+            <div></div>
+            <div class="docente-user-area">
+                <div class="docente-user">
+                    <div class="docente-user__text">
+                        <strong th:text="${nombreUsuario}">Docente</strong>
+                        <small th:text="${rolUsuario}">Docente</small>
+                    </div>
+                    <div class="docente-avatar">
+                        <span th:text="${#strings.substring(nombreUsuario, 0, 1)}">D</span>
+                        <i></i>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="docente-content">
+            <section class="docente-heading">
+                <h1>Mi horario</h1>
+                <p>Consulta el horario aprobado por administracion para el ciclo academico actual.</p>
+            </section>
+
+            <section class="docente-status-panel" th:if="${horario == null}">
+                <div class="docente-status-panel__header">
+                    <span></span>
+                    <h2>Horario pendiente</h2>
+                </div>
+                <div class="docente-status-grid">
+                    <div class="docente-status-item">
+                        <div class="docente-status-item__icon">...</div>
+                        <div>
+                            <strong>Sin horario aprobado</strong>
+                            <p>Revise nuevamente cuando administracion publique una opcion.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="docente-status-panel" th:if="${horario != null}">
+                <div class="docente-status-panel__header">
+                    <span></span>
+                    <h2 th:text="${'Opcion aprobada ' + horario.opcion}">Horario aprobado</h2>
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                        <tr>
+                            <th>Curso</th>
+                            <th>Aula</th>
+                            <th>Sede</th>
+                            <th>Dia</th>
+                            <th>Inicio</th>
+                            <th>Fin</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="detalle : ${detalleHorario}">
+                            <td th:text="${detalle.curso}">Curso</td>
+                            <td th:text="${detalle.aula}">Aula</td>
+                            <td th:text="${detalle.sede}">Sede</td>
+                            <td th:text="${detalle.dia}">Lunes</td>
+                            <td th:text="${detalle.horaInicio}">07:00</td>
+                            <td th:text="${detalle.horaFin}">09:00</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+</div>
+
+</body>
+</html>

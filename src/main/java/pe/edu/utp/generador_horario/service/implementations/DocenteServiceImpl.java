@@ -4,10 +4,10 @@ import pe.edu.utp.generador_horario.entidad.Docente;
 import pe.edu.utp.generador_horario.dao.DocenteDAO;
 import pe.edu.utp.generador_horario.dao.UsuarioDAO;
 import pe.edu.utp.generador_horario.entidad.Usuario;
+import pe.edu.utp.generador_horario.service.factory.UsuarioFactory;
 import pe.edu.utp.generador_horario.service.interfaces.DocenteService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,12 +27,12 @@ public class DocenteServiceImpl implements DocenteService {
 
     private final DocenteDAO docenteDAO;
     private final UsuarioDAO usuarioDAO;
-    private final PasswordEncoder passwordEncoder;
+    private final UsuarioFactory usuarioFactory;
 
-    public DocenteServiceImpl(DocenteDAO docenteDAO, UsuarioDAO usuarioDAO, PasswordEncoder passwordEncoder) {
+    public DocenteServiceImpl(DocenteDAO docenteDAO, UsuarioDAO usuarioDAO, UsuarioFactory usuarioFactory) {
         this.docenteDAO = docenteDAO;
         this.usuarioDAO = usuarioDAO;
-        this.passwordEncoder = passwordEncoder;
+        this.usuarioFactory = usuarioFactory;
     }
 
     @Override
@@ -64,20 +64,17 @@ public class DocenteServiceImpl implements DocenteService {
                 throw new IllegalArgumentException("Ya existe un usuario registrado con ese correo.");
             }
 
-            Usuario usuario = new Usuario();
-            usuario.setNombre(docente.getNombres());
-            usuario.setApellido(docente.getApellidos());
-            usuario.setEmail(docente.getCorreo());
-            usuario.setPassword(passwordEncoder.encode(docente.getPassword()));
-            usuario.setRol("DOCENTE");
-            usuario.setEstado(Boolean.TRUE.equals(docente.getEstado()) ? "ACTIVO" : "INACTIVO");
-
+            Usuario usuario = usuarioFactory.crearDocente(docente);
             Long usuarioId = usuarioDAO.guardarRetornandoId(usuario);
             docente.setUsuarioId(usuarioId);
+            LOGGER.info("Usuario docente creado. usuarioId={}, correo={}", usuarioId, docente.getCorreo());
         }
 
         try {
-            return docenteDAO.save(docente);
+            Docente guardado = docenteDAO.save(docente);
+            LOGGER.info("Docente guardado. id={}, codigo={}, nuevo={}",
+                    guardado.getIdDocente(), guardado.getCodigo(), esNuevo);
+            return guardado;
         } catch (RuntimeException e) {
             LOGGER.error("No se pudo guardar el docente. id={}, codigo={}, dni={}",
                     docente.getIdDocente(), docente.getCodigo(), docente.getDni(), e);

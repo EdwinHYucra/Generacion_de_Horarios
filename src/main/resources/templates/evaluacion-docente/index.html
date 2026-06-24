@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Evaluacion Docente</title>
+    <link rel="stylesheet" th:href="@{/css/evaluacion_docente.css}">
+</head>
+<body>
+
+<main class="survey-shell">
+    <section class="survey-panel">
+        <div class="survey-heading">
+            <span>UTP</span>
+            <h1>Evaluacion docente</h1>
+            <p>Califica a docentes que dictaron cursos en el ciclo academico anterior.</p>
+        </div>
+
+        <div th:if="${mensajeExito}" class="alert alert--success" th:text="${mensajeExito}"></div>
+        <div th:if="${mensajeError}" class="alert alert--error" th:text="${mensajeError}"></div>
+
+        <form th:action="@{/evaluacion-docente}" th:object="${evaluacion}" method="post" class="survey-form">
+            <input type="hidden" th:field="*{idDocente}" id="idDocente">
+            <input type="hidden" th:field="*{idCurso}" id="idCurso">
+
+            <label class="field">
+                <span>Docente y curso</span>
+                <select id="opcionEvaluacion" required>
+                    <option value="">Seleccione una opcion</option>
+                    <option th:each="opcion : ${opciones}"
+                            th:value="${opcion.idDocente + '-' + opcion.idCurso}"
+                            th:attr="data-docente=${opcion.idDocente}, data-curso=${opcion.idCurso}"
+                            th:text="${opcion.nombreDocente + ' - ' + opcion.nombreCurso + ' (' + opcion.cicloAcademico + ')'}">
+                        Docente - Curso
+                    </option>
+                </select>
+            </label>
+
+            <label class="field">
+                <span>Puntaje</span>
+                <input id="puntajeInput" type="number" th:field="*{puntaje}" min="1" max="20" required>
+            </label>
+
+            <div class="score-scale">
+                <span class="score-scale__bad">1-15 Malo</span>
+                <span class="score-scale__neutral">16-18 Neutral</span>
+                <span class="score-scale__good">19-20 Positivo</span>
+            </div>
+
+            <div id="categoriaPreview" class="category-preview">Seleccione un puntaje</div>
+
+            <label class="field">
+                <span>Comentario</span>
+                <textarea th:field="*{comentario}" maxlength="500"
+                          placeholder="Comentario opcional sobre la experiencia academica"></textarea>
+            </label>
+
+            <button type="submit" class="submit-button" th:disabled="${#lists.isEmpty(opciones)}">
+                Enviar evaluacion
+            </button>
+
+            <p th:if="${#lists.isEmpty(opciones)}" class="empty-state">
+                No hay docentes del ciclo anterior disponibles para evaluar.
+            </p>
+        </form>
+    </section>
+</main>
+
+<script th:src="@{/js/evaluacion_docente.js}"></script>
+</body>
+</html>

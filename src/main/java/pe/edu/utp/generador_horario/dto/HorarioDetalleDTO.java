@@ -2,12 +2,30 @@ package pe.edu.utp.generador_horario.dto;
 
 public class HorarioDetalleDTO {
 
+    private Long idCurso;
+    private Long idAula;
     private String curso;
     private String aula;
     private String sede;
     private String dia;
     private String horaInicio;
     private String horaFin;
+
+    public Long getIdCurso() {
+        return idCurso;
+    }
+
+    public void setIdCurso(Long idCurso) {
+        this.idCurso = idCurso;
+    }
+
+    public Long getIdAula() {
+        return idAula;
+    }
+
+    public void setIdAula(Long idAula) {
+        this.idAula = idAula;
+    }
 
     public String getCurso() {
         return curso;

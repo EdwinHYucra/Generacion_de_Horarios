@@ -31,7 +31,7 @@
              th:each="opcion,iter : ${opcionesHorario}">
 
         <div class="opcion-card__header">
-            <h2 th:text="'Opción ' + ${iter.index + 1}">
+            <h2 th:text="'Opcion ' + ${opcion.opcion}">
                 Opción 1
             </h2>
         </div>
@@ -83,13 +83,13 @@
 
             <button type="button"
                     class="btn-ver-detalle"
-                    th:data-id="${opcion.opcion}">
+                    th:data-id="${opcion.idHorario}">
                 Ver más
             </button>
 
             <button type="button"
                     class="btn-seleccionar"
-                    th:data-id="${opcion.opcion}">
+                    th:data-id="${opcion.idHorario}">
                 Seleccionar
             </button>
 
@@ -105,7 +105,7 @@
 
                     <input type="hidden"
                            id="idOpcionSeleccionada"
-                           name="idOpcion">
+                           name="idHorario">
 
                     <button type="submit"
                             id="btnConfirmar"

@@ -49,36 +49,40 @@ public class SeguridadConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/css/**", "/js/**", "/images/**", "/img/**", "/assets/**").permitAll()
-                        .requestMatchers("/login", "/logout").permitAll()
-                        .requestMatchers("/superadmin/**").hasRole("SUPERADMIN")
-                        .requestMatchers("/administrador/**").hasRole("ADMIN")
-                        .requestMatchers("/docente/**").hasRole("DOCENTE")
+                        .requestMatchers("/evaluacion-docente/**").permitAll()
+                        .requestMatchers(RutasSistema.LOGIN, RutasSistema.LOGOUT).permitAll()
+                        .requestMatchers(RutasSistema.SUPERADMIN + "/**").hasRole(RolSistema.SUPERADMIN)
+                        .requestMatchers(RutasSistema.ADMINISTRADOR + "/**").hasRole(RolSistema.ADMIN)
+                        .requestMatchers(RutasSistema.DOCENTE + "/**").hasRole(RolSistema.DOCENTE)
                         .anyRequest().authenticated())
                 .formLogin(form -> form
-                        .loginPage("/login")
+                        .loginPage(RutasSistema.LOGIN)
                         .successHandler((request, response, authentication) -> {
                             boolean esSuperAdmin = authentication.getAuthorities().stream()
-                                    .anyMatch(authority -> authority.getAuthority().equals("ROLE_SUPERADMIN"));
+                                    .anyMatch(authority -> authority.getAuthority().equals(RolSistema.AUTHORITY_SUPERADMIN));
 
                             boolean esAdmin = authentication.getAuthorities().stream()
-                                    .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
+                                    .anyMatch(authority -> authority.getAuthority().equals(RolSistema.AUTHORITY_ADMIN));
 
                             boolean esDocente = authentication.getAuthorities().stream()
-                                    .anyMatch(authority -> authority.getAuthority().equals("ROLE_DOCENTE"));
+                                    .anyMatch(authority -> authority.getAuthority().equals(RolSistema.AUTHORITY_DOCENTE));
 
                             if (esSuperAdmin) {
-                                response.sendRedirect("/superadmin/dashboard");
+                                response.sendRedirect(RutasSistema.SUPERADMIN_DASHBOARD);
                             } else if (esAdmin) {
-                                response.sendRedirect("/administrador/dashboard");
+                                response.sendRedirect(RutasSistema.ADMINISTRADOR_DASHBOARD);
                             } else if (esDocente) {
-                                response.sendRedirect("/docente/dashboard");
+                                response.sendRedirect(RutasSistema.DOCENTE_DASHBOARD);
                             } else {
-                                response.sendRedirect("/login?error");
+                                response.sendRedirect(RutasSistema.LOGIN_ERROR);
                             }
                         })
                         .permitAll())
                 .logout(logout -> logout
-                        .logoutSuccessUrl("/login?logout")
+                        .logoutUrl(RutasSistema.LOGOUT)
+                        .logoutSuccessUrl(RutasSistema.LOGIN + "?logout")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
                         .permitAll());
 
         return http.build();

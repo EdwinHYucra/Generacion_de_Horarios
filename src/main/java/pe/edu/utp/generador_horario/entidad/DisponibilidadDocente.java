@@ -4,6 +4,7 @@ import java.time.LocalTime;
 
 public class DisponibilidadDocente {
     private Long idDisponibilidad;
+    private Long idCicloAcademico;
     private Long idDocente;
     private String diaSemana;
     private LocalTime horaInicio;
@@ -16,6 +17,14 @@ public class DisponibilidadDocente {
 
     public void setIdDisponibilidad(Long idDisponibilidad) {
         this.idDisponibilidad = idDisponibilidad;
+    }
+
+    public Long getIdCicloAcademico() {
+        return idCicloAcademico;
+    }
+
+    public void setIdCicloAcademico(Long idCicloAcademico) {
+        this.idCicloAcademico = idCicloAcademico;
     }
 
     public Long getIdDocente() {

@@ -37,20 +37,22 @@
             <strong>Opciones de horario</strong>
         </a>
 
-        <a th:href="@{/docente/solicitudes}"
-           class="docente-nav__link"
-           th:classappend="${moduloActivo == 'solicitudes'} ? ' active' : ''">
-            <span class="nav-icon icon-message"></span>
-            <strong>Solicitudes</strong>
-        </a>
-
         <a th:href="@{/docente/mi-horario}"
            class="docente-nav__link"
-           th:classappend="${moduloActivo == 'mi-horario'} ? ' active' : ''">
+           th:classappend="${moduloActivo == 'mi_horario'} ? ' active' : ''">
             <span class="nav-icon icon-mycalendar"></span>
-            <strong>Mi Horario</strong>
+            <strong>Mi horario</strong>
         </a>
 
     </nav>
+
+    <div class="docente-logout">
+        <form th:action="@{/logout}" method="post">
+            <button type="submit">
+                <span class="nav-icon icon-logout"></span>
+                <strong>Cerrar sesion</strong>
+            </button>
+        </form>
+    </div>
 
 </aside>

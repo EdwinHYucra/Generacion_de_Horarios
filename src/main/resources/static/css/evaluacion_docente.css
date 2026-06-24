@@ -1,0 +1,160 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    background: #f3f5f8;
+    color: #172033;
+}
+
+.survey-shell {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 16px;
+}
+
+.survey-panel {
+    width: min(720px, 100%);
+    background: #fff;
+    border: 1px solid #e0e5ee;
+    border-radius: 8px;
+    box-shadow: 0 18px 45px rgba(18, 28, 45, 0.08);
+    padding: 32px;
+}
+
+.survey-heading {
+    margin-bottom: 24px;
+}
+
+.survey-heading span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    margin-bottom: 16px;
+    border-radius: 8px;
+    background: #d90429;
+    color: #fff;
+    font-weight: 700;
+}
+
+.survey-heading h1 {
+    margin: 0 0 8px;
+    font-size: 28px;
+}
+
+.survey-heading p {
+    margin: 0;
+    color: #667085;
+}
+
+.survey-form {
+    display: grid;
+    gap: 18px;
+}
+
+.field {
+    display: grid;
+    gap: 8px;
+    font-weight: 700;
+}
+
+.field select,
+.field input,
+.field textarea {
+    width: 100%;
+    border: 1px solid #cfd6e2;
+    border-radius: 6px;
+    padding: 12px 14px;
+    font: inherit;
+    color: #172033;
+    background: #fff;
+}
+
+.field textarea {
+    min-height: 110px;
+    resize: vertical;
+}
+
+.score-scale {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.score-scale span,
+.category-preview,
+.alert,
+.empty-state {
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 14px;
+}
+
+.score-scale__bad {
+    background: #fff1f2;
+    color: #b42318;
+}
+
+.score-scale__neutral {
+    background: #fffaeb;
+    color: #b54708;
+}
+
+.score-scale__good {
+    background: #ecfdf3;
+    color: #027a48;
+}
+
+.category-preview {
+    background: #f8fafc;
+    color: #475467;
+    font-weight: 700;
+}
+
+.alert--success {
+    background: #ecfdf3;
+    color: #027a48;
+}
+
+.alert--error {
+    background: #fff1f2;
+    color: #b42318;
+}
+
+.submit-button {
+    border: 0;
+    border-radius: 6px;
+    padding: 13px 18px;
+    background: #d90429;
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.submit-button:disabled {
+    background: #98a2b3;
+    cursor: not-allowed;
+}
+
+.empty-state {
+    margin: 0;
+    background: #f8fafc;
+    color: #667085;
+}
+
+@media (max-width: 620px) {
+    .survey-panel {
+        padding: 24px;
+    }
+
+    .score-scale {
+        grid-template-columns: 1fr;
+    }
+}

@@ -58,7 +58,7 @@ btnGuardarCursos.addEventListener("click", async () => {
         });
 
         if (response.ok) {
-            alert("Cursos guardados correctamente.");
+            alert(await response.text());
         } else {
             alert("Error al guardar los cursos.");
         }

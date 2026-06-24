@@ -4,11 +4,21 @@ import java.util.List;
 
 public class OpcionesHorarioDTO {
 
+    private Long idHorario;
+
     private Integer opcion;
 
     private List<HorarioDetalleDTO> bloques;
 
     private String observacion;
+
+    public Long getIdHorario() {
+        return idHorario;
+    }
+
+    public void setIdHorario(Long idHorario) {
+        this.idHorario = idHorario;
+    }
 
     public Integer getOpcion() {
         return opcion;

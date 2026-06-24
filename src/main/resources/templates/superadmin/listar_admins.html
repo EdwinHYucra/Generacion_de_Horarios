@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Administradores</title>
@@ -7,62 +7,80 @@
 </head>
 <body>
 
-<nav class="navbar">
-    <span class="navbar-brand">Sistema de Horarios</span>
-    <div class="navbar-links">
-        <a th:href="@{/superadmin/dashboard}">Dashboard</a>
-        <a th:href="@{/superadmin/admins}">Administradores</a>
-        <a th:href="@{/logout}">Cerrar sesión</a>
+<div class="superadmin-app">
+    <div th:replace="~{fragments/sidebar_superadmin :: sidebarSuperadmin}"></div>
+
+    <div class="superadmin-main">
+        <header class="superadmin-topbar">
+            <div class="superadmin-user">
+                <div>
+                    <strong>Hola, SuperAdmin</strong><br>
+                    <span>Super administrador</span>
+                </div>
+                <div class="superadmin-avatar"></div>
+            </div>
+        </header>
+
+        <main class="superadmin-content">
+            <section class="contenido-header superadmin-title">
+                <div>
+                    <h1>Administradores</h1>
+                    <p>Gestiona las cuentas administrativas del sistema.</p>
+                </div>
+                <a th:href="@{/superadmin/admins/nuevo}" class="btn-primary">Nuevo Admin</a>
+            </section>
+
+            <div th:if="${exito}" class="alerta alerta-exito" th:text="${exito}"></div>
+
+            <section class="superadmin-table-card">
+                <table class="superadmin-table">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Email</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="admin : ${admins}">
+                        <td th:text="${admin.id}"></td>
+                        <td th:text="${admin.nombre}"></td>
+                        <td th:text="${admin.apellido}"></td>
+                        <td th:text="${admin.email}"></td>
+                        <td>
+                            <span th:class="${admin.estado == 'ACTIVO'} ? 'badge badge-activo' : 'badge badge-inactivo'"
+                                  th:text="${admin.estado}"></span>
+                        </td>
+                        <td>
+                            <div class="superadmin-actions">
+                                <a th:href="@{/superadmin/admins/editar/{id}(id=${admin.id})}"
+                                   class="btn-secondary">Editar</a>
+                                <a th:if="${admin.estado == 'ACTIVO'}"
+                                   th:href="@{/superadmin/admins/desactivar/{id}(id=${admin.id})}"
+                                   class="btn-danger"
+                                   onclick="return confirm('Desactivar este administrador?')">Desactivar</a>
+                                <a th:if="${admin.estado == 'INACTIVO'}"
+                                   th:href="@{/superadmin/admins/activar/{id}(id=${admin.id})}"
+                                   class="btn-success"
+                                   onclick="return confirm('Activar este administrador?')">Activar</a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(admins)}">
+                        <td colspan="6" class="tabla-vacia">No hay administradores registrados.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </section>
+        </main>
+
+        <footer class="superadmin-footer">
+            © 2026 Generador de Horarios Automatico UTP - Universidad Tecnologica.
+        </footer>
     </div>
-</nav>
-
-<div class="contenido">
-    <div class="contenido-header">
-        <h1>Administradores</h1>
-        <a th:href="@{/superadmin/admins/nuevo}" class="btn-primary">+ Nuevo Admin</a>
-    </div>
-
-    <div th:if="${exito}" class="alerta alerta-exito" th:text="${exito}"></div>
-
-    <table class="tabla">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Nombre</th>
-                <th>Apellido</th>
-                <th>Email</th>
-                <th>Estado</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="admin : ${admins}">
-                <td th:text="${admin.id}"></td>
-                <td th:text="${admin.nombre}"></td>
-                <td th:text="${admin.apellido}"></td>
-                <td th:text="${admin.email}"></td>
-                <td>
-                    <span th:class="${admin.estado == 'ACTIVO'} ? 'badge badge-activo' : 'badge badge-inactivo'"
-                          th:text="${admin.estado}"></span>
-                </td>
-                <td class="acciones">
-                    <a th:href="@{/superadmin/admins/editar/{id}(id=${admin.id})}"
-                       class="btn-secondary">Editar</a>
-                    <a th:if="${admin.estado == 'ACTIVO'}"
-                       th:href="@{/superadmin/admins/desactivar/{id}(id=${admin.id})}"
-                       class="btn-danger"
-                       onclick="return confirm('¿Desactivar este administrador?')">Desactivar</a>
-                    <a th:if="${admin.estado == 'INACTIVO'}"
-                       th:href="@{/superadmin/admins/activar/{id}(id=${admin.id})}"
-                       class="btn-success"
-                       onclick="return confirm('¿Activar este administrador?')">Activar</a>
-                </td>
-            </tr>
-            <tr th:if="${#lists.isEmpty(admins)}">
-                <td colspan="6" class="tabla-vacia">No hay administradores registrados</td>
-            </tr>
-        </tbody>
-    </table>
 </div>
 
 </body>

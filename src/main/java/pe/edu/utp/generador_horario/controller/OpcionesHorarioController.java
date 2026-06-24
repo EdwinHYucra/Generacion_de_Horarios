@@ -1,73 +1,83 @@
 package pe.edu.utp.generador_horario.controller;
 
-import java.util.List;
-
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import pe.edu.utp.generador_horario.dao.DocenteDAO;
 import pe.edu.utp.generador_horario.dao.UsuarioDAO;
 import pe.edu.utp.generador_horario.dto.OpcionesHorarioDTO;
+import pe.edu.utp.generador_horario.entidad.Docente;
 import pe.edu.utp.generador_horario.entidad.Usuario;
-import pe.edu.utp.generador_horario.service.interfaces.OpcionesHorarioService;
+import pe.edu.utp.generador_horario.service.interfaces.HorarioGeneradoService;
+
+import java.util.List;
 
 @Controller
 public class OpcionesHorarioController {
 
     private final UsuarioDAO usuarioDAO;
-    private final OpcionesHorarioService opcionesHorarioService;
+    private final DocenteDAO docenteDAO;
+    private final HorarioGeneradoService horarioGeneradoService;
 
     public OpcionesHorarioController(
             UsuarioDAO usuarioDAO,
-            OpcionesHorarioService opcionesHorarioService) {
+            DocenteDAO docenteDAO,
+            HorarioGeneradoService horarioGeneradoService) {
 
         this.usuarioDAO = usuarioDAO;
-        this.opcionesHorarioService = opcionesHorarioService;
+        this.docenteDAO = docenteDAO;
+        this.horarioGeneradoService = horarioGeneradoService;
     }
 
     @GetMapping("/docente/opciones_horario")
-    public String mostrarVista(
-            Model model,
-            Authentication authentication) {
+    public String mostrarVista(Model model, Authentication authentication) {
+        Usuario usuario = obtenerUsuario(authentication);
+        Docente docente = obtenerDocente(usuario);
 
-        Usuario usuario = usuarioDAO
-                .buscarPorEmail(authentication.getName())
-                .orElseThrow(() ->
-                        new RuntimeException("Usuario no encontrado"));
-
-        model.addAttribute(
-                "nombreUsuario",
-                usuario.getNombre() + " " + usuario.getApellido());
-
-        model.addAttribute(
-                "rolUsuario",
-                "Docente");
-
-        model.addAttribute(
-                "diasSemana",
-                List.of(
-                        "Lunes",
-                        "Martes",
-                        "Miércoles",
-                        "Jueves",
-                        "Viernes"));
-
-        model.addAttribute(
-                "bloquesHora",
-                List.of(
-                        "07:00",
-                        "09:00",
-                        "11:00",
-                        "13:00"));
+        model.addAttribute("nombreUsuario", usuario.getNombre() + " " + usuario.getApellido());
+        model.addAttribute("rolUsuario", "Docente");
+        model.addAttribute("moduloActivo", "opciones_horario");
+        model.addAttribute("diasSemana", List.of("Lunes", "Martes", "Miercoles", "Jueves", "Viernes"));
+        model.addAttribute("bloquesHora", List.of("07:00", "09:00", "11:00", "13:00"));
 
         List<OpcionesHorarioDTO> opciones =
-                opcionesHorarioService.generarHorarios(usuario.getId());
+                horarioGeneradoService.listarOpcionesPendientesPorDocente(docente.getIdDocente());
 
-        model.addAttribute(
-                "opcionesHorario",
-                opciones);
+        if (opciones.isEmpty()) {
+            horarioGeneradoService.generarSiTieneInsumos(docente.getIdDocente());
+            opciones = horarioGeneradoService.listarOpcionesPendientesPorDocente(docente.getIdDocente());
+        }
+
+        model.addAttribute("opcionesHorario", opciones);
 
         return "docente/opciones_horario";
+    }
+
+    @PostMapping("/docente/opciones_horario/confirmar")
+    public String confirmar(
+            @RequestParam("idHorario") Long idHorario,
+            Authentication authentication,
+            RedirectAttributes redirectAttributes) {
+
+        Usuario usuario = obtenerUsuario(authentication);
+        Docente docente = obtenerDocente(usuario);
+
+        horarioGeneradoService.confirmarSeleccionDocente(idHorario, docente.getIdDocente());
+        redirectAttributes.addFlashAttribute("mensajeExito", "Horario confirmado correctamente.");
+        return "redirect:/docente/mi-horario";
+    }
+
+    private Usuario obtenerUsuario(Authentication authentication) {
+        return usuarioDAO.buscarPorEmail(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+    }
+
+    private Docente obtenerDocente(Usuario usuario) {
+        return docenteDAO.findByUsuarioId(usuario.getId())
+                .orElseThrow(() -> new RuntimeException("Docente no encontrado"));
     }
 }

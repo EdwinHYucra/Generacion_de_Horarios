@@ -3,9 +3,9 @@ package pe.edu.utp.generador_horario.dao;
 import java.util.List;
 
 public interface DocenteCursoDAO {
-    List<Long> findCursoIdsByDocenteId(Long idDocente);
+    List<Long> findCursoIdsByDocenteIdAndCicloId(Long idDocente, Long idCicloAcademico);
 
-    void deleteByDocenteId(Long idDocente);
+    void deleteByDocenteIdAndCicloId(Long idDocente, Long idCicloAcademico);
 
-    void save(Long idDocente, Long idCurso);
+    void save(Long idDocente, Long idCurso, Long idCicloAcademico);
 }

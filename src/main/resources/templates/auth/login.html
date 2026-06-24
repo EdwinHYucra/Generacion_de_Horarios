@@ -1,39 +1,90 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Iniciar Sesión</title>
+    <title>Iniciar Sesion</title>
     <link rel="stylesheet" th:href="@{/css/estilos.css}">
 </head>
-<body>
+<body class="login-page">
 
-<div class="login-container">
-    <div class="login-card">
-        <h2>Sistema de Horarios</h2>
-        <p class="login-subtitle">Ingresa tus credenciales</p>
-
-        <div th:if="${param.error}" class="alerta alerta-error">
-            Email o contraseña incorrectos.
-        </div>
-        <div th:if="${param.logout}" class="alerta alerta-info">
-            Sesión cerrada correctamente.
-        </div>
-
-        <form th:action="@{/login}" method="post">
-            <div class="campo">
-                <label for="username">Email</label>
-                <input type="email" id="username" name="username"
-                       placeholder="correo@ejemplo.com" required>
-            </div>
-            <div class="campo">
-                <label for="password">Contraseña</label>
-                <input type="password" id="password" name="password"
-                       placeholder="••••••••" required>
-            </div>
-            <button type="submit" class="btn-primary">Ingresar</button>
-        </form>
+<header class="login-topbar">
+    <div class="login-brand">
+        <span class="login-brand__mark">UTP</span>
+        <strong>Generador de Horarios Automatico UTP</strong>
     </div>
-</div>
+    <a href="#" class="login-help">Ayuda</a>
+</header>
+
+<main class="login-shell">
+    <section class="login-visual" aria-label="Ilustracion institucional">
+        <div class="campus-scene">
+            <div class="campus-building">
+                <div class="campus-logo">UTP</div>
+                <span></span><span></span><span></span><span></span>
+            </div>
+
+            <div class="teacher-illustration">
+                <div class="teacher-head"></div>
+                <div class="teacher-body"></div>
+                <div class="teacher-tablet"></div>
+                <div class="teacher-arm"></div>
+            </div>
+
+            <div class="student-group student-group--left"></div>
+            <div class="student-group student-group--right"></div>
+            <div class="chart-board"></div>
+        </div>
+    </section>
+
+    <section class="login-panel">
+        <div class="login-card login-card--prototype">
+            <div class="login-card__icon">UTP</div>
+            <h1>Iniciar Sesion</h1>
+            <p>Ingresa tus credenciales institucionales para acceder.</p>
+
+            <div th:if="${param.error}" class="alerta alerta-error">
+                Credenciales incorrectas.
+            </div>
+            <div th:if="${param.logout}" class="alerta alerta-info">
+                Sesion cerrada correctamente.
+            </div>
+
+            <form th:action="@{/login}" method="post" class="login-form">
+                <div class="login-field">
+                    <label for="username">Correo institucional</label>
+                    <div class="login-input">
+                        <span>@</span>
+                        <input type="email" id="username" name="username"
+                               placeholder="admin@sistema.com" required>
+                    </div>
+                </div>
+
+                <div class="login-field">
+                    <label for="password">Contrasena</label>
+                    <div class="login-input">
+                        <span>*</span>
+                        <input type="password" id="password" name="password"
+                               placeholder="********" required>
+                    </div>
+                </div>
+
+                <div class="login-options">
+                    <label>
+                        <input type="checkbox" name="remember-me">
+                        <span>Recordarme</span>
+                    </label>
+                    <a href="#">Olvidaste tu contrasena?</a>
+                </div>
+
+                <button type="submit" class="login-submit">Ingresar al Sistema</button>
+            </form>
+        </div>
+    </section>
+</main>
+
+<footer class="login-footer">
+    <p>© 2026 Generador de Horarios Automatico UTP - Universidad Tecnologica. Todos los derechos reservados.</p>
+</footer>
 
 </body>
 </html>

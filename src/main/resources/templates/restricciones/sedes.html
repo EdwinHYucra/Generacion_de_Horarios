@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Restricciones de Traslado</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+
+<div class="app">
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <div class="main">
+        <div th:replace="~{fragments/header :: header}"></div>
+
+        <main class="content">
+
+            <section class="page-title">
+                <h1>Restricciones de Traslado</h1>
+                <p>Configura los minutos minimos que necesita un docente para moverse entre sedes.</p>
+            </section>
+
+            <div th:if="${mensajeExito}" class="alert alert--success">
+                <span th:text="${mensajeExito}"></span>
+            </div>
+
+            <div th:if="${mensajeError}" class="alert alert--error">
+                <span th:text="${mensajeError}"></span>
+            </div>
+
+            <section class="panel">
+                <div class="panel__header">
+                    <div class="panel__title">
+                        <div class="panel__title-icon">&lt;&gt;</div>
+                        <div>
+                            <h2 th:text="${modoEdicion} ? 'Editar Regla' : 'Agregar Regla'">Agregar Regla</h2>
+                            <p>El sentido de la regla importa: origen a destino puede tener un tiempo distinto al retorno.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <form th:action="@{/administrador/restricciones/sedes/guardar}"
+                      th:object="${restriccionSede}"
+                      method="post">
+                    <div class="panel__body">
+                        <input type="hidden" th:field="*{idRestriccion}">
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Sede Origen <span class="required">*</span></label>
+                                <select th:field="*{sedeOrigen.idSede}" class="form-control" required>
+                                    <option value="">Seleccione sede</option>
+                                    <option th:each="sede : ${sedes}"
+                                            th:value="${sede.idSede}"
+                                            th:text="${sede.nombre}">Sede</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Sede Destino <span class="required">*</span></label>
+                                <select th:field="*{sedeDestino.idSede}" class="form-control" required>
+                                    <option value="">Seleccione sede</option>
+                                    <option th:each="sede : ${sedes}"
+                                            th:value="${sede.idSede}"
+                                            th:text="${sede.nombre}">Sede</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Minutos Minimos <span class="required">*</span></label>
+                                <input type="number"
+                                       th:field="*{tiempoMinimoMinutos}"
+                                       class="form-control"
+                                       min="0"
+                                       step="1"
+                                       required
+                                       placeholder="Ej. 30">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel__footer">
+                        <a th:href="@{/administrador/restricciones/sedes}" class="btn btn--secondary">Cancelar</a>
+                        <button type="submit" class="btn btn--primary">Guardar Regla</button>
+                    </div>
+                </form>
+            </section>
+
+            <section class="panel">
+                <div class="panel__header">
+                    <div class="panel__title">
+                        <div>
+                            <h2>Reglas Configuradas</h2>
+                            <p>Estas reglas se aplican durante la generacion de horarios.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                        <tr>
+                            <th>Origen</th>
+                            <th>Destino</th>
+                            <th>Tiempo minimo</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <tr th:each="item : ${restricciones}">
+                            <td>
+                                <strong th:text="${item.sedeOrigen.nombre}">Origen</strong>
+                                <span class="muted" th:text="${item.sedeOrigen.codigo}">COD</span>
+                            </td>
+                            <td>
+                                <strong th:text="${item.sedeDestino.nombre}">Destino</strong>
+                                <span class="muted" th:text="${item.sedeDestino.codigo}">COD</span>
+                            </td>
+                            <td>
+                                <span class="badge badge--active"
+                                      th:text="${item.tiempoMinimoMinutos + ' min'}">30 min</span>
+                            </td>
+                            <td>
+                                <div class="action-group">
+                                    <a th:href="@{/administrador/restricciones/sedes/editar/{id}(id=${item.idRestriccion})}"
+                                       class="action-link">
+                                        <img th:src="@{/assets/IMG_16.svg}" alt="Editar">
+                                    </a>
+
+                                    <form th:action="@{/administrador/restricciones/sedes/eliminar/{id}(id=${item.idRestriccion})}"
+                                          method="post"
+                                          class="inline-form"
+                                          onsubmit="return confirm('Seguro que deseas eliminar esta regla?');">
+                                        <button type="submit" class="action-button">
+                                            <img th:src="@{/assets/IMG_17.svg}" alt="Eliminar">
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr th:if="${#lists.isEmpty(restricciones)}">
+                            <td colspan="4" class="empty-table">No hay reglas de traslado configuradas.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="table-footer">
+                    <p>Mostrando <strong th:text="${#lists.size(restricciones)}">0</strong> reglas</p>
+                </div>
+            </section>
+
+        </main>
+
+        <div th:replace="~{fragments/footer :: footer}"></div>
+    </div>
+</div>
+
+<script th:src="@{/js/admin.js}"></script>
+</body>
+</html>

@@ -115,7 +115,7 @@ document.getElementById("btnConfirmar").addEventListener("click", async () => {
         });
 
         if (response.ok) {
-            alert("Disponibilidad guardada correctamente.");
+            alert(await response.text());
         } else {
             alert("Error al guardar.");
         }
@@ -131,13 +131,12 @@ async function cargarDisponibilidadGuardada() {
         const bloques = await response.json();
 
         bloques.forEach(bloque => {
-            const slot = document.querySelector(
-                `.slot[data-dia="${bloque.diaSemana}"][data-hora="${bloque.horaInicio}"]`
-            );
-
-            if (slot) {
-                slot.classList.add("selected");
-            }
+            document.querySelectorAll(`.slot[data-dia="${bloque.diaSemana}"]`)
+                .forEach(slot => {
+                    if (slot.dataset.hora >= bloque.horaInicio && slot.dataset.hora < bloque.horaFin) {
+                        slot.classList.add("selected");
+                    }
+                });
         });
 
         actualizarContador();

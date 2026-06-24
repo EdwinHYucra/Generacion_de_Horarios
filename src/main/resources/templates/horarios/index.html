@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Generacion de Horarios</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+
+<div class="app">
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <div class="main">
+        <div th:replace="~{fragments/header :: header}"></div>
+
+        <main class="content">
+
+            <section class="page-title">
+                <h1>Generacion de Horarios</h1>
+                <p>Ejecuta el algoritmo, revisa las opciones generadas y aprueba la propuesta final.</p>
+            </section>
+
+            <div th:if="${mensajeExito}" class="alert alert--success">
+                <span th:text="${mensajeExito}"></span>
+            </div>
+
+            <div th:if="${mensajeError}" class="alert alert--error">
+                <span th:text="${mensajeError}"></span>
+            </div>
+
+            <section class="panel">
+                <div class="panel__header">
+                    <div class="panel__title">
+                        <div class="panel__title-icon">GH</div>
+                        <div>
+                            <h2>Ejecutar algoritmo</h2>
+                            <p>Genera opciones con cursos, aulas, disponibilidad, evaluaciones y restricciones activas.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel__body">
+                    <div class="form-grid">
+                        <form th:action="@{/administrador/horarios/generar}" method="post" class="form-group form-group--full">
+                            <label>Docente</label>
+                            <div class="schedule-actions">
+                                <select name="idDocente" class="form-control" required>
+                                    <option value="">Seleccione docente</option>
+                                    <option th:each="docente : ${docentes}"
+                                            th:if="${docente.estado}"
+                                            th:value="${docente.idDocente}"
+                                            th:text="${docente.nombres + ' ' + docente.apellidos}">
+                                        Docente
+                                    </option>
+                                </select>
+                                <button type="submit" class="btn btn--primary">Generar docente</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="panel__footer">
+                    <form th:action="@{/administrador/horarios/generar-todos}" method="post">
+                        <button type="submit" class="btn btn--secondary">
+                            Generar para todos
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel__header">
+                    <div class="panel__title">
+                        <div>
+                            <h2>Opciones generadas</h2>
+                            <p>Revise el detalle antes de aprobar una opcion.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                        <tr>
+                            <th>Docente</th>
+                            <th>Opcion</th>
+                            <th>Bloques</th>
+                            <th>Estado</th>
+                            <th>Generado</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <tr th:each="horario : ${horarios}">
+                            <td th:text="${horario.docente}">Docente</td>
+                            <td th:text="${'Opcion ' + horario.opcion}">Opcion</td>
+                            <td th:text="${horario.totalBloques}">0</td>
+                            <td>
+                                <span th:class="${horario.estado == 'APROBADO'} ? 'badge badge--active' : 'badge'"
+                                      th:text="${horario.estado}">PENDIENTE</span>
+                            </td>
+                            <td th:text="${horario.fechaGeneracion}">2026-01-01</td>
+                            <td>
+                                <div class="action-group">
+                                    <a th:href="@{/administrador/horarios(horario=${horario.idHorario})}"
+                                       class="btn btn--secondary">Ver</a>
+
+                                    <form th:action="@{/administrador/horarios/aprobar/{id}(id=${horario.idHorario})}"
+                                          method="post"
+                                          class="inline-form"
+                                          th:if="${horario.estado != 'APROBADO'}"
+                                          onsubmit="return confirm('Aprobar esta opcion de horario?');">
+                                        <button type="submit" class="btn btn--primary">Aprobar</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr th:if="${#lists.isEmpty(horarios)}">
+                            <td colspan="6" class="empty-table">Aun no hay horarios generados.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="panel" th:if="${detalleHorario != null}">
+                <div class="panel__header">
+                    <div class="panel__title">
+                        <div>
+                            <h2>Detalle de horario</h2>
+                            <p th:text="${'Horario #' + horarioSeleccionado}">Horario seleccionado</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                        <tr>
+                            <th>Curso</th>
+                            <th>Aula</th>
+                            <th>Sede</th>
+                            <th>Dia</th>
+                            <th>Inicio</th>
+                            <th>Fin</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="detalle : ${detalleHorario}">
+                            <td th:text="${detalle.curso}">Curso</td>
+                            <td th:text="${detalle.aula}">Aula</td>
+                            <td th:text="${detalle.sede}">Sede</td>
+                            <td th:text="${detalle.dia}">Lunes</td>
+                            <td th:text="${detalle.horaInicio}">07:00</td>
+                            <td th:text="${detalle.horaFin}">09:00</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </main>
+
+        <div th:replace="~{fragments/footer :: footer}"></div>
+    </div>
+</div>
+
+<script th:src="@{/js/admin.js}"></script>
+</body>
+</html>

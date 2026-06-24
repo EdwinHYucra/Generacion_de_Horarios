@@ -23,6 +23,7 @@ public class DocenteDashboardController {
 
         model.addAttribute("nombreUsuario", usuario.getNombre() + " " + usuario.getApellido());
         model.addAttribute("rolUsuario", "Docente");
+        model.addAttribute("moduloActivo", "dashboard");
 
         return "docente/dashboard";
     }

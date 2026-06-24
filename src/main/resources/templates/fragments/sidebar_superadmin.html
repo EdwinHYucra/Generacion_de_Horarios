@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<aside th:fragment="sidebarSuperadmin" class="superadmin-sidebar">
+    <div class="superadmin-brand">
+        <span class="superadmin-brand__mark">UTP</span>
+        <span>UTP SuperAdmin</span>
+    </div>
+
+    <nav class="superadmin-nav">
+        <a th:href="@{/superadmin/dashboard}"
+           class="superadmin-link"
+           th:classappend="${moduloActivo == 'dashboard'} ? ' superadmin-link--active' : ''">
+            <span class="superadmin-dot"></span>
+            <span>Dashboard</span>
+        </a>
+
+        <a th:href="@{/superadmin/admins}"
+           class="superadmin-link"
+           th:classappend="${moduloActivo == 'admins'} ? ' superadmin-link--active' : ''">
+            <span class="superadmin-dot"></span>
+            <span>Administradores</span>
+        </a>
+    </nav>
+
+    <div class="superadmin-logout">
+        <form th:action="@{/logout}" method="post">
+            <button type="submit">
+                <span class="superadmin-dot"></span>
+                <span>Cerrar sesion</span>
+            </button>
+        </form>
+    </div>
+</aside>
+
+</body>
+</html>

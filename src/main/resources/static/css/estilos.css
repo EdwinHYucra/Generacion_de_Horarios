@@ -25,14 +25,35 @@ body {
     font-weight: bold;
 }
 
+.navbar-links {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
 .navbar-links a {
     color: #cbd5e1;
     text-decoration: none;
-    margin-left: 20px;
     font-size: 0.95rem;
 }
 
 .navbar-links a:hover {
+    color: white;
+}
+
+.navbar-logout-form {
+    margin: 0;
+}
+
+.navbar-logout-form button {
+    border: 0;
+    background: transparent;
+    color: #cbd5e1;
+    cursor: pointer;
+    font: inherit;
+}
+
+.navbar-logout-form button:hover {
     color: white;
 }
 
@@ -302,4 +323,650 @@ body {
     background-color: #dbeafe;
     color: #2563eb;
     border: 1px solid #93c5fd;
+}
+
+/* Login estilo prototipo UTP */
+.login-page {
+    min-height: 100vh;
+    background: #f4f4f6;
+    color: #151821;
+    display: flex;
+    flex-direction: column;
+}
+
+.login-topbar {
+    height: 58px;
+    background: #ffffff;
+    border-bottom: 1px solid #d9dce3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 42px;
+}
+
+.login-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #e00000;
+    font-size: 18px;
+}
+
+.login-brand__mark,
+.login-card__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #e00000;
+    color: #ffffff;
+    font-weight: 900;
+}
+
+.login-brand__mark {
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    font-size: 10px;
+}
+
+.login-help {
+    color: #171923;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.login-shell {
+    flex: 1;
+    display: grid;
+    grid-template-columns: minmax(480px, 1fr) minmax(420px, 1fr);
+    min-height: calc(100vh - 98px);
+}
+
+.login-visual {
+    position: relative;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 25% 12%, rgba(224, 0, 0, 0.08), transparent 18%),
+        linear-gradient(135deg, #f5fdff 0%, #eaf7fb 52%, #ffffff 100%);
+    border-right: 1px solid #d9dce3;
+}
+
+.login-visual::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(135deg, rgba(160, 172, 190, 0.2) 8%, transparent 8%, transparent 50%, rgba(160, 172, 190, 0.2) 50%, rgba(160, 172, 190, 0.2) 58%, transparent 58%),
+        radial-gradient(circle, rgba(120, 132, 150, 0.22) 0 7px, transparent 8px);
+    background-size: 92px 92px, 150px 150px;
+    opacity: 0.38;
+}
+
+.campus-scene {
+    position: absolute;
+    inset: 40px 30px 0;
+}
+
+.campus-building {
+    position: absolute;
+    left: 0;
+    bottom: 120px;
+    width: 170px;
+    height: 270px;
+    background: #f2f5f8;
+    border: 2px solid #717987;
+    transform: skewY(-7deg);
+    box-shadow: 14px 16px 0 rgba(15, 23, 42, 0.06);
+}
+
+.campus-building span {
+    float: left;
+    width: 42px;
+    height: 52px;
+    margin: 18px 0 0 24px;
+    background: #dceaf4;
+    border: 2px solid #8ca0b2;
+}
+
+.campus-logo {
+    width: 68px;
+    height: 42px;
+    margin: 18px auto 0;
+    background: #e00000;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    letter-spacing: 3px;
+}
+
+.teacher-illustration {
+    position: absolute;
+    left: 230px;
+    bottom: 0;
+    width: 310px;
+    height: 470px;
+}
+
+.teacher-head {
+    position: absolute;
+    left: 95px;
+    top: 20px;
+    width: 104px;
+    height: 118px;
+    background: #f2a574;
+    border: 4px solid #171923;
+    border-radius: 48% 48% 45% 45%;
+    box-shadow: inset 0 16px 0 #3d271e;
+}
+
+.teacher-head::after {
+    content: "";
+    position: absolute;
+    left: 24px;
+    top: 46px;
+    width: 58px;
+    height: 18px;
+    border: 3px solid #171923;
+    border-left: 0;
+    border-right: 0;
+    border-radius: 16px;
+}
+
+.teacher-body {
+    position: absolute;
+    left: 58px;
+    top: 132px;
+    width: 185px;
+    height: 330px;
+    background: #073763;
+    border: 4px solid #172033;
+    border-radius: 70px 70px 22px 22px;
+}
+
+.teacher-body::before {
+    content: "";
+    position: absolute;
+    left: 62px;
+    top: 0;
+    width: 64px;
+    height: 185px;
+    background: #ffffff;
+    clip-path: polygon(0 0, 100% 0, 82% 100%, 18% 100%);
+}
+
+.teacher-tablet {
+    position: absolute;
+    left: 120px;
+    top: 242px;
+    width: 112px;
+    height: 142px;
+    background: #93a3b5;
+    border: 4px solid #172033;
+    border-radius: 12px;
+    transform: rotate(-12deg);
+}
+
+.teacher-tablet::after {
+    content: "";
+    position: absolute;
+    left: 45px;
+    top: 56px;
+    width: 20px;
+    height: 20px;
+    background: #d7e1ea;
+    border-radius: 50%;
+}
+
+.teacher-arm {
+    position: absolute;
+    right: 0;
+    top: 185px;
+    width: 130px;
+    height: 24px;
+    background: #f2a574;
+    border: 4px solid #172033;
+    border-radius: 24px;
+    transform: rotate(-25deg);
+}
+
+.student-group,
+.chart-board {
+    position: absolute;
+    background: #ffffff;
+    border: 2px solid #9aa6b5;
+    box-shadow: 0 10px 0 rgba(15, 23, 42, 0.06);
+}
+
+.student-group {
+    bottom: 46px;
+    width: 115px;
+    height: 58px;
+    border-radius: 14px;
+}
+
+.student-group--left {
+    left: 16px;
+}
+
+.student-group--right {
+    right: 72px;
+}
+
+.chart-board {
+    right: 80px;
+    bottom: 170px;
+    width: 120px;
+    height: 85px;
+}
+
+.chart-board::after {
+    content: "";
+    position: absolute;
+    left: 20px;
+    bottom: 18px;
+    width: 12px;
+    height: 24px;
+    background: #e00000;
+    box-shadow: 24px -16px 0 #8392a5, 48px -4px 0 #e00000;
+}
+
+.login-panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px;
+}
+
+.login-card--prototype {
+    width: 100%;
+    max-width: 370px;
+    padding: 42px 36px 22px;
+    border-radius: 8px;
+    box-shadow: 0 14px 28px rgba(15, 23, 42, 0.16);
+}
+
+.login-card--prototype h1 {
+    margin: 18px 0 10px;
+    text-align: center;
+    font-size: 25px;
+    color: #161922;
+}
+
+.login-card--prototype p {
+    margin: 0 0 30px;
+    text-align: center;
+    color: #8d929d;
+    font-size: 13px;
+}
+
+.login-card__icon {
+    width: 58px;
+    height: 58px;
+    margin: 0 auto;
+    border-radius: 50%;
+    background: #ffe1e4;
+    color: #e00000;
+    font-size: 12px;
+}
+
+.login-form {
+    display: grid;
+    gap: 18px;
+}
+
+.login-field label {
+    display: block;
+    margin-bottom: 8px;
+    color: #151821;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.login-input {
+    height: 40px;
+    border: 1px solid #cfd4dd;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 12px;
+    background: #ffffff;
+}
+
+.login-input span {
+    color: #8a92a0;
+    font-weight: 800;
+}
+
+.login-input input {
+    width: 100%;
+    border: 0;
+    outline: 0;
+    font: inherit;
+    color: #151821;
+}
+
+.login-options {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+}
+
+.login-options label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: #8d929d;
+}
+
+.login-options a {
+    color: #e00000;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.login-submit {
+    height: 42px;
+    border: 0;
+    border-radius: 6px;
+    background: #e00000;
+    color: #ffffff;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.login-submit:hover {
+    background: #bd0000;
+}
+
+.login-footer {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top: 1px solid #d9dce3;
+    background: #f5f5f6;
+    color: #9aa0aa;
+    font-size: 11px;
+    text-align: center;
+}
+
+/* SuperAdmin layout alineado al prototipo */
+.superadmin-app {
+    min-height: 100vh;
+    display: flex;
+    background: #f4f4f6;
+}
+
+.superadmin-sidebar {
+    width: 230px;
+    background: #050814;
+    color: #ffffff;
+    min-height: 100vh;
+    position: fixed;
+    inset: 0 auto 0 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.superadmin-brand {
+    height: 58px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 18px;
+    color: #ff1f1f;
+    font-weight: 900;
+}
+
+.superadmin-brand__mark {
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    background: #e00000;
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+}
+
+.superadmin-nav {
+    padding: 18px 14px;
+    display: grid;
+    gap: 8px;
+}
+
+.superadmin-link,
+.superadmin-logout button {
+    min-height: 40px;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 12px;
+    color: #a7adbb;
+    text-decoration: none;
+    border: 0;
+    background: transparent;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.superadmin-link--active,
+.superadmin-link:hover,
+.superadmin-logout button:hover {
+    color: #ffffff;
+    background: rgba(224, 0, 0, 0.18);
+}
+
+.superadmin-dot {
+    width: 8px;
+    height: 8px;
+    background: currentColor;
+    border-radius: 50%;
+}
+
+.superadmin-logout {
+    margin-top: auto;
+    padding: 16px;
+    border-top: 1px solid #1d2230;
+}
+
+.superadmin-logout form {
+    margin: 0;
+}
+
+.superadmin-main {
+    margin-left: 230px;
+    width: calc(100% - 230px);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.superadmin-topbar {
+    height: 58px;
+    background: #f7f7f9;
+    border-bottom: 1px solid #d9dce3;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 34px;
+}
+
+.superadmin-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: #171923;
+}
+
+.superadmin-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #e7ddff;
+    position: relative;
+}
+
+.superadmin-avatar::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: 1px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #16b364;
+    border: 2px solid #ffffff;
+}
+
+.superadmin-content {
+    width: min(920px, calc(100% - 64px));
+    margin: 0 auto;
+    padding: 34px 0 48px;
+}
+
+.superadmin-title h1 {
+    margin: 0 0 8px;
+    font-size: 30px;
+    color: #171923;
+}
+
+.superadmin-title p {
+    margin: 0;
+    color: #8d929d;
+    line-height: 1.5;
+}
+
+.superadmin-grid {
+    margin-top: 28px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(260px, 1fr));
+    gap: 22px;
+}
+
+.superadmin-card,
+.superadmin-table-card,
+.superadmin-form-card {
+    background: #ffffff;
+    border: 1px solid #dfe2e8;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(15, 23, 42, 0.06);
+}
+
+.superadmin-card {
+    min-height: 210px;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.superadmin-card__icon {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background: #ffe1e4;
+    color: #e00000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    margin-bottom: 20px;
+}
+
+.superadmin-card h2 {
+    margin: 0 0 10px;
+    font-size: 18px;
+}
+
+.superadmin-card p {
+    margin: 0 0 22px;
+    color: #8d929d;
+}
+
+.superadmin-card strong {
+    display: block;
+    margin-bottom: 12px;
+    font-size: 34px;
+}
+
+.superadmin-table-card,
+.superadmin-form-card {
+    margin-top: 26px;
+    padding: 24px;
+}
+
+.superadmin-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.superadmin-table th,
+.superadmin-table td {
+    padding: 13px 12px;
+    border-bottom: 1px solid #edf0f4;
+    text-align: left;
+    font-size: 13px;
+}
+
+.superadmin-table th {
+    color: #727988;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+
+.superadmin-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.superadmin-footer {
+    margin-top: auto;
+    height: 38px;
+    border-top: 1px solid #d9dce3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9aa0aa;
+    font-size: 11px;
+}
+
+@media (max-width: 920px) {
+    .login-shell {
+        grid-template-columns: 1fr;
+    }
+
+    .login-visual {
+        min-height: 360px;
+        border-right: 0;
+        border-bottom: 1px solid #d9dce3;
+    }
+
+    .login-panel {
+        padding: 28px;
+    }
+
+    .superadmin-sidebar {
+        width: 205px;
+    }
+
+    .superadmin-main {
+        margin-left: 205px;
+        width: calc(100% - 205px);
+    }
+
+    .superadmin-grid {
+        grid-template-columns: 1fr;
+    }
 }

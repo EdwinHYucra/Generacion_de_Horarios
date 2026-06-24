@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Editar Administrador</title>
@@ -7,46 +7,59 @@
 </head>
 <body>
 
-<nav class="navbar">
-    <span class="navbar-brand">Sistema de Horarios</span>
-    <div class="navbar-links">
-        <a th:href="@{/superadmin/dashboard}">Dashboard</a>
-        <a th:href="@{/superadmin/admins}">Administradores</a>
-        <a th:href="@{/logout}">Cerrar sesión</a>
-    </div>
-</nav>
+<div class="superadmin-app">
+    <div th:replace="~{fragments/sidebar_superadmin :: sidebarSuperadmin}"></div>
 
-<div class="contenido">
-    <h1>Editar Administrador</h1>
-
-    <div class="formulario-card">
-        <form th:action="@{/superadmin/admins/actualizar}"
-              th:object="${usuario}"
-              method="post">
-
-            <input type="hidden" th:field="*{id}">
-
-            <div class="campo">
-                <label>Nombre</label>
-                <input type="text" th:field="*{nombre}" placeholder="Nombre">
+    <div class="superadmin-main">
+        <header class="superadmin-topbar">
+            <div class="superadmin-user">
+                <div>
+                    <strong>Hola, SuperAdmin</strong><br>
+                    <span>Super administrador</span>
+                </div>
+                <div class="superadmin-avatar"></div>
             </div>
+        </header>
 
-            <div class="campo">
-                <label>Apellido</label>
-                <input type="text" th:field="*{apellido}" placeholder="Apellido">
-            </div>
+        <main class="superadmin-content">
+            <section class="superadmin-title">
+                <h1>Editar Administrador</h1>
+                <p>Actualiza los datos basicos del administrador seleccionado.</p>
+            </section>
 
-            <div class="campo">
-                <label>Email</label>
-                <input type="email" th:field="*{email}" placeholder="correo@ejemplo.com">
-            </div>
+            <section class="superadmin-form-card">
+                <form th:action="@{/superadmin/admins/actualizar}"
+                      th:object="${usuario}"
+                      method="post">
 
-            <div class="form-botones">
-                <a th:href="@{/superadmin/admins}" class="btn-secondary">Cancelar</a>
-                <button type="submit" class="btn-primary">Guardar cambios</button>
-            </div>
+                    <input type="hidden" th:field="*{id}">
 
-        </form>
+                    <div class="campo">
+                        <label>Nombre</label>
+                        <input type="text" th:field="*{nombre}" placeholder="Nombre">
+                    </div>
+
+                    <div class="campo">
+                        <label>Apellido</label>
+                        <input type="text" th:field="*{apellido}" placeholder="Apellido">
+                    </div>
+
+                    <div class="campo">
+                        <label>Email</label>
+                        <input type="email" th:field="*{email}" placeholder="admin@utp.edu.pe">
+                    </div>
+
+                    <div class="form-botones">
+                        <a th:href="@{/superadmin/admins}" class="btn-secondary">Cancelar</a>
+                        <button type="submit" class="btn-primary">Guardar cambios</button>
+                    </div>
+                </form>
+            </section>
+        </main>
+
+        <footer class="superadmin-footer">
+            © 2026 Generador de Horarios Automatico UTP - Universidad Tecnologica.
+        </footer>
     </div>
 </div>
 
