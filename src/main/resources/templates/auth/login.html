@@ -9,7 +9,7 @@
 
 <header class="login-topbar">
     <div class="login-brand">
-        <span class="login-brand__mark">UTP</span>
+        <span class="login-brand__mark"><i data-lucide="graduation-cap"></i></span>
         <strong>Generador de Horarios Automatico UTP</strong>
     </div>
     <a href="#" class="login-help">Ayuda</a>
@@ -17,28 +17,14 @@
 
 <main class="login-shell">
     <section class="login-visual" aria-label="Ilustracion institucional">
-        <div class="campus-scene">
-            <div class="campus-building">
-                <div class="campus-logo">UTP</div>
-                <span></span><span></span><span></span><span></span>
-            </div>
-
-            <div class="teacher-illustration">
-                <div class="teacher-head"></div>
-                <div class="teacher-body"></div>
-                <div class="teacher-tablet"></div>
-                <div class="teacher-arm"></div>
-            </div>
-
-            <div class="student-group student-group--left"></div>
-            <div class="student-group student-group--right"></div>
-            <div class="chart-board"></div>
-        </div>
+        <img class="login-visual__image"
+             th:src="@{/img/login/IMG_2.png}"
+             alt="Docente UTP presentando el sistema de horarios">
     </section>
 
     <section class="login-panel">
         <div class="login-card login-card--prototype">
-            <div class="login-card__icon">UTP</div>
+            <div class="login-card__icon"><i data-lucide="graduation-cap"></i></div>
             <h1>Iniciar Sesion</h1>
             <p>Ingresa tus credenciales institucionales para acceder.</p>
 
@@ -53,7 +39,7 @@
                 <div class="login-field">
                     <label for="username">Correo institucional</label>
                     <div class="login-input">
-                        <span>@</span>
+                        <span><i data-lucide="user"></i></span>
                         <input type="email" id="username" name="username"
                                placeholder="admin@sistema.com" required>
                     </div>
@@ -62,7 +48,7 @@
                 <div class="login-field">
                     <label for="password">Contrasena</label>
                     <div class="login-input">
-                        <span>*</span>
+                        <span><i data-lucide="lock"></i></span>
                         <input type="password" id="password" name="password"
                                placeholder="********" required>
                     </div>
@@ -86,5 +72,11 @@
     <p>© 2026 Generador de Horarios Automatico UTP - Universidad Tecnologica. Todos los derechos reservados.</p>
 </footer>
 
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+    if (window.lucide) {
+        window.lucide.createIcons();
+    }
+</script>
 </body>
 </html>

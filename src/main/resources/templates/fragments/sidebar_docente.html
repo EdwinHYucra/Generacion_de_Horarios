@@ -37,6 +37,13 @@
             <strong>Opciones de horario</strong>
         </a>
 
+        <a th:href="@{/docente/solicitudes}"
+           class="docente-nav__link"
+           th:classappend="${moduloActivo == 'solicitudes'} ? ' active' : ''">
+            <span class="nav-icon icon-calendar"></span>
+            <strong>Solicitudes</strong>
+        </a>
+
         <a th:href="@{/docente/mi-horario}"
            class="docente-nav__link"
            th:classappend="${moduloActivo == 'mi_horario'} ? ' active' : ''">

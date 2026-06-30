@@ -29,4 +29,8 @@ public interface HorarioGeneradoService {
     void aprobar(Long idHorario);
 
     void confirmarSeleccionDocente(Long idHorario, Long idDocente);
+
+    void marcarEnRevision(Long idHorario, Long idDocente);
+
+    void rechazarPorDocente(Long idHorario, Long idDocente);
 }

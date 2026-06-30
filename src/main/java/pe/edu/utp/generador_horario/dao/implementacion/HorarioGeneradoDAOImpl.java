@@ -163,6 +163,15 @@ public class HorarioGeneradoDAOImpl implements HorarioGeneradoDAO {
     }
 
     @Override
+    public Optional<String> findEstadoById(Long idHorario) {
+        List<String> estados = jdbcTemplate.queryForList(
+                "SELECT estado FROM horario_generado WHERE id_horario = ?",
+                String.class,
+                idHorario);
+        return estados.isEmpty() ? Optional.empty() : Optional.ofNullable(estados.get(0));
+    }
+
+    @Override
     public Optional<HorarioGeneradoResumenDTO> buscarAprobadoPorDocente(Long idDocente) {
         List<HorarioGeneradoResumenDTO> horarios = jdbcTemplate.query(
                 """
@@ -212,6 +221,28 @@ public class HorarioGeneradoDAOImpl implements HorarioGeneradoDAO {
     }
 
     @Override
+    public void actualizarEstado(Long idHorario, String estado) {
+        jdbcTemplate.update(
+                "UPDATE horario_generado SET estado = ? WHERE id_horario = ?",
+                estado,
+                idHorario);
+    }
+
+    @Override
+    public void descartarPendientesDeDocenteExcepto(Long idHorario, Long idDocente) {
+        jdbcTemplate.update(
+                """
+                        UPDATE horario_generado
+                        SET estado = 'DESCARTADO'
+                        WHERE id_docente = ?
+                          AND id_horario <> ?
+                          AND estado = 'PENDIENTE'
+                        """,
+                idDocente,
+                idHorario);
+    }
+
+    @Override
     public void aprobar(Long idHorario) {
         Long docenteId = jdbcTemplate.queryForObject(
                 "SELECT id_docente FROM horario_generado WHERE id_horario = ?",
@@ -220,8 +251,15 @@ public class HorarioGeneradoDAOImpl implements HorarioGeneradoDAO {
 
         if (docenteId != null) {
             jdbcTemplate.update(
-                    "UPDATE horario_generado SET estado = 'DESCARTADO' WHERE id_docente = ? AND estado = 'APROBADO'",
-                    docenteId);
+                    """
+                            UPDATE horario_generado
+                            SET estado = 'DESCARTADO'
+                            WHERE id_docente = ?
+                              AND id_horario <> ?
+                              AND estado IN ('PENDIENTE', 'APROBADA_DOCENTE', 'EN_REVISION', 'APROBADO')
+                            """,
+                    docenteId,
+                    idHorario);
         }
 
         jdbcTemplate.update("UPDATE horario_generado SET estado = 'APROBADO' WHERE id_horario = ?", idHorario);

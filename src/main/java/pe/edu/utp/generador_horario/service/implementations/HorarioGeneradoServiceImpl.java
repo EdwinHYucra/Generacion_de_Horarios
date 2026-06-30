@@ -30,6 +30,9 @@ public class HorarioGeneradoServiceImpl implements HorarioGeneradoService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HorarioGeneradoServiceImpl.class);
     private static final String ESTADO_PENDIENTE = "PENDIENTE";
+    private static final String ESTADO_APROBADA_DOCENTE = "APROBADA_DOCENTE";
+    private static final String ESTADO_EN_REVISION = "EN_REVISION";
+    private static final String ESTADO_RECHAZADA = "RECHAZADA";
 
     private final DocenteDAO docenteDAO;
     private final CicloAcademicoDAO cicloAcademicoDAO;
@@ -143,6 +146,12 @@ public class HorarioGeneradoServiceImpl implements HorarioGeneradoService {
 
     @Override
     public void aprobar(Long idHorario) {
+        String estadoActual = horarioGeneradoDAO.findEstadoById(idHorario)
+                .orElseThrow(() -> new IllegalArgumentException("Horario no encontrado."));
+        if (!ESTADO_APROBADA_DOCENTE.equals(estadoActual)) {
+            throw new IllegalArgumentException("Solo se puede aprobar definitivamente una propuesta aceptada por el docente.");
+        }
+
         horarioGeneradoDAO.aprobar(idHorario);
         LOGGER.info("Horario aprobado. idHorario={}", idHorario);
     }
@@ -155,7 +164,30 @@ public class HorarioGeneradoServiceImpl implements HorarioGeneradoService {
             throw new IllegalArgumentException("La opcion seleccionada no pertenece al docente autenticado.");
         }
 
-        horarioGeneradoDAO.aprobar(idHorario);
-        LOGGER.info("Horario confirmado por docente. idHorario={}, idDocente={}", idHorario, idDocente);
+        horarioGeneradoDAO.actualizarEstado(idHorario, ESTADO_APROBADA_DOCENTE);
+        horarioGeneradoDAO.descartarPendientesDeDocenteExcepto(idHorario, idDocente);
+        LOGGER.info("Horario aprobado por docente. idHorario={}, idDocente={}", idHorario, idDocente);
+    }
+
+    @Override
+    public void marcarEnRevision(Long idHorario, Long idDocente) {
+        validarHorarioDeDocente(idHorario, idDocente);
+        horarioGeneradoDAO.actualizarEstado(idHorario, ESTADO_EN_REVISION);
+        LOGGER.info("Horario marcado en revision por docente. idHorario={}, idDocente={}", idHorario, idDocente);
+    }
+
+    @Override
+    public void rechazarPorDocente(Long idHorario, Long idDocente) {
+        validarHorarioDeDocente(idHorario, idDocente);
+        horarioGeneradoDAO.actualizarEstado(idHorario, ESTADO_RECHAZADA);
+        LOGGER.info("Horario rechazado por docente. idHorario={}, idDocente={}", idHorario, idDocente);
+    }
+
+    private void validarHorarioDeDocente(Long idHorario, Long idDocente) {
+        if (!horarioGeneradoDAO.existePorDocente(idHorario, idDocente)) {
+            LOGGER.warn("Operacion rechazada: horario no pertenece al docente. idHorario={}, idDocente={}",
+                    idHorario, idDocente);
+            throw new IllegalArgumentException("La opcion seleccionada no pertenece al docente autenticado.");
+        }
     }
 }

@@ -29,4 +29,16 @@ public interface CursoDAO {
     List<Curso> findCursosDeCarreraPorCarrera(String carrera);
 
     List<Curso> findCursosGeneralesPorCarrera(String carrera);
+
+    List<Curso> findCursosDeCarreraPorCarreraFiltrandoEvaluacion(
+            String carrera,
+            Long idDocente,
+            Long idCicloAnterior,
+            double puntajeMinimo);
+
+    List<Curso> findCursosGeneralesPorCarreraFiltrandoEvaluacion(
+            String carrera,
+            Long idDocente,
+            Long idCicloAnterior,
+            double puntajeMinimo);
 }

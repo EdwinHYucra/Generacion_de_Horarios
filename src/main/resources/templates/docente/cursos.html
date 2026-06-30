@@ -133,6 +133,8 @@
                         </div>
                     </div>
 
+                    <p id="limiteHorasMensaje" class="resumen-alerta"></p>
+
                     <button type="button" id="btnGuardarCursos" class="btn-guardar-cursos">
                         Confirmar selección
                     </button>
@@ -146,6 +148,9 @@
 
 </div>
 
+<script th:inline="javascript">
+    window.maxHorasSemanales = /*[[${maxHorasSemanales}]]*/ 40;
+</script>
 <script th:src="@{/js/cursos_docente.js}"></script>
 </body>
 </html>

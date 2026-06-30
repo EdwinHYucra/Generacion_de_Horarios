@@ -72,8 +72,8 @@
                 <div class="panel__header">
                     <div class="panel__title">
                         <div>
-                            <h2>Opciones generadas</h2>
-                            <p>Revise el detalle antes de aprobar una opcion.</p>
+                            <h2>Horarios generados por docente</h2>
+                            <p>Abra el modal para revisar las propuestas completas antes de aprobar.</p>
                         </div>
                     </div>
                 </div>
@@ -83,78 +83,39 @@
                         <thead>
                         <tr>
                             <th>Docente</th>
-                            <th>Opcion</th>
-                            <th>Bloques</th>
+                            <th>Opciones</th>
+                            <th>Bloques totales</th>
                             <th>Estado</th>
-                            <th>Generado</th>
+                            <th>Ultima generacion</th>
                             <th class="text-center">Acciones</th>
                         </tr>
                         </thead>
 
                         <tbody>
-                        <tr th:each="horario : ${horarios}">
-                            <td th:text="${horario.docente}">Docente</td>
-                            <td th:text="${'Opcion ' + horario.opcion}">Opcion</td>
-                            <td th:text="${horario.totalBloques}">0</td>
+                        <tr th:each="grupo : ${horariosAgrupados}">
+                            <td th:text="${grupo.docente}">Docente</td>
+                            <td th:text="${grupo.cantidadOpciones}">3</td>
+                            <td th:text="${grupo.totalBloques}">0</td>
                             <td>
-                                <span th:class="${horario.estado == 'APROBADO'} ? 'badge badge--active' : 'badge'"
-                                      th:text="${horario.estado}">PENDIENTE</span>
+                                <span th:class="${grupo.estadoResumen == 'APROBADO'} ? 'badge badge--active' : 'badge'"
+                                      th:text="${grupo.estadoResumen}">PENDIENTE</span>
                             </td>
-                            <td th:text="${horario.fechaGeneracion}">2026-01-01</td>
+                            <td th:text="${grupo.fechaGeneracion}">2026-01-01</td>
                             <td>
                                 <div class="action-group">
-                                    <a th:href="@{/administrador/horarios(horario=${horario.idHorario})}"
-                                       class="btn btn--secondary">Ver</a>
-
-                                    <form th:action="@{/administrador/horarios/aprobar/{id}(id=${horario.idHorario})}"
-                                          method="post"
-                                          class="inline-form"
-                                          th:if="${horario.estado != 'APROBADO'}"
-                                          onsubmit="return confirm('Aprobar esta opcion de horario?');">
-                                        <button type="submit" class="btn btn--primary">Aprobar</button>
-                                    </form>
+                                    <button type="button"
+                                            class="btn btn--secondary"
+                                            th:data-docente-id="${grupo.idDocente}"
+                                            th:data-docente="${grupo.docente}"
+                                            onclick="abrirModalOpciones(this)">
+                                        Ver horarios
+                                    </button>
                                 </div>
                             </td>
                         </tr>
 
-                        <tr th:if="${#lists.isEmpty(horarios)}">
+                        <tr th:if="${#lists.isEmpty(horariosAgrupados)}">
                             <td colspan="6" class="empty-table">Aun no hay horarios generados.</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <section class="panel" th:if="${detalleHorario != null}">
-                <div class="panel__header">
-                    <div class="panel__title">
-                        <div>
-                            <h2>Detalle de horario</h2>
-                            <p th:text="${'Horario #' + horarioSeleccionado}">Horario seleccionado</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="table-wrapper">
-                    <table class="data-table">
-                        <thead>
-                        <tr>
-                            <th>Curso</th>
-                            <th>Aula</th>
-                            <th>Sede</th>
-                            <th>Dia</th>
-                            <th>Inicio</th>
-                            <th>Fin</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="detalle : ${detalleHorario}">
-                            <td th:text="${detalle.curso}">Curso</td>
-                            <td th:text="${detalle.aula}">Aula</td>
-                            <td th:text="${detalle.sede}">Sede</td>
-                            <td th:text="${detalle.dia}">Lunes</td>
-                            <td th:text="${detalle.horaInicio}">07:00</td>
-                            <td th:text="${detalle.horaFin}">09:00</td>
                         </tr>
                         </tbody>
                     </table>
@@ -167,6 +128,27 @@
     </div>
 </div>
 
+<div class="modal modal-horarios" id="modalOpcionesHorario">
+    <div class="modal__backdrop" onclick="cerrarModalOpciones()"></div>
+    <div class="modal__dialog modal__dialog--wide">
+        <div class="modal__header">
+            <div>
+                <h2 id="modalDocenteTitulo">Horarios generados del docente</h2>
+                <p>Revise las propuestas generadas y sus bloques antes de aprobar.</p>
+            </div>
+            <button type="button" class="modal__close" onclick="cerrarModalOpciones()">&times;</button>
+        </div>
+        <div class="modal__body">
+            <div id="modalOpcionesTabs" class="horario-modal-tabs"></div>
+            <div id="modalOpcionesContenido"></div>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    const opcionesPorDocente = /*[[${opcionesPorDocente}]]*/ {};
+    const diasHorarioAdmin = ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo"];
+</script>
 <script th:src="@{/js/admin.js}"></script>
 </body>
 </html>

@@ -2,36 +2,33 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <body>
 
-<header th:fragment="headerDocente" class="topbar">
+<header th:fragment="headerDocente" class="docente-topbar">
 
-    <button class="topbar__menu" type="button" aria-label="Abrir menú">
-        ☰
-    </button>
+    <div></div>
 
-    <div class="topbar__right">
+    <div class="docente-user-area">
 
-        <div class="topbar__notification">
-            <img th:src="@{/assets/IMG_10.svg}" alt="Notificaciones">
-            <span></span>
+        <div class="docente-notification" aria-label="Notificaciones">
+            <span class="nav-icon icon-bell"></span>
+            <i></i>
         </div>
 
-        <div class="topbar__divider"></div>
+        <div class="docente-user">
 
-        <div class="topbar__user">
-
-            <div class="topbar__user-text">
+            <div class="docente-user__text">
                 <strong
                         th:if="${session.usuario != null}"
                         th:text="${session.usuario.nombres + ' ' + session.usuario.apellidos}">
                     Usuario
                 </strong>
 
+                <strong th:if="${session.usuario == null}">Docente</strong>
                 <small>Docente</small>
             </div>
 
-            <div class="topbar__avatar">
-                <img th:src="@{/assets/IMG_9.webp}" alt="Usuario">
-                <span></span>
+            <div class="docente-avatar">
+                <span th:text="${session.usuario != null ? #strings.substring(session.usuario.nombres, 0, 1) : 'D'}">D</span>
+                <i></i>
             </div>
 
         </div>

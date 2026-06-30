@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Solicitudes</title>
+    <link rel="stylesheet" th:href="@{/css/style_dashboard_docente.css}">
+    <link rel="stylesheet" th:href="@{/css/opciones_horario.css}">
+</head>
+<body>
+
+<div class="docente-app">
+    <div th:replace="~{fragments/sidebar_docente :: sidebarDocente}"></div>
+
+    <div class="docente-main">
+        <div th:replace="~{fragments/header_docente :: headerDocente}"></div>
+
+        <main class="docente-content">
+            <section class="docente-heading">
+                <h1>Solicitudes</h1>
+                <p>Revise el historial de observaciones y rechazos enviados a administracion.</p>
+            </section>
+
+            <div th:if="${mensajeExito}" class="alert alert--success">
+                <span th:text="${mensajeExito}"></span>
+            </div>
+
+            <section class="docente-status-panel">
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                        <tr>
+                            <th>Codigo</th>
+                            <th>Fecha</th>
+                            <th>Horario</th>
+                            <th>Tipo</th>
+                            <th>Comentario</th>
+                            <th>Estado</th>
+                            <th>Respuesta</th>
+                            <th>Fecha respuesta</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="solicitud : ${solicitudes}">
+                            <td th:text="${solicitud.codigoSolicitud}">SOL</td>
+                            <td th:text="${solicitud.fechaRegistro}">2026-01-01</td>
+                            <td th:text="${'Opcion ' + solicitud.opcionHorario}">Opcion</td>
+                            <td th:text="${solicitud.tipoSolicitud}">Tipo</td>
+                            <td th:text="${solicitud.comentarioDocente}">Comentario</td>
+                            <td th:text="${solicitud.estadoSolicitud}">Pendiente</td>
+                            <td th:text="${solicitud.comentarioAdministrador ?: '-'}">-</td>
+                            <td th:text="${solicitud.fechaResolucion ?: '-'}">-</td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(solicitudes)}">
+                            <td colspan="8" class="empty-table">Aun no registra solicitudes.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+</div>
+
+</body>
+</html>

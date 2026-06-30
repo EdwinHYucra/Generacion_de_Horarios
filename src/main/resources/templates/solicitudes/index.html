@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Solicitudes de Cambio</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+
+<div class="app">
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <div class="main">
+        <div th:replace="~{fragments/header :: header}"></div>
+
+        <main class="content">
+            <section class="page-title">
+                <h1>Solicitudes de Cambio</h1>
+                <p>Atiende observaciones y rechazos enviados por docentes.</p>
+            </section>
+
+            <div th:if="${mensajeExito}" class="alert alert--success">
+                <span th:text="${mensajeExito}"></span>
+            </div>
+
+            <section class="panel">
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                        <tr>
+                            <th>Codigo</th>
+                            <th>Docente</th>
+                            <th>Horario</th>
+                            <th>Tipo</th>
+                            <th>Comentario docente</th>
+                            <th>Estado</th>
+                            <th>Respuesta</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="solicitud : ${solicitudes}">
+                            <td th:text="${solicitud.codigoSolicitud}">SOL</td>
+                            <td th:text="${solicitud.docente}">Docente</td>
+                            <td th:text="${'Opcion ' + solicitud.opcionHorario}">Opcion</td>
+                            <td th:text="${solicitud.tipoSolicitud}">Tipo</td>
+                            <td th:text="${solicitud.comentarioDocente}">Comentario</td>
+                            <td th:text="${solicitud.estadoSolicitud}">PENDIENTE</td>
+                            <td>
+                                <form th:if="${solicitud.estadoSolicitud == 'PENDIENTE'}"
+                                      th:action="@{/administrador/solicitudes/responder}"
+                                      method="post"
+                                      class="form-group"
+                                      onsubmit="return this.comentarioAdministrador.value.trim().length > 0;">
+                                    <input type="hidden" name="idSolicitud" th:value="${solicitud.idSolicitud}">
+                                    <textarea name="comentarioAdministrador"
+                                              rows="3"
+                                              class="form-control"
+                                              placeholder="Comentario obligatorio"></textarea>
+                                    <div class="action-group">
+                                        <button type="submit" name="estado" value="APROBADA" class="btn btn--primary">
+                                            Aprobar
+                                        </button>
+                                        <button type="submit" name="estado" value="RECHAZADA" class="btn btn--secondary">
+                                            Rechazar
+                                        </button>
+                                    </div>
+                                </form>
+                                <span th:unless="${solicitud.estadoSolicitud == 'PENDIENTE'}"
+                                      th:text="${solicitud.comentarioAdministrador ?: '-'}">-</span>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(solicitudes)}">
+                            <td colspan="7" class="empty-table">Aun no hay solicitudes registradas.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <div th:replace="~{fragments/footer :: footer}"></div>
+    </div>
+</div>
+
+</body>
+</html>

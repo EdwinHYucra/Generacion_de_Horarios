@@ -25,6 +25,21 @@ public class DocenteCursoDAOImpl implements DocenteCursoDAO {
     }
 
     @Override
+    public int countDocentesByCursoIdAndCicloId(Long idCurso, Long idCicloAcademico) {
+        Integer total = jdbcTemplate.queryForObject(
+                """
+                        SELECT COUNT(DISTINCT id_docente)
+                        FROM docente_curso
+                        WHERE id_curso = ?
+                          AND id_ciclo_academico = ?
+                        """,
+                Integer.class,
+                idCurso,
+                idCicloAcademico);
+        return total == null ? 0 : total;
+    }
+
+    @Override
     public void deleteByDocenteIdAndCicloId(Long idDocente, Long idCicloAcademico) {
         jdbcTemplate.update(
                 "DELETE FROM docente_curso WHERE id_docente = ? AND id_ciclo_academico = ?",

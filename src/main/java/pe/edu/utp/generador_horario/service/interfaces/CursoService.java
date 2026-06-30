@@ -50,4 +50,16 @@ public interface CursoService {
     List<Curso> listarCursosDeCarreraPorCarrera(String carrera);
 
     List<Curso> listarCursosGeneralesPorCarrera(String carrera);
+
+    List<Curso> listarCursosDeCarreraPorCarreraFiltrandoEvaluacion(
+            String carrera,
+            Long idDocente,
+            Long idCicloAnterior,
+            double puntajeMinimo);
+
+    List<Curso> listarCursosGeneralesPorCarreraFiltrandoEvaluacion(
+            String carrera,
+            Long idDocente,
+            Long idCicloAnterior,
+            double puntajeMinimo);
 }

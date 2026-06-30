@@ -25,6 +25,8 @@ import pe.edu.utp.generador_horario.service.interfaces.HorarioGeneradoService;
 public class CursoDocenteController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CursoDocenteController.class);
+    private static final int MAX_HORAS_SEMANALES = 40;
+    private static final double PUNTAJE_MINIMO_CURSO_DISPONIBLE = 12.0;
 
     private final CursoService cursoService;
     private final CicloAcademicoDAO cicloAcademicoDAO;
@@ -70,10 +72,25 @@ public class CursoDocenteController {
             palabraCarrera = "Civil";
         }
 
-        model.addAttribute("cursosCarrera", cursoService.listarCursosDeCarreraPorCarrera(palabraCarrera));
-        model.addAttribute("cursosGenerales", cursoService.listarCursosGeneralesPorCarrera(palabraCarrera));
+        Long cicloAnteriorId = cicloAcademicoDAO.findIdAnteriorAlActivo().orElse(null);
+
+        model.addAttribute("cursosCarrera", cicloAnteriorId == null
+                ? cursoService.listarCursosDeCarreraPorCarrera(palabraCarrera)
+                : cursoService.listarCursosDeCarreraPorCarreraFiltrandoEvaluacion(
+                        palabraCarrera,
+                        docente.getIdDocente(),
+                        cicloAnteriorId,
+                        PUNTAJE_MINIMO_CURSO_DISPONIBLE));
+        model.addAttribute("cursosGenerales", cicloAnteriorId == null
+                ? cursoService.listarCursosGeneralesPorCarrera(palabraCarrera)
+                : cursoService.listarCursosGeneralesPorCarreraFiltrandoEvaluacion(
+                        palabraCarrera,
+                        docente.getIdDocente(),
+                        cicloAnteriorId,
+                        PUNTAJE_MINIMO_CURSO_DISPONIBLE));
         model.addAttribute("cursosSeleccionados",
                 docenteCursoDAO.findCursoIdsByDocenteIdAndCicloId(docente.getIdDocente(), cicloActivoId));
+        model.addAttribute("maxHorasSemanales", MAX_HORAS_SEMANALES);
 
         return "docente/cursos";
     }
@@ -90,6 +107,19 @@ public class CursoDocenteController {
         Docente docente = docenteDAO.findByUsuarioId(usuario.getId())
                 .orElseThrow(() -> new RuntimeException("Docente no encontrado"));
         Long cicloActivoId = obtenerCicloActivoId();
+
+        int horasSeleccionadas = request.getCursosSeleccionados() == null
+                ? 0
+                : request.getCursosSeleccionados()
+                        .stream()
+                        .map(cursoService::obtenerPorId)
+                        .mapToInt(curso -> curso.getHorasSemanales() == null ? 0 : curso.getHorasSemanales())
+                        .sum();
+        if (horasSeleccionadas > MAX_HORAS_SEMANALES) {
+            return ResponseEntity.badRequest().body(
+                    "No se puede continuar: la carga seleccionada supera "
+                            + MAX_HORAS_SEMANALES + " horas semanales.");
+        }
 
         docenteCursoDAO.deleteByDocenteIdAndCicloId(docente.getIdDocente(), cicloActivoId);
 

@@ -20,7 +20,7 @@ import java.util.Optional;
 public class EvaluacionDocenteRestriccion implements RestriccionHorario {
 
     private static final String CODIGO = "EVALUACION_DOCENTE";
-    private static final int PUNTAJE_MAXIMO_MALO = 15;
+    private static final double PUNTAJE_MINIMO_PERMITIDO = 12.0;
 
     private final CicloAcademicoDAO cicloAcademicoDAO;
     private final EvaluacionDocenteDAO evaluacionDocenteDAO;
@@ -51,10 +51,10 @@ public class EvaluacionDocenteRestriccion implements RestriccionHorario {
                 candidata.getIdDocente(),
                 candidata.getIdCurso());
 
-        if (promedio.isPresent() && promedio.get() <= PUNTAJE_MAXIMO_MALO) {
+        if (promedio.isPresent() && promedio.get() < PUNTAJE_MINIMO_PERMITIDO) {
             return ResultadoRestriccionDTO.invalido(
                     CODIGO,
-                    "El docente tuvo evaluacion mala en este curso durante el ciclo anterior.");
+                    "El docente tuvo evaluacion menor a 6/10 en este curso durante el ciclo anterior.");
         }
 
         return ResultadoRestriccionDTO.valido();

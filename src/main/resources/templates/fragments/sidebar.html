@@ -61,6 +61,12 @@
             <span>Validación</span>
         </a>
 
+        <a th:href="@{/administrador/solicitudes}" class="sidebar__link"
+           th:classappend="${moduloActivo == 'solicitudes'} ? ' sidebar__link--active' : ''">
+            <img th:src="@{/assets/IMG_7.svg}" alt="Solicitudes">
+            <span>Solicitudes</span>
+        </a>
+
     </nav>
 
     <div class="sidebar__logout">

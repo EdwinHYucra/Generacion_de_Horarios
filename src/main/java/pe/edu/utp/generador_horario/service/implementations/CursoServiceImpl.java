@@ -114,4 +114,30 @@ public class CursoServiceImpl implements CursoService {
     public List<Curso> listarCursosGeneralesPorCarrera(String carrera) {
         return cursoDAO.findCursosGeneralesPorCarrera(carrera);
     }
+
+    @Override
+    public List<Curso> listarCursosDeCarreraPorCarreraFiltrandoEvaluacion(
+            String carrera,
+            Long idDocente,
+            Long idCicloAnterior,
+            double puntajeMinimo) {
+        return cursoDAO.findCursosDeCarreraPorCarreraFiltrandoEvaluacion(
+                carrera,
+                idDocente,
+                idCicloAnterior,
+                puntajeMinimo);
+    }
+
+    @Override
+    public List<Curso> listarCursosGeneralesPorCarreraFiltrandoEvaluacion(
+            String carrera,
+            Long idDocente,
+            Long idCicloAnterior,
+            double puntajeMinimo) {
+        return cursoDAO.findCursosGeneralesPorCarreraFiltrandoEvaluacion(
+                carrera,
+                idDocente,
+                idCicloAnterior,
+                puntajeMinimo);
+    }
 }

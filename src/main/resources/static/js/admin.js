@@ -246,3 +246,137 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
+
+function abrirModalOpciones(boton) {
+    const docenteId = boton.dataset.docenteId;
+    const docente = boton.dataset.docente || "Docente";
+    const opciones = opcionesPorDocente ? opcionesPorDocente[docenteId] : [];
+    const modal = document.getElementById("modalOpcionesHorario");
+
+    document.getElementById("modalDocenteTitulo").textContent = "Horarios generados: " + docente;
+    renderizarTabsOpcionesAdmin(opciones || []);
+    renderizarOpcionAdmin((opciones || [])[0]);
+
+    if (modal) {
+        modal.classList.add("modal--show");
+        modal.setAttribute("aria-hidden", "false");
+    }
+}
+
+function cerrarModalOpciones() {
+    cerrarModal("modalOpcionesHorario");
+}
+
+function renderizarTabsOpcionesAdmin(opciones) {
+    const contenedor = document.getElementById("modalOpcionesTabs");
+    contenedor.innerHTML = "";
+
+    opciones.forEach(function (opcion, index) {
+        const boton = document.createElement("button");
+        boton.type = "button";
+        boton.className = "horario-tab" + (index === 0 ? " is-active" : "");
+        boton.textContent = "Opcion " + opcion.opcion;
+        boton.addEventListener("click", function () {
+            document.querySelectorAll(".horario-tab").forEach(function (tab) {
+                tab.classList.remove("is-active");
+            });
+            boton.classList.add("is-active");
+            renderizarOpcionAdmin(opcion);
+        });
+        contenedor.appendChild(boton);
+    });
+}
+
+function renderizarOpcionAdmin(opcion) {
+    const contenedor = document.getElementById("modalOpcionesContenido");
+    if (!opcion) {
+        contenedor.innerHTML = '<p class="empty-table">No hay opciones para este docente.</p>';
+        return;
+    }
+
+    const horas = obtenerHorasAdmin(opcion);
+    if (horas.length === 0) {
+        contenedor.innerHTML = `
+            <div class="horario-modal-summary">
+                <div>
+                    <strong>Opcion ${opcion.opcion}</strong>
+                    <small>Horario #${opcion.idHorario || "-"} - ${opcion.observacion || "PENDIENTE"}</small>
+                </div>
+                <span>0 bloques generados</span>
+            </div>
+            <p class="empty-table">Esta propuesta todavia no tiene bloques de horario.</p>
+        `;
+        return;
+    }
+
+    const filas = horas.map(function (hora) {
+        const celdas = diasHorarioAdmin.map(function (dia) {
+            const bloques = (opcion.bloques || []).filter(function (bloque) {
+                return normalizarDiaAdmin(bloque.dia) === normalizarDiaAdmin(dia)
+                    && bloque.horaInicio === hora;
+            });
+
+            return "<td>" + bloques.map(renderizarBloqueAdmin).join("") + "</td>";
+        }).join("");
+
+        return '<tr><td class="horario-hora">' + hora + "</td>" + celdas + "</tr>";
+    }).join("");
+
+    const accion = opcion.observacion === "APROBADA_DOCENTE"
+        ? `<form action="/administrador/horarios/aprobar/${opcion.idHorario}" method="post"
+              class="horario-modal-actions"
+              onsubmit="return confirm('Aprobar definitivamente esta opcion de horario?');">
+            <button type="submit" class="btn btn--primary">Aprobar opcion</button>
+        </form>`
+        : `<div class="horario-modal-actions">
+            <span class="badge">${opcion.observacion || "PENDIENTE"}</span>
+        </div>`;
+
+    contenedor.innerHTML = `
+        <div class="horario-modal-summary">
+            <div>
+                <strong>Opcion ${opcion.opcion}</strong>
+                <small>Horario #${opcion.idHorario || "-"} - ${opcion.observacion || "PENDIENTE"}</small>
+            </div>
+            <span>${(opcion.bloques || []).length} bloques generados</span>
+        </div>
+        <div class="table-wrapper">
+            <table class="horario-modal-table">
+                <thead>
+                    <tr>
+                        <th>Hora</th>
+                        ${diasHorarioAdmin.map(function (dia) { return "<th>" + dia + "</th>"; }).join("")}
+                    </tr>
+                </thead>
+                <tbody>${filas}</tbody>
+            </table>
+        </div>
+        ${accion}
+    `;
+}
+
+function renderizarBloqueAdmin(bloque) {
+    return `
+        <div class="horario-modal-block">
+            <strong>${bloque.curso}</strong>
+            <span>${bloque.horaInicio} - ${bloque.horaFin}</span>
+            <small>${bloque.aula} | ${bloque.sede}</small>
+        </div>
+    `;
+}
+
+function obtenerHorasAdmin(opcion) {
+    const horas = new Set();
+    (opcion.bloques || []).forEach(function (bloque) {
+        horas.add(bloque.horaInicio);
+    });
+    return Array.from(horas).sort();
+}
+
+function normalizarDiaAdmin(dia) {
+    return String(dia || "")
+        .trim()
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+}

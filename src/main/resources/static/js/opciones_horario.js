@@ -1,262 +1,272 @@
+const coloresCursos = [
+    "#e00000",
+    "#f7c948",
+    "#2fd67a",
+    "#3da5f4",
+    "#c96a21",
+    "#8b5cf6",
+    "#14b8a6"
+];
+
+const estadoOpciones = {
+    opciones: Array.isArray(opcionesHorarioData) ? opcionesHorarioData : [],
+    activa: null
+};
+
 document.addEventListener("DOMContentLoaded", () => {
-
-    const btnConfirmar = document.getElementById("btnConfirmar");
-    const inputOpcionSeleccionada = document.getElementById("idOpcionSeleccionada");
-
-    const modalDetalle = document.getElementById("modalDetalle");
-    const modalObservacion = document.getElementById("modalObservacion");
-
-    const btnCerrarDetalle = document.getElementById("cerrarDetalle");
-    const btnCerrarObservacion = document.getElementById("cerrarObservacion");
-    const btnCancelarObservacion = document.getElementById("cancelarObservacion");
-
-    let opcionSeleccionada = null;
-
-    /* ==========================
-       SELECCIONAR HORARIO
-       ========================== */
-
-    document.querySelectorAll(".btn-seleccionar").forEach(btn => {
-
-        btn.addEventListener("click", () => {
-
-            document
-                .querySelectorAll(".opcion-card")
-                .forEach(card => card.classList.remove("selected"));
-
-            const card = btn.closest(".opcion-card");
-
-            card.classList.add("selected");
-
-            opcionSeleccionada = btn.dataset.id;
-
-            inputOpcionSeleccionada.value = opcionSeleccionada;
-
-            btnConfirmar.disabled = false;
-        });
-
-    });
-
-    /* ==========================
-       ABRIR DETALLE
-       ========================== */
-
-    document.querySelectorAll(".btn-ver-detalle").forEach(btn => {
-
-        btn.addEventListener("click", () => {
-
-            const idOpcion = btn.dataset.id;
-
-            abrirDetalle(idOpcion);
-
-        });
-
-    });
-
-    /* ==========================
-       CERRAR DETALLE
-       ========================== */
-
-    btnCerrarDetalle.addEventListener("click", () => {
-
-        modalDetalle.classList.add("hidden");
-
-    });
-
-    /* ==========================
-       ABRIR OBSERVACION
-       ========================== */
-
-    const btnObservacion = document.getElementById("btnObservacion");
-
-    btnObservacion.addEventListener("click", () => {
-
-        modalObservacion.classList.remove("hidden");
-
-    });
-
-    /* ==========================
-       CERRAR OBSERVACION
-       ========================== */
-
-    btnCerrarObservacion.addEventListener("click", () => {
-
-        modalObservacion.classList.add("hidden");
-
-    });
-
-    btnCancelarObservacion.addEventListener("click", () => {
-
-        modalObservacion.classList.add("hidden");
-
-    });
-
-    /* ==========================
-       GUARDAR OBSERVACION
-       ========================== */
-
-    document
-        .getElementById("formObservacion")
-        .addEventListener("submit", function (e) {
-
-            e.preventDefault();
-
-            const tipo =
-                document.getElementById("tipoObservacion").value;
-
-            const comentario =
-                document.getElementById("comentarioObservacion").value;
-
-            if (!tipo) {
-
-                alert("Seleccione un tipo de observación.");
-
-                return;
-            }
-
-            if (!comentario.trim()) {
-
-                alert("Ingrese un comentario.");
-
-                return;
-            }
-
-            console.log("Observación registrada");
-
-            console.log({
-                opcion: opcionSeleccionada,
-                tipo,
-                comentario
-            });
-
-            alert("Observación enviada correctamente.");
-
-            this.reset();
-
-            modalObservacion.classList.add("hidden");
-
-        });
-
-    /* ==========================
-       CERRAR CON BACKDROP
-       ========================== */
-
-    document
-        .querySelectorAll(".modal-backdrop")
-        .forEach(backdrop => {
-
-            backdrop.addEventListener("click", () => {
-
-                modalDetalle.classList.add("hidden");
-                modalObservacion.classList.add("hidden");
-
-            });
-
-        });
-
-});
-
-
-/* ==========================================
-   DETALLE DE HORARIO
-   ========================================== */
-
-function abrirDetalle(idHorario) {
-
-    const modalDetalle =
-        document.getElementById("modalDetalle");
-
-    const tituloDetalle =
-        document.getElementById("tituloDetalle");
-
-    const detalleBody =
-        document.getElementById("detalleHorarioBody");
-
-    const detalleCursos =
-        document.getElementById("detalleCursos");
-
-    const detalleCreditos =
-        document.getElementById("detalleCreditos");
-
-    const detalleCarga =
-        document.getElementById("detalleCarga");
-
-    const detalleSedes =
-        document.getElementById("detalleSedes");
-
-    const detalleAulas =
-        document.getElementById("detalleAulas");
-
-    const idOpcionObservacion =
-        document.getElementById("idOpcionObservacion");
-
-    tituloDetalle.textContent =
-        "Detalle opcion " + idHorario;
-
-    idOpcionObservacion.value =
-        idHorario;
-
-    detalleBody.innerHTML = "";
-
-    detalleCursos.innerHTML = "";
-
-    /* ==================================
-       SI EXISTE DATA THYMELEAF
-       ================================== */
-
-    if (typeof opcionesHorarioData !== "undefined") {
-
-        const opcion =
-            opcionesHorarioData.find(
-                o => String(o.idHorario) === String(idHorario)
-            );
-
-        if (opcion) {
-
-            detalleCreditos.textContent =
-                opcion.creditos || 0;
-
-            detalleCarga.textContent =
-                (opcion.cargaSemanal || 0) + " h";
-
-            detalleSedes.textContent =
-                opcion.sedes || 0;
-
-            detalleAulas.textContent =
-                opcion.aulas || 0;
-
-            if (opcion.bloques) {
-                const cursos = [...new Set(opcion.bloques.map(bloque => bloque.curso))];
-                cursos.forEach(curso => {
-
-                    detalleCursos.innerHTML += `
-                        <div class="curso-detalle">
-                            <strong>${curso}</strong>
-                        </div>
-                    `;
-
-                });
-
-            }
-
-            opcion.bloques.forEach(bloque => {
-                detalleBody.innerHTML += `
-                    <tr>
-                        <td>${bloque.horaInicio} - ${bloque.horaFin}</td>
-                        <td>${bloque.dia === "Lunes" ? bloque.curso : ""}</td>
-                        <td>${bloque.dia === "Martes" ? bloque.curso : ""}</td>
-                        <td>${bloque.dia === "Miercoles" ? bloque.curso : ""}</td>
-                        <td>${bloque.dia === "Jueves" ? bloque.curso : ""}</td>
-                        <td>${bloque.dia === "Viernes" ? bloque.curso : ""}</td>
-                        <td>${bloque.dia === "Sabado" ? bloque.curso : ""}</td>
-                    </tr>
-                `;
-            });
-
-        }
-
+    if (window.lucide) {
+        window.lucide.createIcons();
     }
 
-    modalDetalle.classList.remove("hidden");
+    const sinOpciones = document.getElementById("sinOpciones");
+    const panelHorario = document.getElementById("panelHorario");
+    const accionesSolicitud = document.getElementById("accionesSolicitud");
+    const btnVerDetalle = document.getElementById("btnVerDetalle");
+    const btnCerrarDetalle = document.getElementById("cerrarDetalle");
+    const modalDetalle = document.getElementById("modalDetalle");
 
+    if (estadoOpciones.opciones.length === 0) {
+        sinOpciones.classList.remove("hidden");
+        return;
+    }
+
+    panelHorario.classList.remove("hidden");
+    accionesSolicitud.classList.remove("hidden");
+    construirSelectorOpciones();
+    seleccionarOpcion(estadoOpciones.opciones[0].idHorario);
+
+    btnVerDetalle.addEventListener("click", abrirDetalleActivo);
+    btnCerrarDetalle.addEventListener("click", cerrarDetalle);
+    modalDetalle.querySelector(".modal-backdrop").addEventListener("click", cerrarDetalle);
+});
+
+function construirSelectorOpciones() {
+    const selector = document.getElementById("opcionesSelector");
+    selector.innerHTML = "";
+
+    estadoOpciones.opciones.forEach(opcion => {
+        const boton = document.createElement("button");
+        boton.type = "button";
+        boton.className = "opcion-tab";
+        boton.dataset.id = opcion.idHorario;
+        boton.textContent = `Opcion ${opcion.opcion}`;
+        boton.addEventListener("click", () => seleccionarOpcion(opcion.idHorario));
+        selector.appendChild(boton);
+    });
+}
+
+function seleccionarOpcion(idHorario) {
+    const opcion = estadoOpciones.opciones.find(item => String(item.idHorario) === String(idHorario));
+    if (!opcion) {
+        return;
+    }
+
+    estadoOpciones.activa = opcion;
+    document.getElementById("idOpcionSeleccionada").value = opcion.idHorario;
+    document.getElementById("btnConfirmar").disabled = false;
+    document.getElementById("tituloOpcion").textContent = `Opcion ${opcion.opcion}`;
+    document.getElementById("comentarioSolicitud").value = "";
+
+    document.querySelectorAll(".opcion-tab").forEach(tab => {
+        tab.classList.toggle("active", String(tab.dataset.id) === String(opcion.idHorario));
+    });
+
+    renderizarHorario(opcion, document.getElementById("horarioActivoBody"));
+    renderizarResumen(opcion);
+}
+
+function renderizarHorario(opcion, tbody) {
+    const horas = obtenerHoras(opcion);
+    tbody.innerHTML = "";
+
+    horas.forEach(hora => {
+        const fila = document.createElement("tr");
+        fila.appendChild(crearCeldaHora(hora));
+
+        diasSemanaData.forEach(dia => {
+            const celda = document.createElement("td");
+            obtenerBloquesPorInicio(opcion, dia, hora).forEach(bloque => {
+                celda.appendChild(crearBloqueHorario(bloque, obtenerColorCurso(bloque.curso, opcion)));
+            });
+            fila.appendChild(celda);
+        });
+
+        tbody.appendChild(fila);
+    });
+}
+
+function crearCeldaHora(hora) {
+    const celda = document.createElement("td");
+    celda.className = "hora";
+    celda.textContent = hora;
+    return celda;
+}
+
+function crearBloqueHorario(bloque, color) {
+    const div = document.createElement("div");
+    div.className = "bloque-horario";
+    div.style.background = mezclarColor(color, 0.18);
+    div.style.borderColor = mezclarColor(color, 0.45);
+    div.style.color = color;
+
+    const curso = document.createElement("strong");
+    curso.textContent = bloque.curso;
+
+    const horario = document.createElement("span");
+    horario.textContent = `${bloque.horaInicio} - ${bloque.horaFin}`;
+
+    const aula = document.createElement("span");
+    aula.textContent = `${bloque.aula} | ${bloque.sede}`;
+
+    div.appendChild(curso);
+    div.appendChild(horario);
+    div.appendChild(aula);
+    return div;
+}
+
+function renderizarResumen(opcion) {
+    const cursos = obtenerCursosUnicos(opcion);
+    const resumenCursos = document.getElementById("resumenCursos");
+    resumenCursos.innerHTML = "";
+
+    cursos.forEach((curso, index) => {
+        const item = document.createElement("div");
+        item.className = "curso-chip";
+
+        const color = document.createElement("span");
+        color.className = "curso-color";
+        color.style.background = coloresCursos[index % coloresCursos.length];
+
+        const texto = document.createElement("span");
+        texto.textContent = curso;
+
+        item.appendChild(color);
+        item.appendChild(texto);
+        resumenCursos.appendChild(item);
+    });
+
+    const metricas = calcularMetricas(opcion);
+    document.getElementById("metricaBloques").textContent = metricas.bloques;
+    document.getElementById("metricaCarga").textContent = `${metricas.horas}h`;
+    document.getElementById("metricaDias").textContent = metricas.dias;
+    document.getElementById("metricaAulas").textContent = metricas.aulas;
+}
+
+function abrirDetalleActivo() {
+    const opcion = estadoOpciones.activa;
+    if (!opcion) {
+        return;
+    }
+
+    document.getElementById("tituloDetalle").textContent = `Opcion ${opcion.opcion}`;
+    renderizarHorario(opcion, document.getElementById("detalleHorarioBody"));
+    renderizarDetalleCursos(opcion);
+
+    const metricas = calcularMetricas(opcion);
+    document.getElementById("detalleCarga").textContent = `${metricas.horas}h`;
+    document.getElementById("detalleSedes").textContent = metricas.sedes;
+    document.getElementById("detalleAulas").textContent = metricas.aulas;
+    document.getElementById("modalDetalle").classList.remove("hidden");
+}
+
+function cerrarDetalle() {
+    document.getElementById("modalDetalle").classList.add("hidden");
+}
+
+function renderizarDetalleCursos(opcion) {
+    const contenedor = document.getElementById("detalleCursos");
+    contenedor.innerHTML = "";
+
+    opcion.bloques.forEach(bloque => {
+        const item = document.createElement("div");
+        item.className = "curso-detalle";
+
+        const titulo = document.createElement("strong");
+        titulo.textContent = bloque.curso;
+
+        const meta = document.createElement("small");
+        meta.textContent = `${bloque.dia} ${bloque.horaInicio} - ${bloque.horaFin} | ${bloque.aula} | ${bloque.sede}`;
+
+        item.appendChild(titulo);
+        item.appendChild(meta);
+        contenedor.appendChild(item);
+    });
+}
+
+function prepararSolicitud(form) {
+    const opcion = estadoOpciones.activa;
+    const comentario = document.getElementById("comentarioSolicitud").value.trim();
+
+    if (!opcion) {
+        alert("Seleccione una opcion de horario.");
+        return false;
+    }
+
+    if (!comentario) {
+        alert("Debe registrar una justificacion antes de observar o rechazar.");
+        return false;
+    }
+
+    form.querySelector("input[name='idHorario']").value = opcion.idHorario;
+    form.querySelector("input[name='comentario']").value = comentario;
+    return true;
+}
+
+function obtenerHoras(opcion) {
+    const horas = new Set(bloquesHoraData || []);
+    (opcion.bloques || []).forEach(bloque => horas.add(bloque.horaInicio));
+    return Array.from(horas).sort();
+}
+
+function obtenerBloquesPorInicio(opcion, dia, hora) {
+    return (opcion.bloques || []).filter(bloque =>
+        normalizarDia(bloque.dia) === normalizarDia(dia) && bloque.horaInicio === hora
+    );
+}
+
+function obtenerCursosUnicos(opcion) {
+    return Array.from(new Set((opcion.bloques || []).map(bloque => bloque.curso)));
+}
+
+function obtenerColorCurso(curso, opcion) {
+    const indice = obtenerCursosUnicos(opcion).indexOf(curso);
+    return coloresCursos[Math.max(indice, 0) % coloresCursos.length];
+}
+
+function calcularMetricas(opcion) {
+    const bloques = opcion.bloques || [];
+    const minutos = bloques.reduce((total, bloque) => total + minutosEntre(bloque.horaInicio, bloque.horaFin), 0);
+
+    return {
+        bloques: bloques.length,
+        horas: (minutos / 60).toFixed(minutos % 60 === 0 ? 0 : 1),
+        dias: new Set(bloques.map(bloque => normalizarDia(bloque.dia))).size,
+        sedes: new Set(bloques.map(bloque => bloque.sede)).size,
+        aulas: new Set(bloques.map(bloque => bloque.aula)).size
+    };
+}
+
+function minutosEntre(inicio, fin) {
+    return horaAMinutos(fin) - horaAMinutos(inicio);
+}
+
+function horaAMinutos(hora) {
+    const partes = hora.split(":").map(Number);
+    return partes[0] * 60 + partes[1];
+}
+
+function normalizarDia(dia) {
+    return String(dia || "")
+        .trim()
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+}
+
+function mezclarColor(hex, alpha) {
+    const clean = hex.replace("#", "");
+    const r = parseInt(clean.substring(0, 2), 16);
+    const g = parseInt(clean.substring(2, 4), 16);
+    const b = parseInt(clean.substring(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }

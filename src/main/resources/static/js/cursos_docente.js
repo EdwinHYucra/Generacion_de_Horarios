@@ -3,6 +3,8 @@ const resumenLista = document.getElementById("resumenLista");
 const totalCursos = document.getElementById("totalCursos");
 const totalHoras = document.getElementById("totalHoras");
 const btnGuardarCursos = document.getElementById("btnGuardarCursos");
+const limiteHorasMensaje = document.getElementById("limiteHorasMensaje");
+const maxHorasSemanales = Number(window.maxHorasSemanales || 40);
 
 function actualizarResumen() {
     const seleccionados = document.querySelectorAll(".curso-check:checked");
@@ -33,6 +35,14 @@ function actualizarResumen() {
 
     totalCursos.textContent = seleccionados.length;
     totalHoras.textContent = horas;
+
+    if (horas > maxHorasSemanales) {
+        limiteHorasMensaje.textContent = `La carga supera el maximo permitido de ${maxHorasSemanales} horas semanales.`;
+        btnGuardarCursos.disabled = true;
+    } else {
+        limiteHorasMensaje.textContent = "";
+        btnGuardarCursos.disabled = false;
+    }
 }
 
 checksCursos.forEach(check => {
@@ -41,6 +51,12 @@ checksCursos.forEach(check => {
 
 btnGuardarCursos.addEventListener("click", async () => {
     const cursosSeleccionados = [];
+    const horasSeleccionadas = Number(totalHoras.textContent || 0);
+
+    if (horasSeleccionadas > maxHorasSemanales) {
+        alert(`No se puede continuar: la carga supera ${maxHorasSemanales} horas semanales.`);
+        return;
+    }
 
     document.querySelectorAll(".curso-check:checked").forEach(check => {
         cursosSeleccionados.push(Number(check.value));
@@ -60,7 +76,7 @@ btnGuardarCursos.addEventListener("click", async () => {
         if (response.ok) {
             alert(await response.text());
         } else {
-            alert("Error al guardar los cursos.");
+            alert(await response.text());
         }
     } catch (error) {
         console.error(error);

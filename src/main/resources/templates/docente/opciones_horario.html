@@ -5,117 +5,128 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Opciones de Horario</title>
 
+    <link rel="stylesheet" th:href="@{/css/style_dashboard_docente.css}">
     <link rel="stylesheet" th:href="@{/css/opciones_horario.css}">
 </head>
 <body>
 
-<div class="app">
+<div class="docente-app">
 
     <div th:replace="~{fragments/sidebar_docente :: sidebarDocente}"></div>
 
-    <div class="main">
+    <div class="docente-main">
 
         <div th:replace="~{fragments/header_docente :: headerDocente}"></div>
 
-        <main class="content">
+        <main class="docente-content opciones-content">
 
             <section class="opciones-header">
-    <h1>Opciones de Horario</h1>
-    <p>
-        Seleccione la propuesta de horario que mejor se adapte a su disponibilidad.
-    </p>
-</section>
-<section class="opciones-grid">
+                <div>
+                    <h1>Opciones de horario</h1>
+                    <p>Revise una propuesta a la vez y abra el detalle completo antes de confirmar.</p>
+                </div>
 
-    <article class="opcion-card"
-             th:each="opcion,iter : ${opcionesHorario}">
+                <div id="opcionesSelector" class="opciones-selector" aria-label="Opciones generadas"></div>
+            </section>
 
-        <div class="opcion-card__header">
-            <h2 th:text="'Opcion ' + ${opcion.opcion}">
-                Opción 1
-            </h2>
-        </div>
+            <section id="sinOpciones" class="estado-vacio hidden">
+                <strong>No hay propuestas disponibles.</strong>
+                <span>Registre disponibilidad y seleccione cursos para generar opciones de horario.</span>
+            </section>
 
-        <div class="mini-horario">
-
-            <table class="mini-horario__tabla">
-
-                <thead>
-                <tr>
-                    <th>Hora</th>
-
-                    <th th:each="dia : ${diasSemana}"
-                        th:text="${dia}">
-                        Lunes
-                    </th>
-                </tr>
-                </thead>
-
-                <tbody>
-
-                <tr th:each="hora : ${bloquesHora}">
-
-                    <td class="hora"
-                        th:text="${hora}">
-                        07:00
-                    </td>
-
-                    <td th:each="dia : ${diasSemana}">
-
-                        <div class="mini-bloque"
-                             th:each="bloque : ${opcion.bloques}"
-                             th:if="${bloque.dia == dia and bloque.horaInicio == hora}"
-                             th:text="${bloque.curso}">
-                            CURSO
+            <section id="panelHorario" class="horario-panel hidden">
+                <div class="horario-card">
+                    <div class="horario-card__header">
+                        <div>
+                            <span class="eyebrow">Propuesta activa</span>
+                            <h2 id="tituloOpcion">Opcion 1</h2>
                         </div>
 
-                    </td>
+                        <button type="button" id="btnVerDetalle" class="btn-secundario">
+                            <i data-lucide="info"></i>
+                            Ver detalle
+                        </button>
+                    </div>
 
-                </tr>
+                    <div class="horario-grid-shell">
+                        <table class="horario-grid">
+                            <thead>
+                            <tr>
+                                <th>Hora</th>
+                                <th th:each="dia : ${diasSemana}" th:text="${dia}">Lunes</th>
+                            </tr>
+                            </thead>
+                            <tbody id="horarioActivoBody"></tbody>
+                        </table>
+                    </div>
+                </div>
 
-                </tbody>
+                <aside class="resumen-horario">
+                    <h3>Cursos</h3>
+                    <div id="resumenCursos" class="resumen-cursos"></div>
 
-            </table>
+                    <div class="metricas-horario">
+                        <div>
+                            <span>Bloques</span>
+                            <strong id="metricaBloques">0</strong>
+                        </div>
+                        <div>
+                            <span>Carga semanal</span>
+                            <strong id="metricaCarga">0h</strong>
+                        </div>
+                        <div>
+                            <span>Dias de clase</span>
+                            <strong id="metricaDias">0</strong>
+                        </div>
+                        <div>
+                            <span>Aulas</span>
+                            <strong id="metricaAulas">0</strong>
+                        </div>
+                    </div>
 
-        </div>
+                    <form th:action="@{/docente/opciones_horario/confirmar}" method="post">
+                        <input type="hidden" id="idOpcionSeleccionada" name="idHorario">
+                        <button type="submit" id="btnConfirmar" class="btn-principal" disabled>
+                            <i data-lucide="check-circle"></i>
+                            Confirmar horario
+                        </button>
+                    </form>
+                </aside>
+            </section>
 
-        <div class="opcion-card__footer">
+            <section id="accionesSolicitud" class="solicitud-panel hidden">
+                <div>
+                    <h2>Solicitud sobre esta propuesta</h2>
+                    <p>Use estas acciones si necesita observar o rechazar la propuesta activa.</p>
+                </div>
 
-            <button type="button"
-                    class="btn-ver-detalle"
-                    th:data-id="${opcion.idHorario}">
-                Ver más
-            </button>
+                <textarea id="comentarioSolicitud"
+                          rows="3"
+                          placeholder="Justificacion obligatoria para observar o rechazar"></textarea>
 
-            <button type="button"
-                    class="btn-seleccionar"
-                    th:data-id="${opcion.idHorario}">
-                Seleccionar
-            </button>
+                <div class="solicitud-actions">
+                    <form th:action="@{/docente/opciones_horario/observar}"
+                          method="post"
+                          onsubmit="return prepararSolicitud(this);">
+                        <input type="hidden" name="idHorario">
+                        <input type="hidden" name="comentario">
+                        <button type="submit" class="btn-secundario">
+                            <i data-lucide="message-square"></i>
+                            Observar
+                        </button>
+                    </form>
 
-        </div>
-
-    </article>
-
-</section>
-            <section class="confirmacion">
-
-                <form th:action="@{/docente/opciones_horario/confirmar}"
-                      method="post">
-
-                    <input type="hidden"
-                           id="idOpcionSeleccionada"
-                           name="idHorario">
-
-                    <button type="submit"
-                            id="btnConfirmar"
-                            class="btn-confirmar"
-                            disabled>
-                        Confirmar Horario
-                    </button>
-
-                </form>
-
+                    <form th:action="@{/docente/opciones_horario/rechazar}"
+                          method="post"
+                          onsubmit="return prepararSolicitud(this);">
+                        <input type="hidden" name="idHorario">
+                        <input type="hidden" name="comentario">
+                        <button type="submit" class="btn-peligro">
+                            <i data-lucide="x-circle"></i>
+                            Rechazar
+                        </button>
+                    </form>
+                </div>
             </section>
 
         </main>
@@ -126,196 +137,53 @@
 
 </div>
 
-
-
-<!-- MODAL DETALLE -->
-
 <div class="modal hidden" id="modalDetalle">
-
     <div class="modal-backdrop"></div>
 
     <div class="modal-container modal-container--grande">
-
         <div class="modal-header">
+            <div>
+                <span class="eyebrow">Detalle de horario</span>
+                <h2 id="tituloDetalle">Opcion 1</h2>
+            </div>
 
-            <h2 id="tituloDetalle">
-                Detalle de Horario
-            </h2>
-
-            <button type="button"
-                    class="btn-cerrar"
-                    id="cerrarDetalle">
-                ×
+            <button type="button" class="btn-cerrar" id="cerrarDetalle" aria-label="Cerrar">
+                <i data-lucide="x"></i>
             </button>
-
         </div>
 
-        <div class="modal-body">
-
+        <div class="modal-body modal-body--detalle">
             <div class="detalle-horario">
-
                 <table class="tabla-detalle">
-
                     <thead>
-
                     <tr>
                         <th>Hora</th>
-                        <th>Lunes</th>
-                        <th>Martes</th>
-                        <th>Miércoles</th>
-                        <th>Jueves</th>
-                        <th>Viernes</th>
-                        <th>Sábado</th>
+                        <th th:each="dia : ${diasSemana}" th:text="${dia}">Lunes</th>
                     </tr>
-
                     </thead>
-
-                    <tbody id="detalleHorarioBody">
-
-                    </tbody>
-
+                    <tbody id="detalleHorarioBody"></tbody>
                 </table>
-
             </div>
 
             <aside class="detalle-resumen">
-
-                <h3>Cursos Programados</h3>
-
-                <div id="detalleCursos">
-
-                </div>
+                <h3>Cursos programados</h3>
+                <div id="detalleCursos"></div>
 
                 <div class="resumen-item">
-                    <strong>Créditos:</strong>
-                    <span id="detalleCreditos">0</span>
-                </div>
-
-                <div class="resumen-item">
-                    <strong>Carga Semanal:</strong>
+                    <strong>Carga semanal:</strong>
                     <span id="detalleCarga">0h</span>
                 </div>
-
                 <div class="resumen-item">
                     <strong>Sedes:</strong>
                     <span id="detalleSedes">0</span>
                 </div>
-
                 <div class="resumen-item">
                     <strong>Aulas:</strong>
                     <span id="detalleAulas">0</span>
                 </div>
-
-                <button type="button"
-                        class="btn-observacion"
-                        id="btnObservacion">
-                    Reportar Observación
-                </button>
-
             </aside>
-
         </div>
-
     </div>
-
-</div>
-
-<!-- MODAL OBSERVACION -->
-
-<div class="modal hidden" id="modalObservacion">
-
-    <div class="modal-backdrop"></div>
-
-    <div class="modal-container">
-
-        <div class="modal-header">
-
-            <h2>Registrar Observación</h2>
-
-            <button type="button"
-                    class="btn-cerrar"
-                    id="cerrarObservacion">
-                ×
-            </button>
-
-        </div>
-
-        <div class="modal-body">
-
-            <form id="formObservacion">
-
-                <input type="hidden"
-                       id="idOpcionObservacion">
-
-                <div class="form-group">
-
-                    <label for="tipoObservacion">
-                        Tipo de observación
-                    </label>
-
-                    <select id="tipoObservacion">
-
-                        <option value="">
-                            Seleccione una opción
-                        </option>
-
-                        <option value="SEDE">
-                            Cambio de sede
-                        </option>
-
-                        <option value="HORARIO">
-                            Horario muy ajustado
-                        </option>
-
-                        <option value="AULA">
-                            Aula inadecuada
-                        </option>
-
-                        <option value="DISTANCIA">
-                            Distancia excesiva
-                        </option>
-
-                        <option value="OTRO">
-                            Otro
-                        </option>
-
-                    </select>
-
-                </div>
-
-                <div class="form-group">
-
-                    <label for="comentarioObservacion">
-                        Comentario
-                    </label>
-
-                    <textarea id="comentarioObservacion"
-                              rows="6"
-                              placeholder="Describa el inconveniente encontrado en esta propuesta de horario."></textarea>
-
-                </div>
-
-                <div class="modal-actions">
-
-                    <button type="button"
-                            class="btn-secundario"
-                            id="cancelarObservacion">
-                        Cancelar
-                    </button>
-
-                    <button type="submit"
-                            class="btn-principal">
-                        Enviar Observación
-                    </button>
-
-                </div>
-
-            </form>
-
-        </div>
-
-    </div>
-
 </div>
 
 <script th:inline="javascript">
@@ -323,7 +191,7 @@
     const diasSemanaData = /*[[${diasSemana}]]*/ [];
     const bloquesHoraData = /*[[${bloquesHora}]]*/ [];
 </script>
-
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <script th:src="@{/js/opciones_horario.js}"></script>
 
 </body>

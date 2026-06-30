@@ -153,4 +153,70 @@ public class CursoDAOImpl implements CursoDAO {
                 """, mapper, carrera);
     }
 
+    @Override
+    public List<Curso> findCursosDeCarreraPorCarreraFiltrandoEvaluacion(
+            String carrera,
+            Long idDocente,
+            Long idCicloAnterior,
+            double puntajeMinimo) {
+        return jdbcTemplate.query("""
+                SELECT c.*
+                FROM cursos c
+                JOIN carrera_curso cc ON c.id_curso = cc.id_curso
+                JOIN carreras ca ON cc.id_carrera = ca.id_carrera
+                WHERE c.estado = TRUE
+                  AND cc.estado = TRUE
+                  AND LOWER(ca.nombre) LIKE CONCAT('%', LOWER(?), '%')
+                  AND (
+                      SELECT COUNT(*)
+                      FROM carrera_curso cc2
+                      WHERE cc2.id_curso = c.id_curso
+                        AND cc2.estado = TRUE
+                  ) = 1
+                  AND NOT EXISTS (
+                      SELECT 1
+                      FROM evaluacion_docente ed
+                      WHERE ed.id_docente = ?
+                        AND ed.id_ciclo_academico = ?
+                        AND ed.id_curso = c.id_curso
+                      GROUP BY ed.id_docente, ed.id_curso
+                      HAVING AVG(ed.puntaje) < ?
+                  )
+                ORDER BY c.nombre
+                """, mapper, carrera, idDocente, idCicloAnterior, puntajeMinimo);
+    }
+
+    @Override
+    public List<Curso> findCursosGeneralesPorCarreraFiltrandoEvaluacion(
+            String carrera,
+            Long idDocente,
+            Long idCicloAnterior,
+            double puntajeMinimo) {
+        return jdbcTemplate.query("""
+                SELECT c.*
+                FROM cursos c
+                JOIN carrera_curso cc ON c.id_curso = cc.id_curso
+                JOIN carreras ca ON cc.id_carrera = ca.id_carrera
+                WHERE c.estado = TRUE
+                  AND cc.estado = TRUE
+                  AND LOWER(ca.nombre) LIKE CONCAT('%', LOWER(?), '%')
+                  AND (
+                      SELECT COUNT(*)
+                      FROM carrera_curso cc2
+                      WHERE cc2.id_curso = c.id_curso
+                        AND cc2.estado = TRUE
+                  ) >= 2
+                  AND NOT EXISTS (
+                      SELECT 1
+                      FROM evaluacion_docente ed
+                      WHERE ed.id_docente = ?
+                        AND ed.id_ciclo_academico = ?
+                        AND ed.id_curso = c.id_curso
+                      GROUP BY ed.id_docente, ed.id_curso
+                      HAVING AVG(ed.puntaje) < ?
+                  )
+                ORDER BY c.nombre
+                """, mapper, carrera, idDocente, idCicloAnterior, puntajeMinimo);
+    }
+
 }

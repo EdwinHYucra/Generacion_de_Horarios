@@ -24,9 +24,15 @@ public interface HorarioGeneradoDAO {
 
     boolean existePorDocente(Long idHorario, Long idDocente);
 
+    Optional<String> findEstadoById(Long idHorario);
+
     Optional<HorarioGeneradoResumenDTO> buscarAprobadoPorDocente(Long idDocente);
 
     List<HorarioDetalleDTO> listarDetalles(Long idHorario);
+
+    void actualizarEstado(Long idHorario, String estado);
+
+    void descartarPendientesDeDocenteExcepto(Long idHorario, Long idDocente);
 
     void aprobar(Long idHorario);
 }
