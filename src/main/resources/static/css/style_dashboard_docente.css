@@ -144,6 +144,16 @@ body {
     right: -2px;
 }
 
+.icon-notification {
+    width: 24px;
+    height: 24px;
+    display: inline-block;
+    background-image: url("/img/docente/bell.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
 .docente-user {
     display: flex;
     align-items: center;
@@ -407,41 +417,27 @@ body {
     border-right: 2px solid #4b5563;
 }
 
-/* Dashboard */
+/* --- ICONO: DASHBOARD (PANEL PRINCIPAL) --- */
 .icon-dashboard {
     position: relative;
 }
 
-/* Calendario */
+/* --- ICONO: CALENDARIO / MI HORARIO --- */
+/* Estructura base para "Registrar disponibilidad" y "Mi horario" */
 .icon-calendar,
 .icon-mycalendar {
-    border: 2px solid currentColor;
-    border-radius: 4px;
+    width: 55px;
+    height: 55px;
+    display: inline-block;
+    background-image: url("/img/docente/calendar.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    border: none;
 }
 
-.icon-calendar::before,
-.icon-mycalendar::before {
-    content: "";
-    position: absolute;
-    top: 4px;
-    left: 0;
-    width: 100%;
-    border-top: 2px solid currentColor;
-}
-
-.icon-calendar::after,
-.icon-mycalendar::after {
-    content: "";
-    position: absolute;
-    top: -5px;
-    left: 5px;
-    width: 9px;
-    height: 6px;
-    border-left: 2px solid currentColor;
-    border-right: 2px solid currentColor;
-}
-
-/* Cursos */
+/* --- ICONO: CURSOS (LIBROS) --- */
+/* Representa tres libros verticales juntos. La base hace los bordes exteriores */
 .icon-books {
     border-left: 3px solid currentColor;
     border-right: 3px solid currentColor;
@@ -458,7 +454,7 @@ body {
     border-right: 2px solid currentColor;
 }
 
-/* Engranaje */
+/* --- ICONO: ENGRANAJE (OPCIONES DE HORARIO / CONFIGURACIÓN) --- */
 .icon-gear {
     border: 2px solid currentColor;
     border-radius: 50%;
@@ -472,7 +468,8 @@ body {
     border-radius: 50%;
 }
 
-/* Mensaje */
+/* --- ICONO: MENSAJES / CHAT --- */
+/* Caja rectangular del globo de texto */
 .icon-message {
     border: 2px solid currentColor;
     border-radius: 4px;
@@ -513,7 +510,8 @@ body {
     box-shadow: 12px 0 0 -2px #07080d,
                 12px 0 0 0 currentColor;
 }
-
+/* --- ICONO: NOTIFICACIÓN (CAMPANA ESTÁNDAR) --- */
+/* Cuerpo principal de la campana en el área gris/global */
 .notification-icon {
     width: 20px;
     height: 20px;
@@ -546,6 +544,8 @@ body {
     border-radius: 50%;
 }
 
+/* --- ICONO: CAMPANA DE NOTIFICACIONES (SIDEBAR/TOPBAR ACTIVA) --- */
+/* Variación de la campana que hereda el color del texto activo */
 .icon-bell {
     border: 2px solid currentColor;
     border-radius: 10px 10px 6px 6px;

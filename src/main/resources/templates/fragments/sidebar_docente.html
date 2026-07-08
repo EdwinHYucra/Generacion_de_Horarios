@@ -2,64 +2,90 @@
 
     <div class="docente-brand">
         <div class="docente-brand__icon">
-            <span class="brand-calendar"></span>
+            <img th:src="@{/img/docente/IMG_1.svg}" alt="Logo">
         </div>
         <span>Generador UTP</span>
     </div>
 
+
     <nav class="docente-nav">
+
 
         <a th:href="@{/docente/dashboard}"
            class="docente-nav__link"
            th:classappend="${moduloActivo == 'dashboard'} ? ' active' : ''">
-            <span class="nav-icon icon-dashboard"></span>
+            <img th:src="@{/img/docente/IMG_2.svg}" alt="Dashboard">
             <strong>Dashboard</strong>
+
         </a>
+
+
 
         <a th:href="@{/docente/disponibilidad}"
            class="docente-nav__link"
            th:classappend="${moduloActivo == 'disponibilidad'} ? ' active' : ''">
-            <span class="nav-icon icon-calendar"></span>
+            <img th:src="@{/img/docente/IMG_3.svg}" alt="Disponibilidad">
             <strong>Disponibilidad</strong>
+
         </a>
+
+
 
         <a th:href="@{/docente/cursos}"
            class="docente-nav__link"
            th:classappend="${moduloActivo == 'cursos'} ? ' active' : ''">
-            <span class="nav-icon icon-books"></span>
+            <img th:src="@{/img/docente/IMG_4.svg}" alt="Cursos">
             <strong>Cursos</strong>
+
         </a>
+
 
         <a th:href="@{/docente/opciones_horario}"
            class="docente-nav__link"
            th:classappend="${moduloActivo == 'opciones_horario'} ? ' active' : ''">
-            <span class="nav-icon icon-gear"></span>
+
+            <img th:src="@{/img/docente/IMG_5.svg}" alt="Opciones de horario">
+
             <strong>Opciones de horario</strong>
+
         </a>
+
 
         <a th:href="@{/docente/solicitudes}"
            class="docente-nav__link"
            th:classappend="${moduloActivo == 'solicitudes'} ? ' active' : ''">
-            <span class="nav-icon icon-calendar"></span>
+
+            <img th:src="@{/img/docente/IMG_6.svg}" alt="Solicitudes">
+
             <strong>Solicitudes</strong>
+
         </a>
+
 
         <a th:href="@{/docente/mi-horario}"
            class="docente-nav__link"
            th:classappend="${moduloActivo == 'mi_horario'} ? ' active' : ''">
-            <span class="nav-icon icon-mycalendar"></span>
+            <img th:src="@{/img/docente/IMG_7.svg}" alt="Mi horario">
             <strong>Mi horario</strong>
+
         </a>
+
 
     </nav>
 
+
     <div class="docente-logout">
+
         <form th:action="@{/logout}" method="post">
+
             <button type="submit">
-                <span class="nav-icon icon-logout"></span>
+                <img th:src="@{/img/docente/IMG_8.svg}" alt="Cerrar sesión">
                 <strong>Cerrar sesion</strong>
+
             </button>
+
         </form>
+
     </div>
 
 </aside>
