@@ -146,10 +146,24 @@ async function cargarDisponibilidadGuardada() {
 }
 
 function seleccionarTurno(inicio, fin) {
+
+    const bloquesTurno = [];
+
     document.querySelectorAll(".slot").forEach(slot => {
         const hora = slot.dataset.hora;
 
         if (hora >= inicio && hora < fin) {
+            bloquesTurno.push(slot);
+        }
+    });
+
+    const todosSeleccionados =
+        bloquesTurno.every(slot => slot.classList.contains("selected"));
+
+    bloquesTurno.forEach(slot => {
+        if (todosSeleccionados) {
+            slot.classList.remove("selected");
+        } else {
             slot.classList.add("selected");
         }
     });
