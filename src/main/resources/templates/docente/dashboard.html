@@ -2,52 +2,34 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Docente</title>
-    <link rel="stylesheet" th:href="@{/css/style_dashboard_docente.css}">
+    <link rel="stylesheet" th:href="@{/css/docente.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard_docente.css}">
 </head>
 <body>
 
 <div class="docente-app">
-
+    <!-- Sidebar compartido del portal Docente -->
     <div th:replace="~{fragments/sidebar_docente :: sidebarDocente}"></div>
 
     <div class="docente-main">
-
-        <header class="docente-topbar">
-            <div></div>
-
-            <div class="docente-user-area">
-                <div class="docente-notification">
-                    <span class="nav-icon icon-notification"></span>
-                    <i></i>
-                </div>
-
-                <div class="docente-user">
-                    <div class="docente-user__text">
-                        <strong th:text="${nombreUsuario}">Juan Perez</strong>
-                        <small th:text="${rolUsuario}">Docente</small>
-                    </div>
-
-                    <div class="docente-avatar">
-                        <span th:text="${#strings.substring(nombreUsuario, 0, 1)}">J</span>
-                        <i></i>
-                    </div>
-                </div>
-            </div>
-        </header>
+        <!-- Parte superior: información del Docente -->
+        <div th:replace="~{fragments/header_docente :: headerDocente}"></div>
 
         <main class="docente-content">
-
+            <!-- Bienvenida del Dashboard -->
             <section class="docente-heading">
                 <h1>Bienvenido, <span th:text="${rolUsuario}">Docente</span></h1>
-                <p>Gestione su disponibilidad, cursos y opciones de horario para el ciclo academico actual.</p>
+                <p>Gestione su disponibilidad, cursos y opciones de horario para el ciclo académico actual.</p>
             </section>
 
+            <!-- Accesos principales del Docente -->
             <section class="docente-card-grid">
 
                 <article class="docente-action-card">
                     <div class="docente-action-card__icon">
-                        <span class="card-icon icon-calendar"></span>
+                        <img th:src="@{/img/docente/dashboard_disponibilidad.svg}" alt="" aria-hidden="true">
                     </div>
                     <h2>Registrar disponibilidad</h2>
                     <p>Indique los rangos de horas y dias en los que se encuentra disponible para dictar clases.</p>
@@ -56,7 +38,7 @@
 
                 <article class="docente-action-card">
                     <div class="docente-action-card__icon">
-                        <span class="card-icon icon-books"></span>
+                        <img th:src="@{/img/docente/IMG_12.svg}" alt="" aria-hidden="true">
                     </div>
                     <h2>Seleccionar cursos</h2>
                     <p>Elija las materias o asignaturas que desea y esta capacitado para dictar este ciclo.</p>
@@ -65,7 +47,7 @@
 
                 <article class="docente-action-card">
                     <div class="docente-action-card__icon">
-                        <span class="card-icon icon-gear"></span>
+                        <img th:src="@{/img/docente/IMG_13.svg}" alt="" aria-hidden="true">
                     </div>
                     <h2>Opciones de horario</h2>
                     <p>Revise las propuestas generadas y confirme la opcion que mejor se ajusta a su disponibilidad.</p>
@@ -74,7 +56,7 @@
 
                 <article class="docente-action-card">
                     <div class="docente-action-card__icon">
-                        <span class="card-icon icon-mycalendar"></span>
+                        <img th:src="@{/img/docente/IMG_14.svg}" alt="" aria-hidden="true">
                     </div>
                     <h2>Mi horario</h2>
                     <p>Visualice su horario final asignado y confirmado una vez finalizado el proceso.</p>
@@ -83,6 +65,7 @@
 
             </section>
 
+            <!-- Estado dinámico del proceso académico -->
             <section class="docente-status-panel">
                 <div class="docente-status-panel__header">
                     <span></span>
@@ -91,27 +74,27 @@
 
                 <div class="docente-status-grid">
 
-                    <div class="docente-status-item">
-                        <div class="docente-status-item__icon">OK</div>
+                    <div class="docente-status-item" th:classappend="${disponibilidadRegistrada} ? ' is-complete' : ' is-pending'">
+                        <div class="docente-status-item__icon" th:text="${disponibilidadRegistrada} ? '✓' : '…'">…</div>
                         <div>
                             <strong>Disponibilidad</strong>
-                            <p>Registrada</p>
+                            <p th:text="${disponibilidadRegistrada} ? 'Registrada' : 'Pendiente de registro'">Pendiente de registro</p>
                         </div>
                     </div>
 
-                    <div class="docente-status-item">
-                        <div class="docente-status-item__icon">OK</div>
+                    <div class="docente-status-item" th:classappend="${cursosSeleccionados} ? ' is-complete' : ' is-pending'">
+                        <div class="docente-status-item__icon" th:text="${cursosSeleccionados} ? '✓' : '…'">…</div>
                         <div>
                             <strong>Cursos</strong>
-                            <p>Seleccionados</p>
+                            <p th:text="${cursosSeleccionados} ? 'Seleccionados' : 'Pendientes de selección'">Pendientes de selección</p>
                         </div>
                     </div>
 
-                    <div class="docente-status-item">
-                        <div class="docente-status-item__icon">...</div>
+                    <div class="docente-status-item" th:classappend="${horarioAsignado} ? ' is-complete' : ' is-pending'">
+                        <div class="docente-status-item__icon" th:text="${horarioAsignado} ? '✓' : '…'">…</div>
                         <div>
                             <strong>Horario final</strong>
-                            <p>Pendiente de asignacion</p>
+                            <p th:text="${horarioAsignado} ? 'Asignado' : 'Pendiente de asignación'">Pendiente de asignación</p>
                         </div>
                     </div>
 
@@ -119,10 +102,16 @@
             </section>
 
         </main>
+        <!-- Footer compartido del portal Docente -->
+        <div th:replace="~{fragments/footer_docente :: footerDocente}"></div>
 
     </div>
 
 </div>
+
+<!-- Confirmación del cambio de fotografía del perfil -->
+<div th:replace="~{fragments/notificacion_docente :: notificacionDocente}"></div>
+<script th:src="@{/js/docente_notificaciones.js}"></script>
 
 </body>
 </html>

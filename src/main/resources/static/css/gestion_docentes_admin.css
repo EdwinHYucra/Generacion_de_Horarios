@@ -1,0 +1,168 @@
+/* Contenido compacto exclusivo de Gestión de docentes */
+.content--docentes {
+    padding: 18px 24px 18px;
+}
+
+.content--docentes .page-heading {
+    margin-bottom: 12px;
+}
+
+.docentes-heading-title {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.docentes-heading-title > img {
+    width: 18px;
+    height: 18px;
+    margin-top: 1px;
+    filter: brightness(0) saturate(100%) invert(15%) sepia(97%) saturate(6414%) hue-rotate(359deg) brightness(92%) contrast(117%);
+}
+
+.content--docentes .page-heading h1 {
+    font-size: 18px;
+}
+
+.content--docentes .page-heading p {
+    margin-top: 5px;
+    font-size: 9px;
+}
+
+.content--docentes .btn--add {
+    min-width: 104px;
+    height: 28px;
+    margin-top: 0;
+    padding: 0 12px;
+    font-size: 9px;
+}
+
+/* Buscador y filtros conservados en una sola fila */
+.content--docentes .docente-filter-card {
+    min-height: 42px;
+    grid-template-columns: minmax(190px, 1fr) auto 82px 82px 82px;
+    gap: 8px;
+    margin-bottom: 10px;
+    padding: 7px;
+    border-radius: 7px;
+}
+
+.content--docentes .docente-search,
+.content--docentes .docente-select {
+    height: 27px;
+    border-radius: 5px;
+    font-size: 9px;
+}
+
+.content--docentes .docente-search {
+    padding: 0 9px;
+}
+
+.content--docentes .docente-search input {
+    font-size: 9px;
+}
+
+.content--docentes .docente-filter-label {
+    gap: 4px;
+    font-size: 9px;
+    white-space: nowrap;
+}
+
+.content--docentes .docente-select {
+    padding: 0 8px;
+}
+
+/* Tabla compacta y proporcionada como la referencia */
+.content--docentes .docente-table-card {
+    border-radius: 7px;
+}
+
+.content--docentes .docente-table th {
+    height: 29px;
+    padding: 0 12px;
+    font-size: 8px;
+}
+
+.content--docentes .docente-table td {
+    height: 38px;
+    padding: 0 12px;
+    font-size: 9px;
+}
+
+.content--docentes .teacher-cell {
+    gap: 9px;
+}
+
+.content--docentes .teacher-avatar {
+    width: 23px;
+    height: 23px;
+    font-size: 8px;
+}
+
+.content--docentes .teacher-cell strong {
+    font-size: 9px;
+}
+
+.content--docentes .teacher-cell small,
+.content--docentes .docente-table small {
+    margin-top: 2px;
+    font-size: 7px;
+}
+
+.content--docentes .status-pill {
+    min-width: 40px;
+    height: 18px;
+    padding: 0 7px;
+    font-size: 7px;
+}
+
+.content--docentes .action-group {
+    gap: 8px;
+}
+
+.content--docentes .action-link,
+.content--docentes .action-button {
+    width: 16px;
+    height: 16px;
+}
+
+.content--docentes .action-link img,
+.content--docentes .action-button img {
+    width: 12px;
+    height: 12px;
+}
+
+/* Acciones de edición y desactivación en gris neutro */
+.content--docentes .action-link img,
+.content--docentes .btnEliminarDocente img {
+    opacity: .72;
+}
+
+.content--docentes .docente-table-footer {
+    height: 36px;
+    padding: 0 12px;
+}
+
+.content--docentes .docente-table-footer p,
+.content--docentes .pagination button {
+    font-size: 8px;
+}
+
+.content--docentes .pagination {
+    gap: 5px;
+}
+
+.content--docentes .pagination button {
+    min-width: 20px;
+    height: 20px;
+    border-radius: 4px;
+}
+
+@media (max-width: 760px) {
+    .content--docentes .docente-filter-card {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+    .content--docentes .docente-search { grid-column: 1 / -1; }
+    .content--docentes .docente-filter-label { display: none; }
+    .content--docentes .docente-table { min-width: 620px; }
+}

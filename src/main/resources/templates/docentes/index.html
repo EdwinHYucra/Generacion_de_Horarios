@@ -2,8 +2,10 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UTP Admin - Gestión de Docentes</title>
     <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" th:href="@{/css/gestion_docentes_admin.css}">
 </head>
 
 <body>
@@ -18,10 +20,14 @@
 
         <main class="content content--docentes">
 
+            <!-- Parte superior: título y registro de docentes -->
             <section class="page-heading">
-                <div>
-                    <h1>Gestión de docentes</h1>
-                    <p>Administra los perfiles y disponibilidad del cuerpo docente.</p>
+                <div class="docentes-heading-title">
+                    <img th:src="@{/assets/IMG_3.svg}" alt="" aria-hidden="true">
+                    <div>
+                        <h1>Gestión de docentes</h1>
+                        <p>Administra los perfiles y disponibilidad del cuerpo docente.</p>
+                    </div>
                 </div>
 
                 <button type="button" class="btn btn--primary btn--add" onclick="abrirModal('docenteModal')">
@@ -38,6 +44,7 @@
                 <span th:text="${mensajeError}"></span>
             </div>
 
+            <!-- Buscador y filtros de la tabla -->
             <section class="docente-filter-card">
                 <div class="docente-search">
                     <span class="docente-search__icon">⌕</span>
@@ -53,12 +60,9 @@
 
                 <select id="filtroCarrera" class="docente-select">
                     <option value="">Carrera</option>
-                    <option value="Ingeniería de Sistemas">Ingeniería de Sistemas</option>
-                    <option value="Ciencias Básicas">Ciencias Básicas</option>
-                    <option value="Arquitectura">Arquitectura</option>
-                    <option value="Administración">Administración</option>
-                    <option value="Ingeniería Civil">Ingeniería Civil</option>
-                    <option value="Psicología">Psicología</option>
+                    <option th:each="carrera : ${carrerasFiltro}"
+                            th:value="${carrera}"
+                            th:text="${carrera}">Carrera almacenada</option>
                 </select>
 
                 <select id="filtroOrden" class="docente-select">
@@ -74,6 +78,7 @@
                 </select>
             </section>
 
+            <!-- Listado dinámico de docentes almacenados -->
             <section class="docente-table-card">
 
                 <div class="table-wrapper">
@@ -108,7 +113,6 @@
                                         <strong th:text="${item.nombres + ' ' + item.apellidos}">
                                             Nombre docente
                                         </strong>
-                                        <small th:text="${item.dni}">00000000</small>
                                     </div>
                                 </div>
                             </td>
@@ -127,10 +131,6 @@
 
                             <td>
                                 <div class="action-group">
-
-                                    <button type="button" class="action-button" title="Disponibilidad">
-                                        <img th:src="@{/assets/IMG_7.svg}" alt="Disponibilidad">
-                                    </button>
 
                                     <a th:href="@{/administrador/docentes/editar/{id}(id=${item.idDocente})}"
                                        class="action-link"
@@ -161,16 +161,12 @@
                 </div>
 
                 <div class="docente-table-footer">
-                    <p>
-                        Mostrando <strong id="cantidadDocentes" th:text="${#lists.size(docentes)}">0</strong>
-                        docentes
+                    <p id="resumenPaginacionDocentes">
+                        Mostrando <strong id="rangoDocentes">0</strong> de
+                        <strong id="cantidadDocentes" th:text="${#lists.size(docentes)}">0</strong> docentes
                     </p>
 
-                    <div class="pagination">
-                        <button type="button" disabled>‹</button>
-                        <button type="button" class="is-active">1</button>
-                        <button type="button">›</button>
-                    </div>
+                    <div class="pagination" id="paginacionDocentes" aria-label="Paginación de docentes"></div>
                 </div>
 
             </section>

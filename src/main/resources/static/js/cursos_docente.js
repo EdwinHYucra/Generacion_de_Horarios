@@ -5,7 +5,40 @@ const totalHoras = document.getElementById("totalHoras");
 const btnGuardarCursos = document.getElementById("btnGuardarCursos");
 const limiteHorasMensaje = document.getElementById("limiteHorasMensaje");
 const maxHorasSemanales = Number(window.maxHorasSemanales || 40);
+const buscarCursos = document.getElementById("buscarCursos");
 
+// Abre o cierra cada módulo sin modificar las selecciones realizadas.
+document.querySelectorAll(".curso-toggle").forEach(boton => {
+    boton.addEventListener("click", () => {
+        const lista = document.getElementById(boton.getAttribute("aria-controls"));
+        const estaAbierto = boton.getAttribute("aria-expanded") === "true";
+
+        boton.setAttribute("aria-expanded", String(!estaAbierto));
+        boton.textContent = estaAbierto ? "Ver cursos" : "Ocultar cursos";
+        lista.hidden = estaAbierto;
+    });
+});
+
+// Filtra datos reales de ambos módulos y los expande cuando hay una búsqueda.
+buscarCursos.addEventListener("input", () => {
+    const termino = buscarCursos.value.trim().toLocaleLowerCase("es");
+
+    document.querySelectorAll(".curso-item").forEach(item => {
+        const coincide = item.textContent.toLocaleLowerCase("es").includes(termino);
+        item.hidden = termino.length > 0 && !coincide;
+    });
+
+    if (termino.length > 0) {
+        document.querySelectorAll(".curso-toggle").forEach(boton => {
+            const lista = document.getElementById(boton.getAttribute("aria-controls"));
+            boton.setAttribute("aria-expanded", "true");
+            boton.textContent = "Ocultar cursos";
+            lista.hidden = false;
+        });
+    }
+});
+
+// Actualiza el resumen con la selección actual del docente.
 function actualizarResumen() {
     const seleccionados = document.querySelectorAll(".curso-check:checked");
 
@@ -54,7 +87,11 @@ btnGuardarCursos.addEventListener("click", async () => {
     const horasSeleccionadas = Number(totalHoras.textContent || 0);
 
     if (horasSeleccionadas > maxHorasSemanales) {
-        alert(`No se puede continuar: la carga supera ${maxHorasSemanales} horas semanales.`);
+        mostrarNotificacionDocente(
+            `La carga supera ${maxHorasSemanales} horas semanales.`,
+            "error",
+            "Selección no válida"
+        );
         return;
     }
 
@@ -63,6 +100,8 @@ btnGuardarCursos.addEventListener("click", async () => {
     });
 
     try {
+        btnGuardarCursos.disabled = true;
+        btnGuardarCursos.textContent = "Guardando...";
         const response = await fetch("/docente/cursos/guardar", {
             method: "POST",
             headers: {
@@ -74,13 +113,17 @@ btnGuardarCursos.addEventListener("click", async () => {
         });
 
         if (response.ok) {
-            alert(await response.text());
+            window.location.assign("/docente/opciones_horario");
+            return;
         } else {
-            alert(await response.text());
+            mostrarNotificacionDocente(await response.text(), "error");
         }
     } catch (error) {
         console.error(error);
-        alert("Error de conexión.");
+        mostrarNotificacionDocente("No fue posible conectar con el servidor.", "error", "Error de conexión");
+    } finally {
+        btnGuardarCursos.disabled = false;
+        btnGuardarCursos.textContent = "Confirmar selección";
     }
 });
 

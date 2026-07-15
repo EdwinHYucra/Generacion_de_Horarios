@@ -72,6 +72,21 @@ function actualizarContador() {
 
     document.getElementById("contadorBloques").textContent = bloquesSeleccionados.length;
     document.getElementById("contadorHoras").textContent = (bloquesSeleccionados.length * 0.25).toFixed(1);
+    actualizarEstadoTurnos();
+}
+
+// Mantiene cada botón marcado solo cuando todo su turno está seleccionado.
+function actualizarEstadoTurnos() {
+    document.querySelectorAll(".turno-btn").forEach(boton => {
+        const slotsTurno = [...document.querySelectorAll(".slot")].filter(slot =>
+            slot.dataset.hora >= boton.dataset.inicio && slot.dataset.hora < boton.dataset.fin
+        );
+        const turnoCompleto = slotsTurno.length > 0
+            && slotsTurno.every(slot => slot.classList.contains("selected"));
+
+        boton.classList.toggle("active", turnoCompleto);
+        boton.setAttribute("aria-pressed", String(turnoCompleto));
+    });
 }
 
 function sumar15Minutos(hora) {
@@ -93,6 +108,7 @@ document.getElementById("btnLimpiar").addEventListener("click", () => {
 });
 
 document.getElementById("btnConfirmar").addEventListener("click", async () => {
+    const botonConfirmar = document.getElementById("btnConfirmar");
     const bloques = [];
 
     document.querySelectorAll(".slot.selected").forEach(slot => {
@@ -104,6 +120,8 @@ document.getElementById("btnConfirmar").addEventListener("click", async () => {
     });
 
     try {
+        botonConfirmar.disabled = true;
+        botonConfirmar.textContent = "Guardando...";
         const response = await fetch("/docente/disponibilidad/guardar", {
             method: "POST",
             headers: {
@@ -115,13 +133,17 @@ document.getElementById("btnConfirmar").addEventListener("click", async () => {
         });
 
         if (response.ok) {
-            alert(await response.text());
+            window.location.assign("/docente/cursos");
+            return;
         } else {
-            alert("Error al guardar.");
+            mostrarNotificacionDocente(await response.text() || "Error al guardar.", "error");
         }
     } catch (error) {
         console.error(error);
-        alert("Error de conexión.");
+        mostrarNotificacionDocente("No fue posible conectar con el servidor.", "error", "Error de conexión");
+    } finally {
+        botonConfirmar.disabled = false;
+        botonConfirmar.textContent = "Confirmar";
     }
 });
 
@@ -145,35 +167,21 @@ async function cargarDisponibilidadGuardada() {
     }
 }
 
-function seleccionarTurno(inicio, fin) {
+// Primer clic selecciona el turno completo; el siguiente lo deselecciona.
+function alternarTurno(inicio, fin) {
+    const slotsTurno = [...document.querySelectorAll(".slot")].filter(slot =>
+        slot.dataset.hora >= inicio && slot.dataset.hora < fin
+    );
+    const turnoCompleto = slotsTurno.every(slot => slot.classList.contains("selected"));
 
-    const bloquesTurno = [];
-
-    document.querySelectorAll(".slot").forEach(slot => {
-        const hora = slot.dataset.hora;
-
-        if (hora >= inicio && hora < fin) {
-            bloquesTurno.push(slot);
-        }
-    });
-
-    const todosSeleccionados =
-        bloquesTurno.every(slot => slot.classList.contains("selected"));
-
-    bloquesTurno.forEach(slot => {
-        if (todosSeleccionados) {
-            slot.classList.remove("selected");
-        } else {
-            slot.classList.add("selected");
-        }
-    });
+    slotsTurno.forEach(slot => slot.classList.toggle("selected", !turnoCompleto));
 
     actualizarContador();
 }
 
 document.querySelectorAll(".turno-btn").forEach(boton => {
     boton.addEventListener("click", () => {
-        seleccionarTurno(
+        alternarTurno(
             boton.dataset.inicio,
             boton.dataset.fin
         );

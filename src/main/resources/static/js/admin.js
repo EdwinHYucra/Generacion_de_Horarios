@@ -49,21 +49,27 @@ function filtrarTabla(inputId, rowSelector, counterId, atributos) {
     const filas = document.querySelectorAll(rowSelector);
     const contador = document.getElementById(counterId);
 
-    const texto = input ? input.value.toLowerCase().trim() : "";
+    const normalizar = valor => (valor || "").toString().normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+    const texto = normalizar(input ? input.value : "");
     let visibles = 0;
 
     filas.forEach(function (fila) {
         let coincide = false;
 
         atributos.forEach(function (atributo) {
-            const valor = (fila.dataset[atributo] || "").toLowerCase();
+            const valor = normalizar(fila.dataset[atributo]);
 
             if (valor.includes(texto)) {
                 coincide = true;
             }
         });
 
-        fila.style.display = coincide ? "" : "none";
+        if (rowSelector === ".curso-row") {
+            fila.dataset.coincideFiltro = coincide ? "true" : "false";
+        } else {
+            fila.style.display = coincide ? "" : "none";
+        }
 
         if (coincide) {
             visibles++;
@@ -73,22 +79,77 @@ function filtrarTabla(inputId, rowSelector, counterId, atributos) {
     if (contador) {
         contador.textContent = visibles.toString();
     }
+
+    if (rowSelector === ".curso-row") {
+        paginaCursosActual = 1;
+        renderizarPaginacionCursos();
+    }
 }
 
+let paginaCursosActual = 1;
+
+// Paginación de cursos adaptada a la altura útil de la ventana.
+function renderizarPaginacionCursos() {
+    const filas = Array.from(document.querySelectorAll(".curso-row"));
+    if (!filas.length) return;
+    const coincidentes = filas.filter(fila => fila.dataset.coincideFiltro !== "false");
+    const tarjeta = document.querySelector(".module-table-card--cursos");
+    const piePagina = document.querySelector(".footer");
+    const altoDisponible = window.innerHeight - (tarjeta?.getBoundingClientRect().top || 0)
+        - (piePagina?.offsetHeight || 42) - 72;
+    const porPagina = window.innerWidth <= 700 ? 7 : Math.max(7, Math.floor(altoDisponible / 40));
+    const totalPaginas = Math.max(1, Math.ceil(coincidentes.length / porPagina));
+    paginaCursosActual = Math.min(paginaCursosActual, totalPaginas);
+    const inicio = (paginaCursosActual - 1) * porPagina;
+    const fin = Math.min(inicio + porPagina, coincidentes.length);
+
+    filas.forEach(fila => { fila.style.display = "none"; });
+    coincidentes.slice(inicio, fin).forEach(fila => { fila.style.display = ""; });
+    document.getElementById("rangoCursos").textContent = coincidentes.length ? `${inicio + 1} a ${fin}` : "0";
+    document.getElementById("cantidadCursos").textContent = coincidentes.length.toString();
+
+    const paginacion = document.getElementById("paginacionCursos");
+    paginacion.innerHTML = "";
+    paginacion.appendChild(crearBotonPaginaCurso("‹", paginaCursosActual - 1, paginaCursosActual === 1));
+    for (let pagina = 1; pagina <= totalPaginas; pagina += 1) {
+        const boton = crearBotonPaginaCurso(String(pagina), pagina, false);
+        boton.classList.toggle("is-active", pagina === paginaCursosActual);
+        paginacion.appendChild(boton);
+    }
+    paginacion.appendChild(crearBotonPaginaCurso("›", paginaCursosActual + 1, paginaCursosActual === totalPaginas));
+}
+
+function crearBotonPaginaCurso(texto, pagina, deshabilitado) {
+    const boton = document.createElement("button");
+    boton.type = "button";
+    boton.textContent = texto;
+    boton.disabled = deshabilitado;
+    boton.addEventListener("click", () => {
+        paginaCursosActual = pagina;
+        renderizarPaginacionCursos();
+    });
+    return boton;
+}
+
+let paginaDocentesActual = 1;
+let docentesPorPagina = 6;
+
 function filtrarDocentes() {
-    const textoBusqueda = document.getElementById("inputBuscarDocente")?.value.toLowerCase().trim() || "";
-    const carrera = document.getElementById("filtroCarrera")?.value || "";
-    const estado = document.getElementById("filtroEstado")?.value || "";
+    const normalizar = valor => (valor || "").toString().normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+    const textoBusqueda = normalizar(document.getElementById("inputBuscarDocente")?.value);
+    const carrera = normalizar(document.getElementById("filtroCarrera")?.value);
+    const estado = normalizar(document.getElementById("filtroEstado")?.value);
     const filas = document.querySelectorAll(".docente-row");
 
     let visibles = 0;
 
     filas.forEach(function (fila) {
-        const nombre = (fila.dataset.nombre || "").toLowerCase();
-        const codigo = (fila.dataset.codigo || "").toLowerCase();
-        const dni = (fila.dataset.dni || "").toLowerCase();
-        const carreraFila = fila.dataset.carrera || "";
-        const estadoFila = fila.dataset.estado || "";
+        const nombre = normalizar(fila.dataset.nombre);
+        const codigo = normalizar(fila.dataset.codigo);
+        const dni = normalizar(fila.dataset.dni);
+        const carreraFila = normalizar(fila.dataset.carrera);
+        const estadoFila = normalizar(fila.dataset.estado);
 
         const coincideTexto =
             nombre.includes(textoBusqueda) ||
@@ -100,18 +161,79 @@ function filtrarDocentes() {
 
         const visible = coincideTexto && coincideCarrera && coincideEstado;
 
-        fila.style.display = visible ? "" : "none";
+        fila.dataset.coincideFiltro = visible ? "true" : "false";
 
         if (visible) {
             visibles++;
         }
     });
 
-    const cantidad = document.getElementById("cantidadDocentes");
+    paginaDocentesActual = 1;
+    renderizarPaginacionDocentes();
+}
 
-    if (cantidad) {
-        cantidad.textContent = visibles.toString();
+// Paginación dinámica: muestra seis docentes por página después de aplicar filtros.
+function renderizarPaginacionDocentes() {
+    const filas = Array.from(document.querySelectorAll(".docente-row"));
+    docentesPorPagina = calcularDocentesPorPagina();
+    const coincidentes = filas.filter(fila => fila.dataset.coincideFiltro !== "false");
+    const totalPaginas = Math.max(1, Math.ceil(coincidentes.length / docentesPorPagina));
+    paginaDocentesActual = Math.min(paginaDocentesActual, totalPaginas);
+    const inicio = (paginaDocentesActual - 1) * docentesPorPagina;
+    const fin = Math.min(inicio + docentesPorPagina, coincidentes.length);
+
+    filas.forEach(fila => { fila.style.display = "none"; });
+    coincidentes.slice(inicio, fin).forEach(fila => { fila.style.display = ""; });
+
+    const rango = document.getElementById("rangoDocentes");
+    const cantidad = document.getElementById("cantidadDocentes");
+    if (rango) rango.textContent = coincidentes.length ? `${inicio + 1} a ${fin}` : "0";
+    if (cantidad) cantidad.textContent = coincidentes.length.toString();
+
+    const paginacion = document.getElementById("paginacionDocentes");
+    if (!paginacion) return;
+    paginacion.innerHTML = "";
+    paginacion.appendChild(crearBotonPagina("‹", paginaDocentesActual - 1, paginaDocentesActual === 1));
+
+    for (let pagina = 1; pagina <= totalPaginas; pagina += 1) {
+        if (totalPaginas > 6 && pagina > 3 && pagina < totalPaginas) {
+            if (pagina === 4) {
+                const puntos = document.createElement("span");
+                puntos.textContent = "…";
+                paginacion.appendChild(puntos);
+            }
+            continue;
+        }
+        const boton = crearBotonPagina(String(pagina), pagina, false);
+        boton.classList.toggle("is-active", pagina === paginaDocentesActual);
+        paginacion.appendChild(boton);
     }
+    paginacion.appendChild(crearBotonPagina("›", paginaDocentesActual + 1, paginaDocentesActual === totalPaginas));
+}
+
+// Aprovecha la altura disponible sin dejar un bloque vacío innecesario bajo la tabla.
+function calcularDocentesPorPagina() {
+    const tabla = document.querySelector(".docente-table-card");
+    const pieTabla = document.querySelector(".docente-table-footer");
+    const piePagina = document.querySelector(".footer");
+    if (!tabla || window.innerWidth <= 760) return 6;
+
+    const altoFila = 38;
+    const espacioInferior = (pieTabla?.offsetHeight || 36) + (piePagina?.offsetHeight || 42) + 34;
+    const altoDisponible = window.innerHeight - tabla.getBoundingClientRect().top - espacioInferior;
+    return Math.max(6, Math.floor(altoDisponible / altoFila));
+}
+
+function crearBotonPagina(texto, pagina, deshabilitado) {
+    const boton = document.createElement("button");
+    boton.type = "button";
+    boton.textContent = texto;
+    boton.disabled = deshabilitado;
+    boton.addEventListener("click", () => {
+        paginaDocentesActual = pagina;
+        renderizarPaginacionDocentes();
+    });
+    return boton;
 }
 
 function ordenarDocentes() {
@@ -147,6 +269,25 @@ function ordenarDocentes() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
+    // Navegación móvil: sidebar lateral oculto con fondo de cierre.
+    /* El menú lateral común se inicializa una sola vez desde admin_layout.js. */
+    const sidebar = null;
+    const botonMenu = document.querySelector(".topbar__menu");
+    let fondoMenu = document.querySelector(".sidebar-backdrop");
+    if (sidebar && botonMenu) {
+        if (!fondoMenu) {
+            fondoMenu = document.createElement("button");
+            fondoMenu.type = "button"; fondoMenu.className = "sidebar-backdrop";
+            fondoMenu.setAttribute("aria-label", "Cerrar menú"); document.body.appendChild(fondoMenu);
+        }
+        const cerrarMenu = () => { sidebar.classList.remove("sidebar--open"); fondoMenu.classList.remove("sidebar-backdrop--show"); botonMenu.setAttribute("aria-expanded", "false"); document.body.classList.remove("menu-mobile-open"); };
+        const abrirMenu = () => { sidebar.classList.add("sidebar--open"); fondoMenu.classList.add("sidebar-backdrop--show"); botonMenu.setAttribute("aria-expanded", "true"); document.body.classList.add("menu-mobile-open"); };
+        botonMenu.setAttribute("aria-expanded", "false");
+        botonMenu.addEventListener("click", () => sidebar.classList.contains("sidebar--open") ? cerrarMenu() : abrirMenu());
+        fondoMenu.addEventListener("click", cerrarMenu);
+        sidebar.querySelectorAll("a").forEach(enlace => enlace.addEventListener("click", cerrarMenu));
+        document.addEventListener("keydown", evento => { if (evento.key === "Escape") cerrarMenu(); });
+    }
     document.querySelectorAll(".modal__backdrop").forEach(function (backdrop) {
         backdrop.addEventListener("click", function () {
             const modal = backdrop.closest(".modal");
@@ -192,6 +333,17 @@ document.addEventListener("DOMContentLoaded", function () {
     if (filtroCarrera) filtroCarrera.addEventListener("change", filtrarDocentes);
     if (filtroEstado) filtroEstado.addEventListener("change", filtrarDocentes);
     if (filtroOrden) filtroOrden.addEventListener("change", ordenarDocentes);
+    if (document.getElementById("tablaDocentesBody")) filtrarDocentes();
+
+    // Recalcula las filas visibles cuando cambia el tamaño de la ventana.
+    let temporizadorRedimension;
+    window.addEventListener("resize", function () {
+        window.clearTimeout(temporizadorRedimension);
+        temporizadorRedimension = window.setTimeout(function () {
+            if (document.getElementById("tablaDocentesBody")) renderizarPaginacionDocentes();
+            if (document.getElementById("tablaCursosBody")) renderizarPaginacionCursos();
+        }, 120);
+    });
 
     document.querySelectorAll(".btnEliminarDocente").forEach(function (boton) {
         boton.addEventListener("click", function () {
@@ -217,6 +369,12 @@ document.addEventListener("DOMContentLoaded", function () {
             filtrarTabla("inputBuscarCurso", ".curso-row", "cantidadCursos", ["codigo", "nombre", "tipo"]);
         });
     }
+    if (document.getElementById("tablaCursosBody")) {
+        filtrarTabla("inputBuscarCurso", ".curso-row", "cantidadCursos", ["codigo", "nombre", "tipo"]);
+    }
+    document.getElementById("btnBuscarCurso")?.addEventListener("click", function () {
+        filtrarTabla("inputBuscarCurso", ".curso-row", "cantidadCursos", ["codigo", "nombre", "tipo"]);
+    });
 
     const inputBuscarCarrera = document.getElementById("inputBuscarCarrera");
     if (inputBuscarCarrera) {
@@ -322,10 +480,11 @@ function renderizarOpcionAdmin(opcion) {
         return '<tr><td class="horario-hora">' + hora + "</td>" + celdas + "</tr>";
     }).join("");
 
-    const accion = opcion.observacion === "APROBADA_DOCENTE"
+    const accion = opcion.observacion === "EN_REVISION"
+        ? `<div class="horario-modal-actions"><a class="btn btn--primary" href="/administrador/horarios/editar/${opcion.idHorario}">Expandir y editar</a></div>`
+        : opcion.observacion === "APROBADA_DOCENTE"
         ? `<form action="/administrador/horarios/aprobar/${opcion.idHorario}" method="post"
-              class="horario-modal-actions"
-              onsubmit="return confirm('Aprobar definitivamente esta opcion de horario?');">
+              class="horario-modal-actions">
             <button type="submit" class="btn btn--primary">Aprobar opcion</button>
         </form>`
         : `<div class="horario-modal-actions">

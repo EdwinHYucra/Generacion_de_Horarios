@@ -379,6 +379,7 @@ body {
     font-size: 13px;
     font-weight: 700;
 }
+.login-help{border:0;background:transparent;cursor:pointer;font:inherit}
 
 .login-shell {
     flex: 1;
@@ -617,14 +618,22 @@ body {
     width: 58px;
     height: 58px;
     margin: 0 auto;
+    display: flex;
+    align-self: center;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 58px;
     border-radius: 50%;
     background: #ffe1e4;
     color: #e00000;
 }
 
 .login-card__icon svg {
+    display: block;
     width: 28px;
     height: 28px;
+    margin: 0;
+    transform: none;
 }
 
 .login-form {
@@ -690,6 +699,12 @@ body {
     text-decoration: none;
     font-weight: 700;
 }
+.login-forgot{padding:0;border:0;color:#d50000;background:transparent;font:inherit;font-weight:700;cursor:pointer}
+
+/* Modales reutilizables del acceso */
+.login-modal{position:fixed;z-index:1500;inset:0;display:grid;place-items:center;padding:18px}.login-modal[hidden]{display:none}.login-modal__backdrop{position:absolute;inset:0;background:rgba(12,18,28,.62)}.login-modal__dialog{position:relative;width:min(480px,100%);max-height:calc(100vh - 36px);overflow:auto;border-radius:12px;background:#fff;box-shadow:0 24px 65px rgba(0,0,0,.25)}.login-modal__dialog>header{display:grid;grid-template-columns:42px 1fr 30px;align-items:center;gap:11px;padding:18px;border-bottom:1px solid #e5e8ed}.login-modal__dialog>header>span{display:grid;place-items:center;width:39px;height:39px;border-radius:50%;color:#d50000;background:#ffe3e3}.login-modal__dialog>header svg{width:19px;height:19px}.login-modal__dialog h2{margin:0;color:#151821;font-size:18px}.login-modal__dialog header p{margin:4px 0 0;color:#78808d;font-size:11px}.login-modal__dialog header button{width:30px;height:30px;border:0;border-radius:50%;color:#68717e;background:#f1f3f5;font-size:19px;cursor:pointer}.login-modal__body{display:grid;gap:10px;padding:17px 18px}.login-modal__body article{display:flex;align-items:center;gap:11px;padding:12px;border:1px solid #e3e7ed;border-radius:8px;background:#fafbfc}.login-modal__body article>svg{width:18px;height:18px;color:#d50000}.login-modal__body article strong,.login-modal__body article a,.login-modal__body article p{display:block}.login-modal__body article strong{margin-bottom:4px;font-size:11px}.login-modal__body article a,.login-modal__body article p{margin:0;color:#656d79;font-size:11px;text-decoration:none}.login-modal__dialog>footer{display:flex;justify-content:flex-end;padding:12px 18px;border-top:1px solid #e5e8ed}.login-modal__dialog>footer button,.login-recuperacion__contacto{min-width:105px;padding:10px 15px;border:0;border-radius:6px;color:#fff;background:#d50000;font-size:11px;font-weight:800;text-align:center;text-decoration:none;cursor:pointer}.login-recuperacion>p{margin:0;color:#555e6b;font-size:12px;line-height:1.55}.login-recuperacion>div{padding:13px;border-radius:8px;background:#fff5f5}.login-recuperacion strong{font-size:11px}.login-recuperacion ul{margin:8px 0 0;padding-left:18px;color:#626a76;font-size:10px;line-height:1.7}.login-recuperacion__contacto{display:block}.login-modal-open{overflow:hidden}
+
+@media(max-width:520px){.login-modal{padding:10px}.login-modal__dialog{max-height:calc(100vh - 20px)}.login-modal__dialog>header{grid-template-columns:36px 1fr 28px;padding:14px}.login-modal__dialog>header>span{width:34px;height:34px}.login-modal__body{padding:14px}.login-modal__dialog>footer{padding:11px 14px}.login-modal__dialog>footer button,.login-recuperacion__contacto{width:100%}}
 
 .login-submit {
     height: 42px;
@@ -991,4 +1006,27 @@ body {
     .superadmin-grid {
         grid-template-columns: 1fr;
     }
+}
+
+/* Login en teléfono: únicamente el formulario, sin ilustración institucional */
+@media (max-width: 920px) {
+    .login-visual { display: none; }
+    .login-shell { display: flex; min-height: calc(100vh - 96px); }
+    .login-panel { width: 100%; padding: 32px; }
+    .login-card--prototype { max-width: 400px; padding: 30px 22px 24px; }
+    .login-topbar { height: 54px; padding: 0 16px; }
+    .login-brand { min-width: 0; font-size: 14px; }
+    .login-brand strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .login-footer { min-height: 42px; height: auto; padding: 10px 16px; text-align: center; }
+    .login-options { align-items: flex-start; gap: 12px; flex-direction: column; }
+    .login-forgot { align-self: flex-end; }
+}
+
+@media (max-width: 600px) {
+    .login-panel { padding: 24px 16px; }
+}
+
+@media (max-width: 380px) {
+    .login-brand strong { display: none; }
+    .login-card--prototype { padding-inline: 18px; }
 }

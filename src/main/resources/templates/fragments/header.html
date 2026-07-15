@@ -1,32 +1,69 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <body>
 
 <header th:fragment="header" class="topbar">
-    <button class="topbar__menu" type="button" aria-label="Abrir menú">☰</button>
+    <link rel="stylesheet" th:href="@{/css/admin_legibilidad.css(v=8)}">
+
+    <!-- Navegación responsive del Administrador -->
+    <button class="topbar__menu" type="button" aria-label="Abrir menú" aria-expanded="false">
+        <span></span><span></span><span></span>
+    </button>
 
     <div class="topbar__right">
-        <div class="topbar__notification">
-            <img th:src="@{/assets/IMG_10.svg}" alt="Notificaciones">
-            <span></span>
-        </div>
+        <!-- Notificaciones pendientes del proceso académico -->
+        <button class="topbar__notification" id="adminBtnNotificaciones" type="button"
+                aria-label="Abrir notificaciones" aria-expanded="false">
+            <img th:src="@{/assets/IMG_10.svg}" alt="">
+            <span th:if="${notificacionesAdmin != null and !#lists.isEmpty(notificacionesAdmin)}"></span>
+        </button>
 
         <div class="topbar__divider"></div>
 
-        <div class="topbar__user">
-            <div class="topbar__user-text">
-                <strong>Hola, Admin</strong>
+        <!-- Perfil: los datos son informativos; únicamente se edita la fotografía -->
+        <button class="topbar__user" id="adminBtnPerfil" type="button" aria-label="Abrir perfil" aria-expanded="false">
+            <span class="topbar__user-text">
+                <strong th:text="${nombreAdmin ?: 'Administrador'}">Administrador</strong>
                 <small>Administrador</small>
-            </div>
-
-            <div class="topbar__avatar">
-                <img th:src="@{/assets/IMG_9.webp}" alt="Usuario">
-                <span></span>
-            </div>
-        </div>
+            </span>
+            <span class="topbar__avatar">
+                <img th:if="${fotoAdminDisponible}" th:src="@{/administrador/perfil/foto(v=${#dates.createNow().time})}" alt="Foto de perfil">
+                <span th:unless="${fotoAdminDisponible}" th:text="${nombreAdmin != null and !#strings.isEmpty(nombreAdmin) ? #strings.substring(nombreAdmin,0,1) : 'A'}">A</span>
+                <i></i>
+            </span>
+        </button>
     </div>
+
+    <!-- Panel de notificaciones reutilizable -->
+    <section class="admin-header-panel admin-header-panel--notificaciones" id="adminPanelNotificaciones" hidden>
+        <header><div><strong>Notificaciones</strong><small th:text="${notificacionesAdmin == null ? '0 novedades' : #lists.size(notificacionesAdmin) + ' novedades'}"></small></div><button type="button" data-admin-cerrar>&times;</button></header>
+        <div class="admin-header-panel__lista" th:if="${notificacionesAdmin != null and !#lists.isEmpty(notificacionesAdmin)}">
+            <a th:each="notificacion : ${notificacionesAdmin}" th:href="${notificacion.enlace}">
+                <span></span><div><strong th:text="${notificacion.titulo}"></strong><p th:text="${notificacion.mensaje}"></p><small th:text="${notificacion.fecha}"></small></div>
+            </a>
+        </div>
+        <div class="admin-header-panel__vacio" th:if="${notificacionesAdmin == null or #lists.isEmpty(notificacionesAdmin)}">No hay procesos pendientes.</div>
+    </section>
+
+    <!-- Panel de perfil: nombre y rol permanecen bloqueados -->
+    <section class="admin-header-panel admin-header-panel--perfil" id="adminPanelPerfil" hidden>
+        <header><div><strong>Mi perfil</strong><small>Información de la cuenta</small></div><button type="button" data-admin-cerrar>&times;</button></header>
+        <form th:action="@{/administrador/perfil/foto}" method="post" enctype="multipart/form-data">
+            <label class="admin-perfil-foto" for="adminFotoInput">
+                <img id="adminFotoPreview" th:if="${fotoAdminDisponible}" th:src="@{/administrador/perfil/foto(v=${#dates.createNow().time})}" alt="Foto actual">
+                <span id="adminFotoInicial" th:unless="${fotoAdminDisponible}" th:text="${nombreAdmin != null ? #strings.substring(nombreAdmin,0,1) : 'A'}">A</span>
+                <em><img th:src="@{/assets/editar_carrera.svg}" alt="Editar fotografía"></em>
+            </label>
+            <input id="adminFotoInput" name="foto" type="file" accept="image/png,image/jpeg,image/webp" required hidden>
+            <label>Nombre<input th:value="${nombreAdmin}" readonly></label>
+            <label>Rol<input value="Administrador" readonly></label>
+            <small>PNG, JPG o WEBP. Máximo 3 MB.</small>
+            <button class="admin-perfil-guardar" type="submit">Guardar fotografía</button>
+        </form>
+    </section>
+
+    <script th:src="@{/js/admin_layout.js(v=7)}"></script>
 </header>
 
 </body>
 </html>
-

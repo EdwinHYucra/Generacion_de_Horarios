@@ -1,3 +1,11 @@
+/* Parte superior: título e intervalo */
+.docente-content {
+    max-width: 1080px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 32px 34px;
+}
+
 .disponibilidad-header {
     display: flex;
     justify-content: space-between;
@@ -15,30 +23,9 @@
 .title-calendar-icon {
     width: 34px;
     height: 34px;
-    border: 3px solid #e00000;
-    border-radius: 8px;
-    position: relative;
+    object-fit: contain;
     flex-shrink: 0;
     margin-top: 4px;
-}
-
-.title-calendar-icon::before,
-.title-calendar-icon::after {
-    content: "";
-    position: absolute;
-    top: -8px;
-    width: 5px;
-    height: 12px;
-    background: #e00000;
-    border-radius: 3px;
-}
-
-.title-calendar-icon::before {
-    left: 7px;
-}
-
-.title-calendar-icon::after {
-    right: 7px;
 }
 
 .disponibilidad-title h1 {
@@ -82,6 +69,7 @@
     font-weight: 800;
 }
 
+/* Cuadrícula de bloques disponibles */
 .schedule-card {
     background: #ffffff;
     border-radius: 12px;
@@ -91,7 +79,7 @@
 
 .schedule-grid {
     display: grid;
-    grid-template-columns: 80px repeat(7, 1fr);
+    grid-template-columns: 70px repeat(7, minmax(100px, 1fr));
 }
 
 .cell {
@@ -156,6 +144,7 @@
     user-select: none;
 }
 
+/* Selección rápida reversible por turnos */
 .turnos-rapidos {
     margin-bottom: 22px;
     padding: 18px 20px;
@@ -202,61 +191,47 @@
     color: #e00000;
 }
 
-.notification-icon {
-    width: 18px;
-    height: 16px;
-    border: 2px solid #6b7280;
-    border-radius: 10px 10px 6px 6px;
-    position: relative;
-    display: inline-block;
+
+.turno-btn.active,
+.turno-btn[aria-pressed="true"] {
+    color: #ffffff;
+    border-color: #d50000;
+    background: #d50000;
+}
+.schedule-scroll-hint{display:none;margin:0 0 8px;color:#777e8b;font-size:11px;font-weight:700;text-align:right}
+
+/* Adaptación de Disponibilidad para tablet y móvil */
+@media (max-width: 900px) {
+    .disponibilidad-header,
+    .turnos-rapidos { align-items: stretch; flex-direction: column; }
+    .interval-pill { width: max-content; min-width: 0; }
+    .schedule-card { overflow-x: auto; overscroll-behavior-x:contain; -webkit-overflow-scrolling:touch; touch-action:pan-x pan-y; }
+    .schedule-grid,.schedule-grid .cell { touch-action:pan-x pan-y; }
+    .schedule-scroll-hint{display:block}
+    .schedule-grid { min-width: 770px; }
+    .schedule-footer { min-width: 0; position: sticky; left: 0; }
 }
 
-.notification-icon::before {
-    content: "";
-    position: absolute;
-    top: -5px;
-    left: 5px;
-    width: 4px;
-    height: 4px;
-    border: 2px solid #6b7280;
-    border-radius: 50%;
-    background: #f3f4f8;
+@media (max-width: 720px) {
+    .docente-content { padding: 24px 18px; }
+    .disponibilidad-title h1 { font-size: 25px; }
+    .turnos-botones { flex-wrap: wrap; }
+    .turno-btn { flex: 1 1 105px; }
+    .schedule-card { border-radius: 8px; scrollbar-width: thin; }
+    .schedule-footer { align-items: center; gap: 12px; padding: 14px; }
+    .schedule-footer .actions { flex: 0 0 auto; }
 }
 
-.notification-icon::after {
-    content: "";
-    position: absolute;
-    bottom: -5px;
-    left: 6px;
-    width: 4px;
-    height: 4px;
-    background: #6b7280;
-    border-radius: 50%;
-}
-
-.icon-bell {
-    border: 2px solid currentColor;
-    border-radius: 10px 10px 6px 6px;
-}
-
-.icon-bell::before {
-    content: "";
-    position: absolute;
-    top: -5px;
-    left: 7px;
-    width: 4px;
-    height: 4px;
-    border: 2px solid currentColor;
-    border-radius: 50%;
-}
-
-.icon-bell::after {
-    content: "";
-    position: absolute;
-    bottom: -4px;
-    left: 8px;
-    width: 4px;
-    height: 4px;
-    background: currentColor;
-    border-radius: 50%;
+@media (max-width: 480px) {
+    .docente-content { padding: 20px 12px; }
+    .disponibilidad-title { gap: 9px; }
+    .title-calendar-icon { width: 27px; height: 27px; }
+    .disponibilidad-title h1 { font-size: 22px; }
+    .disponibilidad-title p { font-size: 12px; }
+    .interval-pill { width: 100%; justify-content: center; }
+    .turnos-rapidos { padding: 14px; }
+    .turnos-botones { width: 100%; }
+    .schedule-footer { align-items: stretch; flex-direction: column; }
+    .schedule-footer .actions { display: grid; grid-template-columns: 1fr 1fr; width: 100%; }
+    .schedule-footer .btn { width: 100%; }
 }

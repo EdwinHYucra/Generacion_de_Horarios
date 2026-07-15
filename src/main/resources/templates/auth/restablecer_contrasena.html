@@ -1,0 +1,11 @@
+<!DOCTYPE html><html lang="es" xmlns:th="http://www.thymeleaf.org"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Nueva contraseña</title><link rel="stylesheet" th:href="@{/css/recuperar_password.css}"></head>
+<body class="recuperar-page"><main class="recuperar-card">
+    <!-- Segundo paso: contraseña cifrada y token temporal de un solo uso -->
+    <header><h1>Nueva contraseña</h1><p>La validación fue correcta. Registra una contraseña segura para volver a ingresar.</p></header>
+    <div th:if="${errorPassword}" class="recuperar-error" th:text="${errorPassword}"></div>
+    <form th:action="@{/restablecer-contrasena}" method="post">
+        <label>Nueva contraseña<div class="recuperar-input"><input type="password" name="password" placeholder="Ingresa la nueva contraseña" minlength="8" maxlength="64" autocomplete="new-password" required><span>◫</span></div><small>Debe incluir mayúscula, minúscula y número.</small></label>
+        <label>Confirmar contraseña<div class="recuperar-input"><input type="password" name="confirmarPassword" placeholder="Repite la contraseña" minlength="8" maxlength="64" autocomplete="new-password" required><span>◫</span></div></label>
+        <button type="submit">Cambiar contraseña</button><a class="recuperar-volver" th:href="@{/login}">Cancelar</a>
+    </form>
+</main></body></html>

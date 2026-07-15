@@ -1,41 +1,55 @@
-<!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
-<body>
-
-<header th:fragment="headerDocente" class="docente-topbar">
-
-    <div></div>
+<header xmlns:th="http://www.thymeleaf.org"
+        th:fragment="headerDocente"
+        class="docente-topbar">
+    <button class="docente-topbar__menu" type="button" aria-label="Abrir menú" aria-expanded="false">☰</button>
+    <div class="docente-topbar__spacer" aria-hidden="true"></div>
 
     <div class="docente-user-area">
-
-        <div class="docente-notification" aria-label="Notificaciones">
-            <span class="nav-icon icon-bell"></span>
-            <i></i>
-        </div>
+        <button class="docente-notification" type="button" id="docenteBtnNotificaciones" aria-label="Notificaciones" aria-expanded="false">
+            <img th:src="@{/img/docente/bell.svg}" alt="" aria-hidden="true">
+            <i th:if="${notificacionesHeader != null and !#lists.isEmpty(notificacionesHeader)}" aria-hidden="true"></i>
+        </button>
 
         <div class="docente-user">
-
             <div class="docente-user__text">
-                <strong
-                        th:if="${session.usuario != null}"
-                        th:text="${session.usuario.nombres + ' ' + session.usuario.apellidos}">
-                    Usuario
-                </strong>
-
-                <strong th:if="${session.usuario == null}">Docente</strong>
-                <small>Docente</small>
+                <strong th:text="${nombreUsuario ?: 'Docente'}">Docente</strong>
+                <small th:text="${rolUsuario ?: 'Docente'}">Docente</small>
             </div>
 
-            <div class="docente-avatar">
-                <span th:text="${session.usuario != null ? #strings.substring(session.usuario.nombres, 0, 1) : 'D'}">D</span>
-                <i></i>
-            </div>
-
+            <button class="docente-avatar" type="button" id="docenteBtnPerfil" aria-label="Abrir perfil" aria-expanded="false">
+                <img th:if="${fotoPerfilDisponible}" th:src="@{/docente/perfil/foto(v=${#dates.createNow().time})}" alt="Foto de perfil">
+                <span th:unless="${fotoPerfilDisponible}" th:text="${nombreUsuario != null and !#strings.isEmpty(nombreUsuario) ? #strings.substring(nombreUsuario, 0, 1) : 'D'}">D</span>
+                <i aria-hidden="true"></i>
+            </button>
         </div>
-
     </div>
 
-</header>
+    <!-- Panel responsive: notificaciones reales del proceso docente -->
+    <section class="docente-header-panel docente-header-panel--notificaciones" id="docentePanelNotificaciones" hidden>
+        <header><div><strong>Notificaciones</strong><small th:text="${notificacionesHeader == null ? '0 novedades' : #lists.size(notificacionesHeader) + ' novedades'}"></small></div><button type="button" data-cerrar-panel>&times;</button></header>
+        <div class="docente-header-panel__lista" th:if="${notificacionesHeader != null and !#lists.isEmpty(notificacionesHeader)}">
+            <a th:each="notificacion : ${notificacionesHeader}" th:href="${notificacion.enlace}">
+                <span></span><div><strong th:text="${notificacion.titulo}"></strong><p th:text="${notificacion.mensaje}"></p><small th:text="${notificacion.fecha}"></small></div>
+            </a>
+        </div>
+        <div class="docente-header-panel__vacio" th:if="${notificacionesHeader == null or #lists.isEmpty(notificacionesHeader)}">No tiene notificaciones nuevas.</div>
+    </section>
 
-</body>
-</html>
+    <!-- Panel responsive: perfil de solo lectura y cambio de fotografía -->
+    <section class="docente-header-panel docente-header-panel--perfil" id="docentePanelPerfil" hidden>
+        <header><div><strong>Mi perfil</strong><small>Información de la cuenta</small></div><button type="button" data-cerrar-panel>&times;</button></header>
+        <form th:action="@{/docente/perfil/foto}" method="post" enctype="multipart/form-data">
+            <label class="docente-perfil-foto" for="docenteFotoInput">
+                <img id="docenteFotoPreview" th:if="${fotoPerfilDisponible}" th:src="@{/docente/perfil/foto(v=${#dates.createNow().time})}" alt="Foto actual">
+                <span id="docenteFotoInicial" th:unless="${fotoPerfilDisponible}" th:text="${nombreUsuario != null ? #strings.substring(nombreUsuario,0,1) : 'D'}"></span>
+                <em aria-label="Editar fotografía"><img th:src="@{/assets/editar_carrera.svg}" alt=""></em>
+            </label>
+            <input id="docenteFotoInput" name="foto" type="file" accept="image/png,image/jpeg,image/webp" required hidden>
+            <label>Nombre<input th:value="${nombreUsuario}" readonly></label>
+            <label>Rol<input th:value="${rolUsuario ?: 'Docente'}" readonly></label>
+            <small>PNG, JPG o WEBP. Máximo 3 MB.</small>
+            <button class="docente-perfil-guardar" type="submit">Guardar fotografía</button>
+        </form>
+    </section>
+    <script th:src="@{/js/docente_layout.js}"></script>
+</header>

@@ -24,9 +24,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnVerDetalle = document.getElementById("btnVerDetalle");
     const btnCerrarDetalle = document.getElementById("cerrarDetalle");
     const modalDetalle = document.getElementById("modalDetalle");
+    const modalAviso = document.getElementById("modalAvisoSolicitud");
 
     if (estadoOpciones.opciones.length === 0) {
         sinOpciones.classList.remove("hidden");
+        if (generacionEnProcesoData) {
+            setTimeout(() => window.location.reload(), 2000);
+        }
         return;
     }
 
@@ -38,6 +42,15 @@ document.addEventListener("DOMContentLoaded", () => {
     btnVerDetalle.addEventListener("click", abrirDetalleActivo);
     btnCerrarDetalle.addEventListener("click", cerrarDetalle);
     modalDetalle.querySelector(".modal-backdrop").addEventListener("click", cerrarDetalle);
+    document.getElementById("cerrarAvisoSolicitud").addEventListener("click", cerrarAvisoSolicitud);
+    modalAviso.querySelector("[data-cerrar-aviso]").addEventListener("click", cerrarAvisoSolicitud);
+
+    // Permite cerrar los módulos con Escape sin utilizar ventanas del navegador.
+    document.addEventListener("keydown", evento => {
+        if (evento.key === "Escape" && !modalAviso.classList.contains("hidden")) {
+            cerrarAvisoSolicitud();
+        }
+    });
 });
 
 function construirSelectorOpciones() {
@@ -198,18 +211,39 @@ function prepararSolicitud(form) {
     const comentario = document.getElementById("comentarioSolicitud").value.trim();
 
     if (!opcion) {
-        alert("Seleccione una opcion de horario.");
+        mostrarAvisoSolicitud(
+            "Seleccione una propuesta",
+            "Elija una opción de horario antes de enviar una observación o rechazo."
+        );
         return false;
     }
 
     if (!comentario) {
-        alert("Debe registrar una justificacion antes de observar o rechazar.");
+        mostrarAvisoSolicitud(
+            "Falta una justificación",
+            "Escriba el motivo de la observación o rechazo antes de continuar."
+        );
         return false;
     }
 
     form.querySelector("input[name='idHorario']").value = opcion.idHorario;
     form.querySelector("input[name='comentario']").value = comentario;
     return true;
+}
+
+// Módulo centrado para validaciones de observar y rechazar.
+function mostrarAvisoSolicitud(titulo, mensaje) {
+    document.getElementById("tituloAvisoSolicitud").textContent = titulo;
+    document.getElementById("mensajeAvisoSolicitud").textContent = mensaje;
+    document.getElementById("modalAvisoSolicitud").classList.remove("hidden");
+    document.body.classList.add("modal-abierto");
+    setTimeout(() => document.getElementById("cerrarAvisoSolicitud").focus(), 0);
+}
+
+function cerrarAvisoSolicitud() {
+    document.getElementById("modalAvisoSolicitud").classList.add("hidden");
+    document.body.classList.remove("modal-abierto");
+    document.getElementById("comentarioSolicitud")?.focus();
 }
 
 function obtenerHoras(opcion) {

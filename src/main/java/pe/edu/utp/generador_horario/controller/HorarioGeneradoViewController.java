@@ -9,10 +9,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import pe.edu.utp.generador_horario.dao.DocenteDAO;
+import pe.edu.utp.generador_horario.dao.AulaDAO;
+import pe.edu.utp.generador_horario.dao.CicloAcademicoDAO;
+import pe.edu.utp.generador_horario.dao.DisponibilidadDocenteDAO;
+import pe.edu.utp.generador_horario.dto.HorarioDetalleDTO;
 import pe.edu.utp.generador_horario.dto.HorarioGeneradoResumenDTO;
 import pe.edu.utp.generador_horario.dto.HorariosDocenteGrupoDTO;
 import pe.edu.utp.generador_horario.dto.OpcionesHorarioDTO;
 import pe.edu.utp.generador_horario.service.interfaces.HorarioGeneradoService;
+import pe.edu.utp.generador_horario.entidad.Docente;
 
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -29,12 +34,21 @@ public class HorarioGeneradoViewController {
 
     private final HorarioGeneradoService horarioGeneradoService;
     private final DocenteDAO docenteDAO;
+    private final AulaDAO aulaDAO;
+    private final CicloAcademicoDAO cicloAcademicoDAO;
+    private final DisponibilidadDocenteDAO disponibilidadDocenteDAO;
 
     public HorarioGeneradoViewController(
             HorarioGeneradoService horarioGeneradoService,
-            DocenteDAO docenteDAO) {
+            DocenteDAO docenteDAO,
+            AulaDAO aulaDAO,
+            CicloAcademicoDAO cicloAcademicoDAO,
+            DisponibilidadDocenteDAO disponibilidadDocenteDAO) {
         this.horarioGeneradoService = horarioGeneradoService;
         this.docenteDAO = docenteDAO;
+        this.aulaDAO = aulaDAO;
+        this.cicloAcademicoDAO = cicloAcademicoDAO;
+        this.disponibilidadDocenteDAO = disponibilidadDocenteDAO;
     }
 
     @GetMapping
@@ -47,10 +61,14 @@ public class HorarioGeneradoViewController {
                         HorarioGeneradoResumenDTO::getIdDocente,
                         LinkedHashMap::new,
                         Collectors.toList()));
+        horariosPorDocente.replaceAll((idDocente, opciones) -> ultimasOpciones(opciones));
 
-        model.addAttribute("docentes", docenteDAO.findAll());
+        List<Docente> docentes = docenteDAO.findAll();
+        Map<Long, Docente> docentesPorId = docentes.stream()
+                .collect(Collectors.toMap(Docente::getIdDocente, docente -> docente));
+        model.addAttribute("docentes", docentes);
         model.addAttribute("horarios", horarios);
-        model.addAttribute("horariosAgrupados", construirGrupos(horariosPorDocente));
+        model.addAttribute("horariosAgrupados", construirGrupos(horariosPorDocente, docentesPorId));
         model.addAttribute("opcionesPorDocente", construirOpcionesPorDocente(horariosPorDocente));
         model.addAttribute("detalleHorario", idHorario == null
                 ? null
@@ -58,6 +76,21 @@ public class HorarioGeneradoViewController {
         model.addAttribute("horarioSeleccionado", idHorario);
         model.addAttribute("moduloActivo", "horarios");
         return "horarios/index";
+    }
+
+    /**
+     * Conserva solamente la generación más reciente de cada opción. De esta
+     * manera el modal no mezcla las opciones 1, 2 y 3 de ejecuciones anteriores.
+     */
+    private List<HorarioGeneradoResumenDTO> ultimasOpciones(List<HorarioGeneradoResumenDTO> historico) {
+        Map<Integer, HorarioGeneradoResumenDTO> ultimaPorNumero = new LinkedHashMap<>();
+        historico.stream()
+                .sorted(Comparator.comparing(HorarioGeneradoResumenDTO::getIdHorario))
+                .forEach(opcion -> ultimaPorNumero.put(opcion.getOpcion(), opcion));
+        return ultimaPorNumero.values().stream()
+                .sorted(Comparator.comparing(HorarioGeneradoResumenDTO::getOpcion))
+                .limit(3)
+                .toList();
     }
 
     @PostMapping("/generar")
@@ -97,8 +130,70 @@ public class HorarioGeneradoViewController {
         return "redirect:/administrador/horarios?horario=" + idHorario;
     }
 
+    @PostMapping("/rechazar/{id}")
+    public String rechazar(@PathVariable("id") Long idHorario, RedirectAttributes redirectAttributes) {
+        try {
+            horarioGeneradoService.rechazarPorAdministrador(idHorario);
+            redirectAttributes.addFlashAttribute("mensajeExito", "Propuesta rechazada correctamente.");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("mensajeError", e.getMessage());
+        }
+        return "redirect:/administrador/horarios";
+    }
+
+    @GetMapping("/editar/{id}")
+    public String editarHorario(@PathVariable("id") Long idHorario, Model model, RedirectAttributes redirectAttributes) {
+        HorarioGeneradoResumenDTO resumen = horarioGeneradoService.listarResumenes().stream()
+                .filter(item -> idHorario.equals(item.getIdHorario())).findFirst().orElse(null);
+        if (resumen == null || !("EN_REVISION".equals(resumen.getEstado()) || "APROBADA_DOCENTE".equals(resumen.getEstado()))) {
+            redirectAttributes.addFlashAttribute("mensajeError", "El horario no está disponible para edición.");
+            return "redirect:/administrador/horarios";
+        }
+        Long cicloId = cicloAcademicoDAO.findIdActivo().orElse(null);
+        model.addAttribute("resumen", resumen);
+        model.addAttribute("bloques", horarioGeneradoService.listarDetalles(idHorario));
+        model.addAttribute("aulas", aulaDAO.findByEstadoTrue());
+        model.addAttribute("disponibilidad", cicloId == null ? List.of()
+                : disponibilidadDocenteDAO.findByDocenteIdAndCicloId(resumen.getIdDocente(), cicloId));
+        model.addAttribute("dias", List.of("Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo"));
+        model.addAttribute("moduloActivo", "horarios");
+        return "horarios/editar";
+    }
+
+    @PostMapping("/editar/{id}")
+    public String guardarEdicion(@PathVariable("id") Long idHorario,
+            @RequestParam("idCurso") List<Long> idsCurso,
+            @RequestParam("curso") List<String> cursos,
+            @RequestParam("idAula") List<Long> idsAula,
+            @RequestParam("dia") List<String> dias,
+            @RequestParam("horaInicio") List<String> horasInicio,
+            @RequestParam("horaFin") List<String> horasFin,
+            RedirectAttributes redirectAttributes) {
+        try {
+            if (!(idsCurso.size() == cursos.size() && cursos.size() == idsAula.size()
+                    && idsAula.size() == dias.size() && dias.size() == horasInicio.size()
+                    && horasInicio.size() == horasFin.size())) {
+                throw new IllegalArgumentException("Los bloques enviados están incompletos.");
+            }
+            List<HorarioDetalleDTO> bloques = new java.util.ArrayList<>();
+            for (int i = 0; i < idsCurso.size(); i++) {
+                HorarioDetalleDTO bloque = new HorarioDetalleDTO();
+                bloque.setIdCurso(idsCurso.get(i)); bloque.setCurso(cursos.get(i)); bloque.setIdAula(idsAula.get(i));
+                bloque.setDia(dias.get(i)); bloque.setHoraInicio(horasInicio.get(i)); bloque.setHoraFin(horasFin.get(i));
+                bloques.add(bloque);
+            }
+            horarioGeneradoService.editarYAprobar(idHorario, bloques);
+            redirectAttributes.addFlashAttribute("mensajeExito", "Horario corregido y aprobado correctamente.");
+            return "redirect:/administrador/horarios";
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("mensajeError", e.getMessage());
+            return "redirect:/administrador/horarios/editar/" + idHorario;
+        }
+    }
+
     private List<HorariosDocenteGrupoDTO> construirGrupos(
-            Map<Long, List<HorarioGeneradoResumenDTO>> horariosPorDocente) {
+            Map<Long, List<HorarioGeneradoResumenDTO>> horariosPorDocente,
+            Map<Long, Docente> docentesPorId) {
 
         return horariosPorDocente.entrySet()
                 .stream()
@@ -115,6 +210,17 @@ public class HorarioGeneradoViewController {
                             .sum());
                     grupo.setEstadoResumen(resumirEstado(opciones));
                     grupo.setFechaGeneracion(primera.getFechaGeneracion());
+                    Docente docente = docentesPorId.get(entry.getKey());
+                    grupo.setCarrera(docente == null || docente.getCarrera() == null
+                            ? "No asignada" : docente.getCarrera());
+                    opciones.stream()
+                            .filter(item -> "APROBADA_DOCENTE".equals(item.getEstado())
+                                    || "APROBADO".equals(item.getEstado()))
+                            .findFirst()
+                            .ifPresent(elegida -> {
+                                grupo.setOpcionElegida(elegida.getOpcion());
+                                grupo.setIdHorarioElegido(elegida.getIdHorario());
+                            });
                     return grupo;
                 })
                 .toList();

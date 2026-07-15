@@ -3,6 +3,7 @@ package pe.edu.utp.generador_horario.service.implementations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pe.edu.utp.generador_horario.dao.CicloAcademicoDAO;
 import pe.edu.utp.generador_horario.dao.DisponibilidadDocenteDAO;
 import pe.edu.utp.generador_horario.dao.DocenteDAO;
@@ -15,6 +16,7 @@ import pe.edu.utp.generador_horario.entidad.Docente;
 import pe.edu.utp.generador_horario.service.interfaces.HorarioGeneradoService;
 import pe.edu.utp.generador_horario.service.interfaces.OpcionesHorarioService;
 
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -154,6 +156,67 @@ public class HorarioGeneradoServiceImpl implements HorarioGeneradoService {
 
         horarioGeneradoDAO.aprobar(idHorario);
         LOGGER.info("Horario aprobado. idHorario={}", idHorario);
+    }
+
+    @Override
+    public void rechazarPorAdministrador(Long idHorario) {
+        String estadoActual = horarioGeneradoDAO.findEstadoById(idHorario)
+                .orElseThrow(() -> new IllegalArgumentException("Horario no encontrado."));
+        if (!ESTADO_APROBADA_DOCENTE.equals(estadoActual)) {
+            throw new IllegalArgumentException("Solo se puede rechazar una propuesta elegida por el docente.");
+        }
+        horarioGeneradoDAO.actualizarEstado(idHorario, ESTADO_RECHAZADA);
+        LOGGER.info("Horario rechazado por administrador. idHorario={}", idHorario);
+    }
+
+    @Override
+    @Transactional
+    public void editarYAprobar(Long idHorario, List<HorarioDetalleDTO> detalles) {
+        if (detalles == null || detalles.isEmpty()) {
+            throw new IllegalArgumentException("El horario debe conservar al menos un bloque.");
+        }
+        String estado = horarioGeneradoDAO.findEstadoById(idHorario)
+                .orElseThrow(() -> new IllegalArgumentException("Horario no encontrado."));
+        if (!ESTADO_EN_REVISION.equals(estado) && !ESTADO_APROBADA_DOCENTE.equals(estado)) {
+            throw new IllegalArgumentException("Este horario ya no se encuentra disponible para edición.");
+        }
+        validarBloquesEditados(idHorario, detalles);
+        horarioGeneradoDAO.reemplazarDetalles(idHorario, detalles);
+        horarioGeneradoDAO.aprobar(idHorario);
+        LOGGER.info("Horario corregido y aprobado por administrador. idHorario={}, bloques={}", idHorario, detalles.size());
+    }
+
+    private void validarBloquesEditados(Long idHorario, List<HorarioDetalleDTO> detalles) {
+        HorarioGeneradoResumenDTO resumen = horarioGeneradoDAO.listarResumenes().stream()
+                .filter(item -> idHorario.equals(item.getIdHorario())).findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Horario no encontrado."));
+        Long cicloId = cicloAcademicoDAO.findIdActivo()
+                .orElseThrow(() -> new IllegalArgumentException("No existe un ciclo académico activo."));
+        var disponibilidad = disponibilidadDocenteDAO.findByDocenteIdAndCicloId(resumen.getIdDocente(), cicloId);
+        for (HorarioDetalleDTO bloque : detalles) {
+            LocalTime inicio = LocalTime.parse(bloque.getHoraInicio());
+            LocalTime fin = LocalTime.parse(bloque.getHoraFin());
+            if (!fin.isAfter(inicio)) {
+                throw new IllegalArgumentException("La hora final debe ser posterior a la hora inicial.");
+            }
+            boolean disponible = disponibilidad.stream().anyMatch(rango -> rango.getDiaSemana().equalsIgnoreCase(bloque.getDia())
+                    && !inicio.isBefore(rango.getHoraInicio()) && !fin.isAfter(rango.getHoraFin()));
+            if (!disponible) {
+                throw new IllegalArgumentException("El bloque de " + bloque.getCurso() + " está fuera de la disponibilidad del docente.");
+            }
+        }
+        for (int i = 0; i < detalles.size(); i++) {
+            for (int j = i + 1; j < detalles.size(); j++) {
+                HorarioDetalleDTO a = detalles.get(i), b = detalles.get(j);
+                if (a.getDia().equalsIgnoreCase(b.getDia())) {
+                    LocalTime ai = LocalTime.parse(a.getHoraInicio()), af = LocalTime.parse(a.getHoraFin());
+                    LocalTime bi = LocalTime.parse(b.getHoraInicio()), bf = LocalTime.parse(b.getHoraFin());
+                    if (ai.isBefore(bf) && bi.isBefore(af)) {
+                        throw new IllegalArgumentException("Existen bloques superpuestos el " + a.getDia() + ".");
+                    }
+                }
+            }
+        }
     }
 
     @Override

@@ -11,6 +11,9 @@ public class HorariosDocenteGrupoDTO {
     private Integer totalBloques;
     private String estadoResumen;
     private String fechaGeneracion;
+    private String carrera;
+    private Integer opcionElegida;
+    private Long idHorarioElegido;
 
     public Long getIdDocente() {
         return idDocente;
@@ -59,4 +62,11 @@ public class HorariosDocenteGrupoDTO {
     public void setFechaGeneracion(String fechaGeneracion) {
         this.fechaGeneracion = fechaGeneracion;
     }
+
+    public String getCarrera() { return carrera; }
+    public void setCarrera(String carrera) { this.carrera = carrera; }
+    public Integer getOpcionElegida() { return opcionElegida; }
+    public void setOpcionElegida(Integer opcionElegida) { this.opcionElegida = opcionElegida; }
+    public Long getIdHorarioElegido() { return idHorarioElegido; }
+    public void setIdHorarioElegido(Long idHorarioElegido) { this.idHorarioElegido = idHorarioElegido; }
 }

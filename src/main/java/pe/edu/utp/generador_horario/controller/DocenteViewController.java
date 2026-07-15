@@ -1,11 +1,14 @@
 package pe.edu.utp.generador_horario.controller;
 
 import pe.edu.utp.generador_horario.entidad.Docente;
+import pe.edu.utp.generador_horario.service.interfaces.CarreraService;
 import pe.edu.utp.generador_horario.service.interfaces.DocenteService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
 
 /**
  * Controlador MVC para la gestion de docentes.
@@ -20,9 +23,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class DocenteViewController {
 
     private final DocenteService docenteService;
+    private final CarreraService carreraService;
 
-    public DocenteViewController(DocenteService docenteService) {
+    public DocenteViewController(DocenteService docenteService, CarreraService carreraService) {
         this.docenteService = docenteService;
+        this.carreraService = carreraService;
     }
 
     /**
@@ -39,7 +44,7 @@ public class DocenteViewController {
             model.addAttribute("docente", docente);
         }
 
-        model.addAttribute("docentes", docenteService.listarDocentes());
+        agregarListadoYFiltros(model);
         model.addAttribute("modoEdicion", model.containsAttribute("modoEdicion"));
         model.addAttribute("moduloActivo", "docentes");
 
@@ -86,11 +91,24 @@ public class DocenteViewController {
         Docente docente = docenteService.obtenerPorId(id);
 
         model.addAttribute("docente", docente);
-        model.addAttribute("docentes", docenteService.listarDocentes());
+        agregarListadoYFiltros(model);
         model.addAttribute("modoEdicion", true);
         model.addAttribute("moduloActivo", "docentes");
 
         return "docentes/index";
+    }
+
+    /** Mantiene el filtro de carreras sincronizado con los datos almacenados. */
+    private void agregarListadoYFiltros(Model model) {
+        List<Docente> docentes = docenteService.listarDocentes();
+        model.addAttribute("docentes", docentes);
+        model.addAttribute("carrerasFiltro", carreraService.listarCarreras().stream()
+                .map(carrera -> carrera.getNombre())
+                .filter(nombre -> nombre != null && !nombre.isBlank())
+                .map(String::trim)
+                .distinct()
+                .sorted(String.CASE_INSENSITIVE_ORDER)
+                .toList());
     }
 
     /**

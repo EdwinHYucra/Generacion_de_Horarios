@@ -11,8 +11,10 @@ body {
 
 .opciones-content {
     flex: 1;
-    width: min(1180px, calc(100% - 48px));
-    padding: 34px 0 42px;
+    width: 100%;
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 32px 34px 42px;
 }
 
 .opciones-header {
@@ -23,10 +25,13 @@ body {
     margin-bottom: 24px;
 }
 
+.opciones-title { display: flex; align-items: flex-start; gap: 14px; }
+.opciones-title > img { width: 34px; height: 34px; flex: 0 0 34px; margin-top: 4px; object-fit: contain; }
+
 .opciones-header h1 {
     margin: 0 0 8px;
-    font-size: 32px;
-    font-weight: 900;
+    font-size: 30px;
+    font-weight: 800;
     color: #151821;
 }
 
@@ -81,6 +86,34 @@ body {
     place-items: center;
     text-align: center;
     color: #737a88;
+}
+
+.estado-vacio__contenido {
+    width: min(520px, calc(100% - 40px));
+    text-align: center;
+}
+
+.generacion-progreso {
+    width: 100%;
+    height: 8px;
+    margin: 22px 0;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #eceef2;
+}
+
+.generacion-progreso span {
+    display: block;
+    width: 38%;
+    height: 100%;
+    border-radius: inherit;
+    background: #d50000;
+    animation: docente-generando 1.2s ease-in-out infinite;
+}
+
+@keyframes docente-generando {
+    from { transform: translateX(-110%); }
+    to { transform: translateX(270%); }
 }
 
 .estado-vacio strong {
@@ -351,6 +384,61 @@ body {
     z-index: 1000;
 }
 
+body.modal-abierto {
+    overflow: hidden;
+}
+
+/* Modal pequeño de validación para observar o rechazar una propuesta */
+.modal .modal-container--aviso {
+    width: min(380px, calc(100% - 32px));
+    min-height: 200px;
+    max-height: none;
+    margin: max(70px, calc(50vh - 100px)) auto 0;
+    padding: 24px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border: 1px solid #e4e6eb;
+    border-radius: 14px;
+    background: #ffffff;
+    box-shadow: 0 24px 70px rgba(7, 8, 13, 0.24);
+}
+
+.modal-aviso__icono {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 16px;
+    border-radius: 50%;
+    color: #e00000;
+    background: #ffe3e3;
+    font-size: 27px;
+    font-weight: 900;
+}
+
+.modal-aviso__contenido h2 {
+    margin: 0 0 9px;
+    color: #17191f;
+    font-size: 20px;
+}
+
+.modal-aviso__contenido p {
+    max-width: 330px;
+    margin: 0;
+    color: #687080;
+    font-size: 13px;
+    line-height: 1.55;
+}
+
+.modal-aviso__boton {
+    width: auto;
+    min-width: 130px;
+    margin-top: 22px;
+    padding: 11px 24px;
+    border: 0;
+}
+
 .modal-backdrop {
     position: absolute;
     inset: 0;
@@ -440,11 +528,33 @@ body {
     }
 
     .opciones-content {
-        width: calc(100% - 28px);
+        width: 100%;
+        padding: 24px 18px 34px;
     }
 
     .opciones-header {
         align-items: flex-start;
         flex-direction: column;
     }
+    .opciones-selector { width: 100%; justify-content: flex-start; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; scrollbar-width: thin; }
+    .opcion-tab { flex: 1 0 96px; }
+    .horario-card__header { align-items: stretch; flex-direction: column; }
+    .btn-secundario { width: 100%; justify-content: center; }
+    .horario-grid-shell { overflow-x: auto; scrollbar-width: thin; }
+    .resumen-horario { width: 100%; }
+    .solicitud-actions { display: grid; grid-template-columns: 1fr 1fr; }
+    .solicitud-actions .btn { width: 100%; }
+}
+
+@media (max-width: 480px) {
+    .opciones-content { padding: 20px 12px 28px; }
+    .opciones-title { gap: 9px; }
+    .opciones-title > img { width: 27px; height: 27px; flex-basis: 27px; }
+    .opciones-header h1 { font-size: 22px; }
+    .opciones-header p { font-size: 12px; }
+    .estado-vacio { min-height: 150px; padding: 18px 0; }
+    .estado-vacio strong { font-size: 17px; }
+    .solicitud-actions { grid-template-columns: 1fr; }
+    .modal-container { width: calc(100% - 20px); max-height: calc(100vh - 20px); }
+    .modal-header,.modal-body { padding: 14px; }
 }

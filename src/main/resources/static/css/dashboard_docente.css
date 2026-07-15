@@ -1,0 +1,155 @@
+/* Contenedor principal del Dashboard Docente */
+.docente-content {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 32px 34px 34px;
+}
+
+/* Parte superior: bienvenida */
+.docente-heading h1 {
+    margin: 0 0 9px;
+    color: #20232a;
+    font-size: 30px;
+    line-height: 1.15;
+    font-weight: 800;
+}
+
+.docente-heading p {
+    margin: 0;
+    color: #686d78;
+    font-size: 14px;
+}
+
+/* Tarjetas de accesos principales */
+.docente-card-grid {
+    margin-top: 32px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+}
+
+.docente-action-card {
+    min-height: 220px;
+    padding: 28px 28px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    border: 1px solid #d5d9e0;
+    border-radius: 7px;
+    background: #ffffff;
+    box-shadow: 0 2px 4px rgba(16, 24, 40, .08);
+}
+
+.docente-action-card__icon {
+    width: 58px;
+    height: 58px;
+    margin-bottom: 20px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: rgba(213, 0, 0, .1);
+}
+
+.docente-action-card__icon img {
+    width: 32px;
+    height: 32px;
+}
+
+.docente-action-card h2 {
+    margin: 0 0 10px;
+    color: #24272f;
+    font-size: 17px;
+}
+
+.docente-action-card p {
+    max-width: 390px;
+    margin: 0 auto 22px;
+    color: #686d78;
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+.docente-btn {
+    min-width: 120px;
+    margin-top: auto;
+    padding: 10px 22px;
+    display: inline-flex;
+    justify-content: center;
+    color: #ffffff;
+    border-radius: 6px;
+    background: #d50000;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.docente-btn:hover,
+.docente-btn:focus-visible { background: #b80000; }
+
+/* Panel dinámico: estado actual del proceso */
+.docente-status-panel {
+    margin-top: 28px;
+    overflow: hidden;
+    border: 1px solid #d5d9e0;
+    border-radius: 7px;
+    background: #ffffff;
+    box-shadow: 0 2px 4px rgba(16, 24, 40, .06);
+}
+
+.docente-status-panel__header {
+    min-height: 52px;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid #dfe2e7;
+}
+
+.docente-status-panel__header span {
+    width: 5px;
+    height: 24px;
+    border-radius: 8px;
+    background: #d50000;
+}
+
+.docente-status-panel__header h2 { margin: 0; font-size: 15px; }
+.docente-status-grid {
+    padding: 30px 38px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+}
+
+.docente-status-item { display: flex; align-items: center; gap: 13px; }
+.docente-status-item__icon {
+    width: 22px;
+    height: 22px;
+    flex: 0 0 22px;
+    display: grid;
+    place-items: center;
+    border: 1.5px solid #343840;
+    border-radius: 50%;
+    font-size: 13px;
+    font-weight: 800;
+}
+.docente-status-item strong { display: block; font-size: 12px; }
+.docente-status-item p { margin: 2px 0 0; color: #24272f; font-size: 12px; font-weight: 700; }
+.docente-status-item.is-pending .docente-status-item__icon { color: #747983; border-color: #747983; }
+.docente-status-item.is-pending .docente-status-item__icon {
+    padding-bottom: 6px;
+    line-height: 1;
+    text-align: center;
+}
+
+/* Adaptación del Dashboard para tablet y móvil */
+@media (max-width: 900px) {
+    .docente-card-grid { grid-template-columns: 1fr; }
+    .docente-status-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 720px) {
+    .docente-content { padding: 26px 18px; }
+    .docente-heading h1 { font-size: 25px; }
+    .docente-card-grid { margin-top: 24px; gap: 16px; }
+}

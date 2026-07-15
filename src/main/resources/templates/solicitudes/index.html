@@ -2,8 +2,10 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Solicitudes de Cambio</title>
     <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" th:href="@{/css/solicitudes_admin.css}">
 </head>
 <body>
 
@@ -13,7 +15,7 @@
     <div class="main">
         <div th:replace="~{fragments/header :: header}"></div>
 
-        <main class="content">
+        <main class="content content--solicitudes">
             <section class="page-title">
                 <h1>Solicitudes de Cambio</h1>
                 <p>Atiende observaciones y rechazos enviados por docentes.</p>
@@ -38,7 +40,8 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr th:each="solicitud : ${solicitudes}">
+                        <tr th:each="solicitud : ${solicitudes}" class="solicitud-admin-row"
+                            th:attr="data-docente=${solicitud.docente},data-codigo=${solicitud.codigoSolicitud},data-tipo=${solicitud.tipoSolicitud},data-estado=${solicitud.estadoSolicitud}">
                             <td th:text="${solicitud.codigoSolicitud}">SOL</td>
                             <td th:text="${solicitud.docente}">Docente</td>
                             <td th:text="${'Opcion ' + solicitud.opcionHorario}">Opcion</td>

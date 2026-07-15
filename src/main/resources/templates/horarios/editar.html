@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar horario</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" th:href="@{/css/editar_horario_admin.css}">
+</head>
+<body><div class="app">
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <div class="main"><div th:replace="~{fragments/header :: header}"></div>
+        <main class="content editar-horario-admin">
+            <!-- Parte superior: identificación del horario en revisión -->
+            <header class="editar-horario-heading">
+                <div><img th:src="@{/assets/validacion_horarios.svg}" alt=""><div><h1>Editar horario</h1><p th:text="${'Corrija la propuesta de ' + resumen.docente + ' y apruébela al finalizar.'}"></p></div></div>
+                <a class="editar-volver" th:href="@{/administrador/horarios}">Volver a validación</a>
+            </header>
+            <div th:if="${mensajeError}" class="alert alert--error" th:text="${mensajeError}"></div>
+
+            <div class="editar-horario-layout">
+                <!-- Bloques editables: día, horas y aula -->
+                <section class="editar-panel editar-panel--bloques">
+                    <header><div><h2>Horario propuesto</h2><p>Todos los bloques deben permanecer dentro de la disponibilidad declarada.</p></div><span th:text="${#lists.size(bloques) + ' bloques'}"></span></header>
+                    <form th:action="@{/administrador/horarios/editar/{id}(id=${resumen.idHorario})}" method="post" id="formEditarHorario">
+                        <div class="editar-bloques">
+                            <article class="editar-bloque" th:each="bloque, estado : ${bloques}">
+                                <div class="editar-curso"><span th:text="${estado.count}"></span><div><strong th:text="${bloque.curso}"></strong><small th:text="${'Bloque ' + estado.count}"></small></div></div>
+                                <input type="hidden" name="idCurso" th:value="${bloque.idCurso}"><input type="hidden" name="curso" th:value="${bloque.curso}">
+                                <label>Día<select name="dia" required><option th:each="dia : ${dias}" th:value="${dia}" th:text="${dia}" th:selected="${#strings.equalsIgnoreCase(dia,bloque.dia)}"></option></select></label>
+                                <label>Inicio<input type="time" name="horaInicio" step="900" th:value="${bloque.horaInicio}" required></label>
+                                <label>Fin<input type="time" name="horaFin" step="900" th:value="${bloque.horaFin}" required></label>
+                                <label>Aula<select name="idAula" required><option th:each="aula : ${aulas}" th:value="${aula.idAula}" th:text="${aula.codigo + ' · ' + aula.tipo}" th:selected="${aula.idAula == bloque.idAula}"></option></select></label>
+                            </article>
+                        </div>
+                        <footer><a class="btn" th:href="@{/administrador/horarios}">Cancelar</a><button class="btn btn--primary" type="submit">Guardar y aprobar</button></footer>
+                    </form>
+                </section>
+
+                <!-- Referencia lateral: disponibilidad real del docente -->
+                <aside class="editar-panel editar-disponibilidad">
+                    <header><div><h2>Disponibilidad del docente</h2><p>Rangos confirmados para el ciclo actual.</p></div></header>
+                    <div th:if="${#lists.isEmpty(disponibilidad)}" class="editar-vacio">No registra disponibilidad.</div>
+                    <div class="editar-rango" th:each="rango : ${disponibilidad}"><strong th:text="${rango.diaSemana}"></strong><span th:text="${rango.horaInicio + ' – ' + rango.horaFin}"></span></div>
+                    <div class="editar-ayuda"><strong>Al guardar</strong><p>El horario se aprobará directamente. No regresará al docente para una segunda confirmación.</p></div>
+                </aside>
+            </div>
+        </main>
+        <div th:replace="~{fragments/footer :: footer}"></div>
+    </div>
+</div><script th:src="@{/js/admin.js}"></script></body>
+</html>

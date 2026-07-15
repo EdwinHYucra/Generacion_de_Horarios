@@ -2,46 +2,29 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Disponibilidad Docente</title>
-    <link rel="stylesheet" th:href="@{/css/style_dashboard_docente.css}">
+    <link rel="stylesheet" th:href="@{/css/docente.css}">
     <link rel="stylesheet" th:href="@{/css/disponibilidad_docente.css}">
 </head>
 <body>
 
 <div class="docente-app">
 
+    <!-- Sidebar compartido del portal Docente -->
     <div th:replace="~{fragments/sidebar_docente :: sidebarDocente}"></div>
 
     <div class="docente-main">
 
-        <header class="docente-topbar">
-            <div></div>
-
-            <div class="docente-user-area">
-                <div class="docente-notification">
-                    <span class="nav-icon icon-bell"></span>
-                    <i></i>
-                </div>
-
-                <div class="docente-user">
-                    <div class="docente-user__text">
-                        <strong th:text="${nombreUsuario}">Juan Pérez</strong>
-                        <small th:text="${rolUsuario}">Docente</small>
-                    </div>
-
-                    <div class="docente-avatar">
-                        <span th:text="${#strings.substring(nombreUsuario, 0, 1)}">J</span>
-                        <i></i>
-                    </div>
-                </div>
-            </div>
-        </header>
+        <!-- Parte superior: información del Docente -->
+        <div th:replace="~{fragments/header_docente :: headerDocente}"></div>
 
         <main class="docente-content">
 
+            <!-- Parte superior: título e intervalo de Disponibilidad -->
             <section class="disponibilidad-header">
                 <div class="disponibilidad-title">
-                    <span class="title-calendar-icon"></span>
+                    <img class="title-calendar-icon" th:src="@{/img/docente/IMG_14.svg}" alt="" aria-hidden="true">
 
                     <div>
                         <h1>Disponibilidad</h1>
@@ -58,6 +41,7 @@
                 </div>
             </section>
 
+            <!-- Botones reversibles: mañana, tarde y noche -->
             <section class="turnos-rapidos">
                 <div>
                     <h3>Selección rápida por turno</h3>
@@ -65,20 +49,22 @@
                 </div>
 
                 <div class="turnos-botones">
-                    <button type="button" class="turno-btn" data-inicio="07:00" data-fin="12:00">
+                    <button type="button" class="turno-btn" data-inicio="07:00" data-fin="12:00" aria-pressed="false">
                         Mañana
                     </button>
 
-                    <button type="button" class="turno-btn" data-inicio="12:00" data-fin="17:00">
+                    <button type="button" class="turno-btn" data-inicio="12:00" data-fin="17:00" aria-pressed="false">
                         Tarde
                     </button>
 
-                    <button type="button" class="turno-btn" data-inicio="17:00" data-fin="22:30">
+                    <button type="button" class="turno-btn" data-inicio="17:00" data-fin="22:30" aria-pressed="false">
                         Noche
                     </button>
                 </div>
             </section>
 
+            <!-- Cuadrícula dinámica de bloques de 15 minutos -->
+            <p class="schedule-scroll-hint" aria-hidden="true">↔ Desliza para ver todos los días</p>
             <section class="schedule-card">
                 <div class="schedule-grid" id="scheduleGrid">
                     <div class="cell header-cell">Horario</div>
@@ -91,6 +77,7 @@
                     <div class="cell header-cell">Domingo</div>
                 </div>
 
+                <!-- Contador y botones para limpiar o confirmar -->
                 <div class="schedule-footer">
                     <p>
                         <strong id="contadorBloques">0</strong>
@@ -111,11 +98,16 @@
             </section>
 
         </main>
+        <!-- Footer compartido del portal Docente -->
+        <div th:replace="~{fragments/footer_docente :: footerDocente}"></div>
 
     </div>
 
 </div>
 
+<!-- Mensajes de guardado del portal Docente -->
+<div th:replace="~{fragments/notificacion_docente :: notificacionDocente}"></div>
+<script th:src="@{/js/docente_notificaciones.js}"></script>
 <script th:src="@{/js/disponibilidad_docente.js}"></script>
 </body>
 </html>

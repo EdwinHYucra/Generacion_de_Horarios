@@ -20,6 +20,7 @@ public class AsignacionHorarioCandidataDTO {
     private String diaSemana;
     private LocalTime horaInicio;
     private LocalTime horaFin;
+    private boolean disponibilidadPrevalidada;
 
     public Long getIdDocente() {
         return idDocente;
@@ -91,5 +92,13 @@ public class AsignacionHorarioCandidataDTO {
 
     public void setHoraFin(LocalTime horaFin) {
         this.horaFin = horaFin;
+    }
+
+    public boolean isDisponibilidadPrevalidada() {
+        return disponibilidadPrevalidada;
+    }
+
+    public void setDisponibilidadPrevalidada(boolean disponibilidadPrevalidada) {
+        this.disponibilidadPrevalidada = disponibilidadPrevalidada;
     }
 }

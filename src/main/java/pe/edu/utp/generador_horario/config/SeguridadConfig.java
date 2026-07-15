@@ -50,7 +50,7 @@ public class SeguridadConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/css/**", "/js/**", "/images/**", "/img/**", "/assets/**").permitAll()
                         .requestMatchers("/evaluacion-docente/**").permitAll()
-                        .requestMatchers(RutasSistema.LOGIN, RutasSistema.LOGOUT).permitAll()
+                        .requestMatchers(RutasSistema.LOGIN, RutasSistema.LOGOUT, "/recuperar-contrasena", "/restablecer-contrasena").permitAll()
                         .requestMatchers(RutasSistema.SUPERADMIN + "/**").hasRole(RolSistema.SUPERADMIN)
                         .requestMatchers(RutasSistema.ADMINISTRADOR + "/**").hasRole(RolSistema.ADMIN)
                         .requestMatchers(RutasSistema.DOCENTE + "/**").hasRole(RolSistema.DOCENTE)
