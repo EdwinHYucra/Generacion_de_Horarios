@@ -1,3 +1,64 @@
 /* Presentación exclusiva de Solicitudes del Administrador. */
-.content--solicitudes{display:flex;flex-direction:column;gap:16px}.content--solicitudes .page-title{margin:0}.content--solicitudes .page-title h1{margin:0}.content--solicitudes .page-title p{margin:5px 0 0;color:#7c8491}.content--solicitudes .panel{overflow:hidden;border:1px solid #dfe3e9;border-radius:9px;background:#fff;box-shadow:0 2px 8px rgba(15,23,42,.04)}.content--solicitudes textarea{width:100%;min-height:72px;resize:vertical}.content--solicitudes .action-group{margin-top:8px;flex-wrap:wrap}.content--solicitudes .action-group .btn{min-width:90px}
-@media(max-width:768px){.content--solicitudes{padding:20px 14px}.content--solicitudes .page-title h1{font-size:23px}.content--solicitudes .panel{overflow:visible}.content--solicitudes textarea{min-height:88px}.content--solicitudes .action-group .btn{flex:1}}
+.content--solicitudes {
+    display: flex;
+    flex-direction: column;
+    gap: 16px
+}
+
+.content--solicitudes .page-title {
+    margin: 0
+}
+
+.content--solicitudes .page-title h1 {
+    margin: 0
+}
+
+.content--solicitudes .page-title p {
+    margin: 5px 0 0;
+    color: #7c8491
+}
+
+.content--solicitudes .panel {
+    overflow: hidden;
+    border: 1px solid #dfe3e9;
+    border-radius: 9px;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, .04)
+}
+
+.content--solicitudes textarea {
+    width: 100%;
+    min-height: 72px;
+    resize: vertical
+}
+
+.content--solicitudes .action-group {
+    margin-top: 8px;
+    flex-wrap: wrap
+}
+
+.content--solicitudes .action-group .btn {
+    min-width: 90px
+}
+
+@media(max-width:768px) {
+    .content--solicitudes {
+        padding: 20px 14px
+    }
+
+    .content--solicitudes .page-title h1 {
+        font-size: 23px
+    }
+
+    .content--solicitudes .panel {
+        overflow: visible
+    }
+
+    .content--solicitudes textarea {
+        min-height: 88px
+    }
+
+    .content--solicitudes .action-group .btn {
+        flex: 1
+    }
+}

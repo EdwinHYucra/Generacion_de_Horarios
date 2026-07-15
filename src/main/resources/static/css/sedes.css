@@ -1,10 +1,225 @@
 /* Estilos exclusivos de Gestión de Sedes */
-.content--sedes{padding:18px 24px}.sedes-heading{margin-bottom:13px}.sedes-heading .page-title__row{align-items:flex-start;gap:8px}.sedes-heading .page-title__icon{width:18px;height:18px;margin-top:1px;filter:brightness(0) saturate(100%) invert(15%) sepia(97%) saturate(6414%) hue-rotate(359deg) brightness(92%) contrast(117%)}.sedes-heading h1{font-size:19px}.sedes-heading p{margin-top:5px;font-size:9px}
+.content--sedes {
+    padding: 18px 24px
+}
+
+.sedes-heading {
+    margin-bottom: 13px
+}
+
+.sedes-heading .page-title__row {
+    align-items: flex-start;
+    gap: 8px
+}
+
+.sedes-heading .page-title__icon {
+    width: 18px;
+    height: 18px;
+    margin-top: 1px;
+    filter: brightness(0) saturate(100%) invert(15%) sepia(97%) saturate(6414%) hue-rotate(359deg) brightness(92%) contrast(117%)
+}
+
+.sedes-heading h1 {
+    font-size: 19px
+}
+
+.sedes-heading p {
+    margin-top: 5px;
+    font-size: 9px
+}
 
 /* Formulario compacto */
-.content--sedes .panel{margin-bottom:14px;border-radius:7px}.sedes-form-panel .panel__header{min-height:47px;padding:9px 14px}.sedes-form-panel .panel__title{gap:9px}.sedes-form-panel .panel__title-icon{width:24px;height:24px;border-radius:4px;font-size:14px}.sedes-form-panel .panel__title h2{font-size:14px}.sedes-form-panel .panel__title p{font-size:8px}.sedes-form-panel .panel__body{padding:11px 14px}.sedes-form-panel .form-grid{gap:10px 12px}.sedes-form-panel .form-group{gap:5px}.sedes-form-panel label{font-size:8px}.sedes-form-panel .form-control{height:29px;border-radius:4px;font-size:8px}.sedes-form-panel .panel__footer{padding:9px 14px}.sedes-form-panel .btn{height:28px;min-width:70px;padding:0 10px;border-radius:4px;font-size:8px}
+.content--sedes .panel {
+    margin-bottom: 14px;
+    border-radius: 7px
+}
+
+.sedes-form-panel .panel__header {
+    min-height: 47px;
+    padding: 9px 14px
+}
+
+.sedes-form-panel .panel__title {
+    gap: 9px
+}
+
+.sedes-form-panel .panel__title-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    font-size: 14px
+}
+
+.sedes-form-panel .panel__title h2 {
+    font-size: 14px
+}
+
+.sedes-form-panel .panel__title p {
+    font-size: 8px
+}
+
+.sedes-form-panel .panel__body {
+    padding: 11px 14px
+}
+
+.sedes-form-panel .form-grid {
+    gap: 10px 12px
+}
+
+.sedes-form-panel .form-group {
+    gap: 5px
+}
+
+.sedes-form-panel label {
+    font-size: 8px
+}
+
+.sedes-form-panel .form-control {
+    height: 29px;
+    border-radius: 4px;
+    font-size: 8px
+}
+
+.sedes-form-panel .panel__footer {
+    padding: 9px 14px
+}
+
+.sedes-form-panel .btn {
+    height: 28px;
+    min-width: 70px;
+    padding: 0 10px;
+    border-radius: 4px;
+    font-size: 8px
+}
 
 /* Listado y buscador */
-.sedes-table-panel .panel__header{min-height:51px;padding:9px 14px}.sedes-table-panel .panel__title h2{font-size:14px}.sedes-table-panel .panel__title p{font-size:8px}.sedes-search{display:flex;align-items:center;gap:6px;width:190px;height:28px;padding:0 9px;border:1px solid #d6dbe4;border-radius:4px;background:#f7f7f9}.sedes-search img{width:11px;height:11px}.sedes-search input{width:100%;border:0;outline:0;background:transparent;font-size:8px}.sedes-table-panel .data-table{table-layout:fixed}.sedes-table-panel .data-table th{height:30px;padding:0 12px;font-size:7px}.sedes-table-panel .data-table td{height:39px;padding:0 12px;font-size:8px}.sedes-table-panel .data-table th:nth-child(1),.sedes-table-panel .data-table td:nth-child(1){width:18%}.sedes-table-panel .data-table th:nth-child(2),.sedes-table-panel .data-table td:nth-child(2){width:25%}.sedes-table-panel .data-table th:nth-child(3),.sedes-table-panel .data-table td:nth-child(3){width:35%}.sedes-table-panel .data-table th:nth-child(4),.sedes-table-panel .data-table td:nth-child(4){width:12%}.sedes-table-panel .data-table th:nth-child(5),.sedes-table-panel .data-table td:nth-child(5){width:10%}.sedes-table-panel .badge{min-height:17px;padding:0 7px;font-size:6px}.sedes-table-panel .action-group{gap:8px}.sedes-table-panel .action-link,.sedes-table-panel .action-button{width:15px;height:15px}.sedes-table-panel .action-link img,.sedes-table-panel .action-button img{width:11px;height:11px;opacity:.72}.sedes-table-panel .table-footer{height:36px;padding:0 14px;font-size:8px}
+.sedes-table-panel .panel__header {
+    min-height: 51px;
+    padding: 9px 14px
+}
 
-@media(max-width:700px){.content--sedes{padding:16px}.sedes-form-panel .form-grid{grid-template-columns:1fr}.sedes-table-panel .panel__header{align-items:flex-start;flex-direction:column}.sedes-search{width:100%}.sedes-table-panel .data-table{min-width:620px}}
+.sedes-table-panel .panel__title h2 {
+    font-size: 14px
+}
+
+.sedes-table-panel .panel__title p {
+    font-size: 8px
+}
+
+.sedes-search {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 190px;
+    height: 28px;
+    padding: 0 9px;
+    border: 1px solid #d6dbe4;
+    border-radius: 4px;
+    background: #f7f7f9
+}
+
+.sedes-search img {
+    width: 11px;
+    height: 11px
+}
+
+.sedes-search input {
+    width: 100%;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    font-size: 8px
+}
+
+.sedes-table-panel .data-table {
+    table-layout: fixed
+}
+
+.sedes-table-panel .data-table th {
+    height: 30px;
+    padding: 0 12px;
+    font-size: 7px
+}
+
+.sedes-table-panel .data-table td {
+    height: 39px;
+    padding: 0 12px;
+    font-size: 8px
+}
+
+.sedes-table-panel .data-table th:nth-child(1),
+.sedes-table-panel .data-table td:nth-child(1) {
+    width: 18%
+}
+
+.sedes-table-panel .data-table th:nth-child(2),
+.sedes-table-panel .data-table td:nth-child(2) {
+    width: 25%
+}
+
+.sedes-table-panel .data-table th:nth-child(3),
+.sedes-table-panel .data-table td:nth-child(3) {
+    width: 35%
+}
+
+.sedes-table-panel .data-table th:nth-child(4),
+.sedes-table-panel .data-table td:nth-child(4) {
+    width: 12%
+}
+
+.sedes-table-panel .data-table th:nth-child(5),
+.sedes-table-panel .data-table td:nth-child(5) {
+    width: 10%
+}
+
+.sedes-table-panel .badge {
+    min-height: 17px;
+    padding: 0 7px;
+    font-size: 6px
+}
+
+.sedes-table-panel .action-group {
+    gap: 8px
+}
+
+.sedes-table-panel .action-link,
+.sedes-table-panel .action-button {
+    width: 15px;
+    height: 15px
+}
+
+.sedes-table-panel .action-link img,
+.sedes-table-panel .action-button img {
+    width: 11px;
+    height: 11px;
+    opacity: .72
+}
+
+.sedes-table-panel .table-footer {
+    height: 36px;
+    padding: 0 14px;
+    font-size: 8px
+}
+
+@media(max-width:700px) {
+    .content--sedes {
+        padding: 16px
+    }
+
+    .sedes-form-panel .form-grid {
+        grid-template-columns: 1fr
+    }
+
+    .sedes-table-panel .panel__header {
+        align-items: flex-start;
+        flex-direction: column
+    }
+
+    .sedes-search {
+        width: 100%
+    }
+
+    .sedes-table-panel .data-table {
+        min-width: 620px
+    }
+}
