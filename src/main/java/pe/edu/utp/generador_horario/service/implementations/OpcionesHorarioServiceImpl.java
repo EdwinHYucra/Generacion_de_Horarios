@@ -28,11 +28,14 @@ import java.util.Locale;
 import java.util.Optional;
 
 /**
- * Genera opciones de horario para un docente usando datos reales del ciclo activo.
+ * Genera opciones de horario para un docente usando datos reales del ciclo
+ * activo.
  *
- * <p>Patrones aplicados: Strategy y Chain of Responsibility se aprovechan a
+ * <p>
+ * Patrones aplicados: Strategy y Chain of Responsibility se aprovechan a
  * traves de {@link ValidadorRestriccionesHorarioService}. Este servicio solo
- * arma candidatas y delega las reglas de negocio al validador.</p>
+ * arma candidatas y delega las reglas de negocio al validador.
+ * </p>
  */
 @Service
 public class OpcionesHorarioServiceImpl implements OpcionesHorarioService {
@@ -82,8 +85,8 @@ public class OpcionesHorarioServiceImpl implements OpcionesHorarioService {
                 .flatMap(Optional::stream)
                 .toList();
 
-        List<DisponibilidadDocente> disponibilidades =
-                disponibilidadDAO.findByDocenteIdAndCicloId(docenteId, cicloActivoId);
+        List<DisponibilidadDocente> disponibilidades = disponibilidadDAO.findByDocenteIdAndCicloId(docenteId,
+                cicloActivoId);
         List<Aula> aulas = aulaDAO.findByEstadoTrue();
 
         if (cursos.isEmpty() || disponibilidades.isEmpty() || aulas.isEmpty()) {
@@ -109,20 +112,22 @@ public class OpcionesHorarioServiceImpl implements OpcionesHorarioService {
                 docenteId,
                 2,
                 cursosPriorizados,
-                disponibilidades,
+                disponibilidades.stream()
+                        .sorted(Comparator.comparing(DisponibilidadDocente::getDiaSemana)
+                                .thenComparing(DisponibilidadDocente::getHoraInicio))
+                        .toList(),
                 ordenarAulasParaOpcion(aulas, 2),
-                "Horario generado distribuyendo las sesiones entre los dias disponibles."));
+                "Horario generado distribuyendo dias disponibles."));
         opciones.add(generarOpcion(
                 docenteId,
                 3,
                 cursosPriorizados.stream()
                         .sorted(Comparator.comparingInt(this::horasSemanales).reversed())
                         .toList(),
-                disponibilidades.stream()
-                        .sorted(Comparator.comparing(DisponibilidadDocente::getHoraInicio).reversed())
-                        .toList(),
+                disponibilidades,
                 ordenarAulasParaOpcion(aulas, 3),
-                "Horario generado priorizando bloques tardios y cursos de mayor carga."));
+                "Horario generado priorizando cursos de mayor carga."));
+
         return opciones;
     }
 
@@ -144,15 +149,13 @@ public class OpcionesHorarioServiceImpl implements OpcionesHorarioService {
             List<HorarioDetalleDTO> bloquesCurso = new ArrayList<>();
 
             for (Integer duracionSesion : calcularSesionesCurso(curso)) {
-                Optional<AsignacionHorarioCandidataDTO> candidata =
-                        buscarMejorCandidataValida(
-                                docenteId,
-                                numeroOpcion,
-                                curso,
-                                duracionSesion,
-                                disponibilidades,
-                                aulas,
-                                asignaciones);
+                Optional<AsignacionHorarioCandidataDTO> candidata = buscarMejorCandidataValida(
+                        docenteId,
+                        curso,
+                        duracionSesion,
+                        disponibilidades,
+                        aulas,
+                        asignaciones);
 
                 if (candidata.isPresent()) {
                     asignaciones.add(candidata.get());
@@ -183,43 +186,39 @@ public class OpcionesHorarioServiceImpl implements OpcionesHorarioService {
 
     private Optional<AsignacionHorarioCandidataDTO> buscarMejorCandidataValida(
             Long docenteId,
-            int numeroOpcion,
             Curso curso,
             int duracionMinutos,
             List<DisponibilidadDocente> disponibilidades,
             List<Aula> aulas,
             List<AsignacionHorarioCandidataDTO> asignaciones) {
 
-        AsignacionHorarioCandidataDTO mejorCandidata = null;
-        int mejorPuntaje = Integer.MAX_VALUE;
-
         for (DisponibilidadDocente disponibilidad : disponibilidades) {
+
             for (LocalTime horaInicio : calcularIniciosPosibles(disponibilidad, duracionMinutos)) {
+
                 LocalTime horaFin = horaInicio.plusMinutes(duracionMinutos);
 
                 for (Aula aula : aulas) {
-                    AsignacionHorarioCandidataDTO candidata =
-                            crearCandidata(docenteId, curso, aula, disponibilidad, horaInicio, horaFin);
-                    ResultadoRestriccionDTO resultado =
-                            validadorRestricciones.validar(candidata, asignaciones);
+
+                    AsignacionHorarioCandidataDTO candidata = crearCandidata(
+                            docenteId,
+                            curso,
+                            aula,
+                            disponibilidad,
+                            horaInicio,
+                            horaFin);
+
+                    ResultadoRestriccionDTO resultado = validadorRestricciones.validar(
+                            candidata,
+                            asignaciones);
 
                     if (resultado.isValido()) {
-                        int puntaje = calcularPuntajeCandidata(candidata, asignaciones, numeroOpcion);
-                        if (puntaje < mejorPuntaje) {
-                            mejorCandidata = candidata;
-                            mejorPuntaje = puntaje;
-                        }
+                        return Optional.of(candidata);
                     }
                 }
             }
         }
 
-        if (mejorCandidata != null) {
-            return Optional.of(mejorCandidata);
-        }
-
-        LOGGER.info("Curso no asignado por restricciones. docenteId={}, cursoId={}",
-                docenteId, curso.getIdCurso());
         return Optional.empty();
     }
 
@@ -305,8 +304,7 @@ public class OpcionesHorarioServiceImpl implements OpcionesHorarioService {
      */
     private int calcularPuntajeCandidata(
             AsignacionHorarioCandidataDTO candidata,
-            List<AsignacionHorarioCandidataDTO> asignaciones,
-            int numeroOpcion) {
+            List<AsignacionHorarioCandidataDTO> asignaciones) {
 
         List<AsignacionHorarioCandidataDTO> asignacionesDelDia = asignaciones.stream()
                 .filter(asignacion -> mismoDia(asignacion, candidata))
@@ -316,18 +314,6 @@ public class OpcionesHorarioServiceImpl implements OpcionesHorarioService {
                 .sum();
         int duracionCandidata = duracionMinutos(candidata);
         int puntaje = asignacionesDelDia.size() * 40;
-        int minutoInicio = candidata.getHoraInicio().getHour() * 60 + candidata.getHoraInicio().getMinute();
-
-        if (numeroOpcion == 1) {
-            // Propuesta compacta y temprana.
-            puntaje += minutoInicio / 5;
-        } else if (numeroOpcion == 2) {
-            // Propuesta distribuida: penaliza concentrar sesiones en un día.
-            puntaje += asignacionesDelDia.size() * 300;
-        } else {
-            // Propuesta alternativa: favorece inicios más tardíos.
-            puntaje += (24 * 60 - minutoInicio) / 5;
-        }
 
         if (minutosDia + duracionCandidata > JORNADA_MAXIMA_RECOMENDADA_MINUTOS) {
             puntaje += 1000;
@@ -431,9 +417,6 @@ public class OpcionesHorarioServiceImpl implements OpcionesHorarioService {
         candidata.setDiaSemana(disponibilidad.getDiaSemana());
         candidata.setHoraInicio(horaInicio);
         candidata.setHoraFin(horaFin);
-        // La candidata nace dentro del rango ya cargado de la BD; evita
-        // consultar nuevamente la misma disponibilidad por cada aula/hora.
-        candidata.setDisponibilidadPrevalidada(true);
         return candidata;
     }
 

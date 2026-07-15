@@ -12,7 +12,7 @@ import pe.edu.utp.generador_horario.dto.DisponibilidadRequestDTO;
 import pe.edu.utp.generador_horario.entidad.Docente;
 import pe.edu.utp.generador_horario.entidad.Usuario;
 import pe.edu.utp.generador_horario.service.interfaces.DisponibilidadDocenteService;
-import pe.edu.utp.generador_horario.service.interfaces.HorarioGeneracionAsyncService;
+import pe.edu.utp.generador_horario.service.interfaces.HorarioGeneradoService;
 
 import java.util.List;
 
@@ -23,17 +23,17 @@ public class DisponibilidadDocenteController {
     private final DisponibilidadDocenteService disponibilidadService;
     private final UsuarioDAO usuarioDAO;
     private final DocenteDAO docenteDAO;
-    private final HorarioGeneracionAsyncService horarioGeneracionAsyncService;
+    private final HorarioGeneradoService horarioGeneradoService;
 
     public DisponibilidadDocenteController(
             DisponibilidadDocenteService disponibilidadService,
             UsuarioDAO usuarioDAO,
             DocenteDAO docenteDAO,
-            HorarioGeneracionAsyncService horarioGeneracionAsyncService) {
+            HorarioGeneradoService horarioGeneradoService) {
         this.disponibilidadService = disponibilidadService;
         this.usuarioDAO = usuarioDAO;
         this.docenteDAO = docenteDAO;
-        this.horarioGeneracionAsyncService = horarioGeneracionAsyncService;
+        this.horarioGeneradoService = horarioGeneradoService;
     }
 
     @GetMapping
@@ -59,9 +59,12 @@ public class DisponibilidadDocenteController {
     public ResponseEntity<String> guardar(
             @RequestBody DisponibilidadRequestDTO request,
             Authentication authentication) {
-        disponibilidadService.guardarPorEmail(authentication.getName(), request.getBloques());
-        horarioGeneracionAsyncService.programarGeneracion(obtenerDocenteId(authentication));
-        return ResponseEntity.ok("Disponibilidad guardada. Las opciones de horario se actualizarán en segundo plano.");
+        disponibilidadService.guardarPorEmail(
+                authentication.getName(),
+                request.getBloques());
+
+        return ResponseEntity.ok(
+                "Disponibilidad guardada correctamente.");
     }
 
     private Long obtenerDocenteId(Authentication authentication) {
