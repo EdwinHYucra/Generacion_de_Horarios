@@ -1,0 +1,127 @@
+/* Contenido compacto exclusivo del Dashboard Administrador */
+.dashboard-wrapper {
+    width: 100%;
+    max-width: 1080px;
+    margin: 0 auto;
+}
+
+.dashboard-title {
+    margin-bottom: 18px;
+}
+
+.dashboard-title h1 {
+    font-size: 26px;
+    letter-spacing: -0.035em;
+}
+
+.dashboard-title p {
+    max-width: 720px;
+    margin-top: 6px;
+    font-size: 13px;
+}
+
+/* Tarjetas de accesos rápidos */
+.dashboard-grid {
+    gap: 14px;
+    margin-top: 0;
+}
+
+.dashboard-card {
+    min-height: 220px;
+    height: auto;
+    padding: 17px 22px;
+    gap: 9px;
+    border-radius: 7px;
+}
+
+.dashboard-card__icon {
+    width: 52px;
+    height: 52px;
+}
+
+.dashboard-card__icon img {
+    width: 25px;
+    height: 25px;
+}
+
+.dashboard-card h2 {
+    font-size: 15px;
+}
+
+.dashboard-card p {
+    min-height: 34px;
+    max-width: 330px;
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.dashboard-card .btn {
+    width: 104px;
+    min-width: 104px;
+    height: 32px;
+    margin-top: 2px;
+    border-radius: 5px;
+    font-size: 12px;
+}
+
+/* Resumen dinámico del estado del sistema */
+.system-panel {
+    margin-top: 22px;
+    margin-bottom: 0;
+    border-radius: 7px;
+}
+
+.system-panel .panel__header {
+    min-height: 52px;
+    padding: 11px 16px;
+}
+
+.system-panel .panel__title h2 {
+    font-size: 15px;
+}
+
+.system-panel .panel__title p {
+    margin-top: 3px;
+    font-size: 10px;
+}
+
+.system-stat {
+    min-height: 78px;
+    padding: 14px 20px;
+    justify-content: center;
+    text-align: center;
+}
+
+.system-stat__icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 7px;
+}
+
+.system-stat__icon img {
+    width: 21px;
+    height: 21px;
+}
+
+.system-stat strong {
+    color: #111827;
+    font-size: 24px;
+    line-height: 1;
+}
+
+.system-stat span {
+    display: block;
+    margin-top: 6px;
+    font-size: 10px;
+}
+
+@media (max-width: 1000px) {
+    .dashboard-card { height: 175px; }
+    .system-stat { border-right: 0; border-bottom: 1px solid var(--border); }
+    .system-stat:last-child { border-bottom: 0; }
+}
+
+@media (max-width: 620px) {
+    .dashboard-title h1 { font-size: 23px; }
+    .dashboard-card { height: auto; min-height: 175px; }
+}

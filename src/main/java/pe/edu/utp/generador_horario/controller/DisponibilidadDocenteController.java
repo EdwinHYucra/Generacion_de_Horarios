@@ -12,7 +12,7 @@ import pe.edu.utp.generador_horario.dto.DisponibilidadRequestDTO;
 import pe.edu.utp.generador_horario.entidad.Docente;
 import pe.edu.utp.generador_horario.entidad.Usuario;
 import pe.edu.utp.generador_horario.service.interfaces.DisponibilidadDocenteService;
-import pe.edu.utp.generador_horario.service.interfaces.HorarioGeneradoService;
+import pe.edu.utp.generador_horario.service.interfaces.HorarioGeneracionAsyncService;
 
 import java.util.List;
 
@@ -23,17 +23,17 @@ public class DisponibilidadDocenteController {
     private final DisponibilidadDocenteService disponibilidadService;
     private final UsuarioDAO usuarioDAO;
     private final DocenteDAO docenteDAO;
-    private final HorarioGeneradoService horarioGeneradoService;
+    private final HorarioGeneracionAsyncService horarioGeneracionAsyncService;
 
     public DisponibilidadDocenteController(
             DisponibilidadDocenteService disponibilidadService,
             UsuarioDAO usuarioDAO,
             DocenteDAO docenteDAO,
-            HorarioGeneradoService horarioGeneradoService) {
+            HorarioGeneracionAsyncService horarioGeneracionAsyncService) {
         this.disponibilidadService = disponibilidadService;
         this.usuarioDAO = usuarioDAO;
         this.docenteDAO = docenteDAO;
-        this.horarioGeneradoService = horarioGeneradoService;
+        this.horarioGeneracionAsyncService = horarioGeneracionAsyncService;
     }
 
     @GetMapping
@@ -60,10 +60,8 @@ public class DisponibilidadDocenteController {
             @RequestBody DisponibilidadRequestDTO request,
             Authentication authentication) {
         disponibilidadService.guardarPorEmail(authentication.getName(), request.getBloques());
-        int opciones = horarioGeneradoService.generarSiTieneInsumos(obtenerDocenteId(authentication));
-        return ResponseEntity.ok(opciones > 0
-                ? "Disponibilidad guardada. Se generaron " + opciones + " opciones de horario."
-                : "Disponibilidad guardada. El horario se generara cuando tambien existan cursos seleccionados.");
+        horarioGeneracionAsyncService.programarGeneracion(obtenerDocenteId(authentication));
+        return ResponseEntity.ok("Disponibilidad guardada. Las opciones de horario se actualizarán en segundo plano.");
     }
 
     private Long obtenerDocenteId(Authentication authentication) {

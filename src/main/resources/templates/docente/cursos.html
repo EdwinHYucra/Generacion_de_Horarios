@@ -2,46 +2,26 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Selección de Cursos</title>
-    <link rel="stylesheet" th:href="@{/css/style_dashboard_docente.css}">
+    <link rel="stylesheet" th:href="@{/css/docente.css}">
     <link rel="stylesheet" th:href="@{/css/cursos_docente.css}">
 </head>
 <body>
 
 <div class="docente-app">
-
+    <!-- Sidebar compartido del portal Docente -->
     <div th:replace="~{fragments/sidebar_docente :: sidebarDocente}"></div>
 
     <div class="docente-main">
-
-        <header class="docente-topbar">
-            <div></div>
-
-            <div class="docente-user-area">
-                <div class="docente-notification">
-                    <span></span>
-                    <i></i>
-                </div>
-
-                <div class="docente-user">
-                    <div class="docente-user__text">
-                        <strong th:text="${nombreUsuario}">Juan Pérez</strong>
-                        <small th:text="${rolUsuario}">Docente</small>
-                    </div>
-
-                    <div class="docente-avatar">
-                        <span th:text="${#strings.substring(nombreUsuario, 0, 1)}">J</span>
-                        <i></i>
-                    </div>
-                </div>
-            </div>
-        </header>
+        <!-- Parte superior: información del Docente -->
+        <div th:replace="~{fragments/header_docente :: headerDocente}"></div>
 
         <main class="docente-content">
-
+            <!-- Parte superior: título de Selección de Cursos -->
             <section class="cursos-header">
                 <div class="cursos-title">
-                    <span class="title-books-icon"></span>
+                    <img class="title-books-icon" th:src="@{/img/docente/IMG_12.svg}" alt="" aria-hidden="true">
                     <div>
                         <h1>Selección de Cursos</h1>
                         <p>Seleccione los cursos que puede dictar durante el ciclo académico.</p>
@@ -49,17 +29,28 @@
                 </div>
             </section>
 
+            <!-- Buscador dinámico de cursos disponibles -->
+            <div class="cursos-search">
+                <input type="search" id="buscarCursos" placeholder="Buscar cursos" aria-label="Buscar cursos">
+            </div>
+
+            <!-- Módulos desplegables y resumen de selección -->
             <section class="cursos-layout">
 
                 <div class="cursos-listas">
 
                     <article class="curso-card">
                         <div class="curso-card-header">
-                            <h2>Cursos de Carrera</h2>
-                            <span th:text="${#lists.size(cursosCarrera)} + ' cursos'">0 cursos</span>
+                            <div>
+                                <h2>Cursos de Carrera</h2>
+                                <span th:text="${#lists.size(cursosCarrera)} + ' cursos'">0 cursos</span>
+                            </div>
+                            <button type="button" class="curso-toggle" aria-expanded="false" aria-controls="cursosCarreraLista">
+                                Ver cursos
+                            </button>
                         </div>
 
-                        <div class="curso-list">
+                        <div class="curso-list" id="cursosCarreraLista" hidden>
                             <label class="curso-item" th:each="curso : ${cursosCarrera}">
                                 <input type="checkbox"
                                        class="curso-check"
@@ -84,11 +75,16 @@
 
                     <article class="curso-card">
                         <div class="curso-card-header">
-                            <h2>Cursos Generales</h2>
-                            <span th:text="${#lists.size(cursosGenerales)} + ' cursos'">0 cursos</span>
+                            <div>
+                                <h2>Cursos Generales</h2>
+                                <span th:text="${#lists.size(cursosGenerales)} + ' cursos'">0 cursos</span>
+                            </div>
+                            <button type="button" class="curso-toggle" aria-expanded="false" aria-controls="cursosGeneralesLista">
+                                Ver cursos
+                            </button>
                         </div>
 
-                        <div class="curso-list">
+                        <div class="curso-list" id="cursosGeneralesLista" hidden>
                             <label class="curso-item" th:each="curso : ${cursosGenerales}">
                                 <input type="checkbox"
                                        class="curso-check"
@@ -143,6 +139,8 @@
             </section>
 
         </main>
+        <!-- Footer compartido del portal Docente -->
+        <div th:replace="~{fragments/footer_docente :: footerDocente}"></div>
 
     </div>
 
@@ -151,6 +149,9 @@
 <script th:inline="javascript">
     window.maxHorasSemanales = /*[[${maxHorasSemanales}]]*/ 40;
 </script>
+<!-- Mensajes de guardado del portal Docente -->
+<div th:replace="~{fragments/notificacion_docente :: notificacionDocente}"></div>
+<script th:src="@{/js/docente_notificaciones.js}"></script>
 <script th:src="@{/js/cursos_docente.js}"></script>
 </body>
 </html>

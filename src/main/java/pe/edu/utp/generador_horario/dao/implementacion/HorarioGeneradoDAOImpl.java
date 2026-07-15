@@ -87,6 +87,12 @@ public class HorarioGeneradoDAOImpl implements HorarioGeneradoDAO {
     }
 
     @Override
+    public void reemplazarDetalles(Long idHorario, List<HorarioDetalleDTO> detalles) {
+        jdbcTemplate.update("DELETE FROM horario_generado_detalle WHERE id_horario = ?", idHorario);
+        detalles.forEach(detalle -> saveDetalle(idHorario, detalle));
+    }
+
+    @Override
     public void eliminarPendientesPorDocente(Long idDocente) {
         List<Long> ids = jdbcTemplate.queryForList(
                 """
@@ -186,9 +192,11 @@ public class HorarioGeneradoDAOImpl implements HorarioGeneradoDAO {
                         INNER JOIN docentes d ON d.id_docente = h.id_docente
                         LEFT JOIN horario_generado_detalle det ON det.id_horario = h.id_horario
                         WHERE h.id_docente = ?
-                          AND h.estado = 'APROBADO'
+                          AND h.estado IN ('APROBADO', 'APROBADA_DOCENTE')
                         GROUP BY h.id_horario, h.id_docente, d.nombres, d.apellidos, h.opcion, h.estado, h.fecha_generacion
-                        ORDER BY h.fecha_generacion DESC, h.id_horario DESC
+                        ORDER BY CASE WHEN h.estado = 'APROBADO' THEN 0 ELSE 1 END,
+                                 h.fecha_generacion DESC,
+                                 h.id_horario DESC
                         LIMIT 1
                         """,
                 resumenMapper,

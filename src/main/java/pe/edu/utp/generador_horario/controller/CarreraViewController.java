@@ -2,10 +2,16 @@ package pe.edu.utp.generador_horario.controller;
 
 import pe.edu.utp.generador_horario.entidad.Carrera;
 import pe.edu.utp.generador_horario.service.interfaces.CarreraService;
+import pe.edu.utp.generador_horario.entidad.CarreraCurso;
+import pe.edu.utp.generador_horario.service.interfaces.CarreraCursoService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Controlador MVC para la gestion de carreras.
@@ -19,9 +25,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class CarreraViewController {
 
     private final CarreraService carreraService;
+    private final CarreraCursoService carreraCursoService;
 
-    public CarreraViewController(CarreraService carreraService) {
+    public CarreraViewController(CarreraService carreraService,
+                                 CarreraCursoService carreraCursoService) {
         this.carreraService = carreraService;
+        this.carreraCursoService = carreraCursoService;
     }
 
     /**
@@ -38,9 +47,7 @@ public class CarreraViewController {
             model.addAttribute("carrera", carrera);
         }
 
-        model.addAttribute("carreras", carreraService.listarCarreras());
-        model.addAttribute("modoEdicion", model.containsAttribute("modoEdicion"));
-        model.addAttribute("moduloActivo", "carreras");
+        cargarDatosVista(model, model.containsAttribute("modoEdicion"));
 
         return "carreras/index";
     }
@@ -79,9 +86,7 @@ public class CarreraViewController {
         Carrera carrera = carreraService.obtenerPorId(id);
 
         model.addAttribute("carrera", carrera);
-        model.addAttribute("carreras", carreraService.listarCarreras());
-        model.addAttribute("modoEdicion", true);
-        model.addAttribute("moduloActivo", "carreras");
+        cargarDatosVista(model, true);
 
         return "carreras/index";
     }
@@ -100,6 +105,25 @@ public class CarreraViewController {
         redirectAttributes.addFlashAttribute("mensajeExito", "Carrera desactivada correctamente.");
         return "redirect:/administrador/carreras";
     }
+
+    /** Carga carreras y asignaciones reales para el formulario y la tabla. */
+    private void cargarDatosVista(Model model, boolean modoEdicion) {
+        List<CarreraCurso> asignaciones = carreraCursoService.listarAsignaciones();
+        Map<Long, List<CarreraCurso>> asignacionesPorCarrera = asignaciones.stream()
+                .collect(Collectors.groupingBy(item -> item.getCarrera().getIdCarrera()));
+
+        Carrera carreraActual = (Carrera) model.getAttribute("carrera");
+        List<CarreraCurso> asignacionesActuales = carreraActual != null && carreraActual.getIdCarrera() != null
+                ? asignacionesPorCarrera.getOrDefault(carreraActual.getIdCarrera(), List.of())
+                : List.of();
+
+        model.addAttribute("carreras", carreraService.listarCarreras());
+        model.addAttribute("asignacionesPorCarrera", asignacionesPorCarrera);
+        model.addAttribute("asignacionesCarreraActual", asignacionesActuales);
+        model.addAttribute("modoEdicion", modoEdicion);
+        model.addAttribute("moduloActivo", "carreras");
+    }
+
 }
 
 

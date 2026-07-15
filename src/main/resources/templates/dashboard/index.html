@@ -2,25 +2,31 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Administrador</title>
     <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard_administrador.css}">
 </head>
 <body>
 
 <div class="app">
+    <!-- Navegación lateral reutilizable del Administrador -->
     <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 
     <div class="main">
+        <!-- Parte superior reutilizable del Administrador -->
         <div th:replace="~{fragments/header :: header}"></div>
 
         <main class="content">
             <section class="dashboard-wrapper">
 
-                <section class="page-title">
+                <!-- Parte superior: bienvenida y descripción del panel -->
+                <section class="page-title dashboard-title">
                     <h1>Bienvenido, Administrador</h1>
                     <p>Panel de control principal. Selecciona una acción para gestionar los recursos académicos o revisa el estado actual del sistema.</p>
                 </section>
 
+                <!-- Accesos rápidos a los módulos principales -->
                 <section class="dashboard-grid">
 
                     <article class="dashboard-card">
@@ -61,6 +67,7 @@
 
                 </section>
 
+                <!-- Estado dinámico del sistema: valores obtenidos desde la base de datos -->
                 <section class="panel system-panel">
                     <div class="panel__header">
                         <div class="panel__title">
@@ -73,31 +80,22 @@
 
                     <div class="system-stats">
                         <div class="system-stat">
-                            <div class="system-stat__icon">
-                                <img th:src="@{/assets/IMG_3.svg}" alt="Docentes">
-                            </div>
                             <div>
-                                <strong>25</strong>
+                                <strong th:text="${totalDocentes != null ? totalDocentes : 0}">0</strong>
                                 <span>Docentes Registrados</span>
                             </div>
                         </div>
 
                         <div class="system-stat">
-                            <div class="system-stat__icon">
-                                <img th:src="@{/assets/IMG_4.svg}" alt="Cursos">
-                            </div>
                             <div>
-                                <strong>40</strong>
+                                <strong th:text="${totalCursosActivos != null ? totalCursosActivos : 0}">0</strong>
                                 <span>Cursos Activos</span>
                             </div>
                         </div>
 
                         <div class="system-stat">
-                            <div class="system-stat__icon">
-                                <img th:src="@{/assets/IMG_7.svg}" alt="Pendientes">
-                            </div>
                             <div>
-                                <strong>7</strong>
+                                <strong th:text="${totalHorariosPendientes != null ? totalHorariosPendientes : 0}">0</strong>
                                 <span>Horarios Pendientes</span>
                             </div>
                         </div>
@@ -107,6 +105,7 @@
             </section>
         </main>
 
+        <!-- Parte inferior reutilizable del Administrador -->
         <div th:replace="~{fragments/footer :: footer}"></div>
     </div>
 </div>

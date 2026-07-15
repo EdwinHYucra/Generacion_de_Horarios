@@ -7,6 +7,7 @@
 
     <link rel="stylesheet" th:href="@{/css/style_dashboard_docente.css}">
     <link rel="stylesheet" th:href="@{/css/opciones_horario.css}">
+    <link rel="stylesheet" th:href="@{/css/docente.css}">
 </head>
 <body>
 
@@ -21,17 +22,32 @@
         <main class="docente-content opciones-content">
 
             <section class="opciones-header">
-                <div>
-                    <h1>Opciones de horario</h1>
-                    <p>Revise una propuesta a la vez y abra el detalle completo antes de confirmar.</p>
+                <div class="opciones-title">
+                    <img th:src="@{/img/docente/opciones_horario_rojo.svg}" alt="" aria-hidden="true">
+                    <div>
+                        <h1>Opciones de horario</h1>
+                        <p>Revise una propuesta a la vez y abra el detalle completo antes de confirmar.</p>
+                    </div>
                 </div>
 
                 <div id="opcionesSelector" class="opciones-selector" aria-label="Opciones generadas"></div>
             </section>
 
             <section id="sinOpciones" class="estado-vacio hidden">
-                <strong>No hay propuestas disponibles.</strong>
-                <span>Registre disponibilidad y seleccione cursos para generar opciones de horario.</span>
+                <div class="estado-vacio__contenido">
+                    <strong th:text="${generacionEnProceso} ? 'Generando propuestas…' : 'No hay propuestas disponibles.'">
+                        No hay propuestas disponibles.
+                    </strong>
+                    <!-- Barra animada mientras se calculan las tres propuestas -->
+                    <div class="generacion-progreso" th:if="${generacionEnProceso}" aria-label="Generación en progreso">
+                        <span></span>
+                    </div>
+                    <span th:text="${generacionEnProceso}
+                            ? 'Estamos preparando tres alternativas. Esta página se actualizará automáticamente.'
+                            : 'Registre disponibilidad y seleccione cursos para generar opciones de horario.'">
+                        Registre disponibilidad y seleccione cursos para generar opciones de horario.
+                    </span>
+                </div>
             </section>
 
             <section id="panelHorario" class="horario-panel hidden">
@@ -131,10 +147,26 @@
 
         </main>
 
-        <div th:replace="~{fragments/footer :: footer}"></div>
+        <div th:replace="~{fragments/footer_docente :: footerDocente}"></div>
 
     </div>
 
+</div>
+
+<!-- Modal de aviso: reemplaza las alertas nativas del navegador -->
+<div class="modal hidden" id="modalAvisoSolicitud" role="dialog" aria-modal="true"
+     aria-labelledby="tituloAvisoSolicitud" aria-describedby="mensajeAvisoSolicitud">
+    <div class="modal-backdrop" data-cerrar-aviso></div>
+    <div class="modal-container modal-container--aviso">
+        <div class="modal-aviso__icono" aria-hidden="true">!</div>
+        <div class="modal-aviso__contenido">
+            <h2 id="tituloAvisoSolicitud">Falta una justificación</h2>
+            <p id="mensajeAvisoSolicitud">Escriba el motivo antes de continuar.</p>
+        </div>
+        <button type="button" class="btn-principal modal-aviso__boton" id="cerrarAvisoSolicitud">
+            Entendido
+        </button>
+    </div>
 </div>
 
 <div class="modal hidden" id="modalDetalle">
@@ -190,6 +222,7 @@
     const opcionesHorarioData = /*[[${opcionesHorario}]]*/ [];
     const diasSemanaData = /*[[${diasSemana}]]*/ [];
     const bloquesHoraData = /*[[${bloquesHora}]]*/ [];
+    const generacionEnProcesoData = /*[[${generacionEnProceso}]]*/ false;
 </script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <script th:src="@{/js/opciones_horario.js}"></script>

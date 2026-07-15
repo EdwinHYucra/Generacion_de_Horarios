@@ -2,8 +2,10 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Asignación de Cursos a Carreras</title>
     <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" th:href="@{/css/asignacion_cursos.css}">
 </head>
 <body>
 
@@ -13,11 +15,12 @@
     <div class="main">
         <div th:replace="~{fragments/header :: header}"></div>
 
-        <main class="content">
+        <main class="content content--asignacion-cursos">
 
-            <section class="page-title">
+            <!-- Parte superior: título e icono del módulo -->
+            <section class="page-title asignacion-heading">
                 <div class="page-title__row">
-                    <img class="page-title__icon" th:src="@{/assets/IMG_4.svg}" alt="Asignar cursos">
+                    <img class="page-title__icon" th:src="@{/assets/asignar_cursos_rojo.svg}" alt="" aria-hidden="true">
                     <h1>Asignación de Cursos a Carreras</h1>
                 </div>
                 <p>Relaciona cursos con una o varias carreras y define el ciclo correspondiente.</p>
@@ -31,7 +34,8 @@
                 <span th:text="${mensajeError}"></span>
             </div>
 
-            <section class="panel">
+            <!-- Formulario de asignación carrera-curso -->
+            <section class="panel asignacion-form-panel">
                 <div class="panel__header">
                     <div class="panel__title">
                         <div class="panel__title-icon">+</div>
@@ -78,7 +82,8 @@
                 </form>
             </section>
 
-            <section class="panel">
+            <!-- Tabla compacta de asignaciones almacenadas -->
+            <section class="panel asignacion-table-panel">
                 <div class="panel__header">
                     <div class="panel__title">
                         <div>
@@ -87,7 +92,10 @@
                         </div>
                     </div>
 
-                    <input id="inputBuscarAsignacion" type="text" class="form-control table-toolbar" placeholder="Buscar por carrera o curso...">
+                    <div class="asignacion-search">
+                        <img th:src="@{/assets/buscar_gris.svg}" alt="" aria-hidden="true">
+                        <input id="inputBuscarAsignacion" type="text" placeholder="Buscar por carrera o curso...">
+                    </div>
                 </div>
 
                 <div class="table-wrapper">

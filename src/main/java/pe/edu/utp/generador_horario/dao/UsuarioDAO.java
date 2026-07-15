@@ -15,6 +15,8 @@ public interface UsuarioDAO {
      * @return usuario encontrado, si existe
      */
     Optional<Usuario> buscarPorEmail(String email);
+    Optional<Usuario> buscarPorUsuarioInstitucional(String usuario);
+    void actualizarPassword(Long idUsuario, String passwordCifrada);
 
     /**
      * Persiste un usuario sin devolver su identificador.

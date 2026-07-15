@@ -1,0 +1,12 @@
+<!DOCTYPE html><html lang="es" xmlns:th="http://www.thymeleaf.org"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Recuperar contraseña</title><link rel="stylesheet" th:href="@{/css/recuperar_password.css}"></head>
+<body class="recuperar-page"><main class="recuperar-card">
+    <!-- Parte superior: indicaciones de validación de identidad -->
+    <header><h1>Recuperar contraseña</h1><p>Ingresa tu usuario y DNI. Ten presente que tu cuenta debe estar registrada en nuestra base de datos.</p></header>
+    <div th:if="${errorRecuperacion}" class="recuperar-error" th:text="${errorRecuperacion}"></div>
+    <form th:action="@{/recuperar-contrasena}" method="post">
+        <label>Usuario<div class="recuperar-input"><input name="usuario" placeholder="Ingresa tu usuario" maxlength="30" pattern="[A-Za-z0-9._-]+" autocomplete="username" required><span><img src="/assets/usuario_recuperacion.svg" alt=""></span></div><small>ⓘ Ejemplo: U1234567 (no digitar el @utp.edu.pe)</small></label>
+        <label>DNI<div class="recuperar-input"><input name="dni" placeholder="Ingresa tu DNI" inputmode="numeric" pattern="[0-9]{8}" maxlength="8" autocomplete="off" required><span><img src="/assets/dni_recuperacion.svg" alt=""></span></div></label>
+        <a class="recuperar-ayuda" href="mailto:soporte.horarios@utp.edu.pe">¿Necesitas ayuda?</a>
+        <button type="submit">Verificar</button><a class="recuperar-volver" th:href="@{/login}">Volver al inicio</a>
+    </form>
+</main></body></html>

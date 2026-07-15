@@ -44,6 +44,10 @@ public class DisponibilidadDocenteRestriccion implements RestriccionHorario {
                     "La duracion de la clase debe ser positiva.");
         }
 
+        if (candidata.isDisponibilidadPrevalidada()) {
+            return ResultadoRestriccionDTO.valido();
+        }
+
         Long cicloActivoId = cicloAcademicoDAO.findIdActivo()
                 .orElse(null);
 

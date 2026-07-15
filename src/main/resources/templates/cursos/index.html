@@ -2,9 +2,11 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Cursos</title>
 
     <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" th:href="@{/css/gestion_cursos_admin.css}">
 </head>
 <body>
 
@@ -18,10 +20,14 @@
 
         <main class="content content--courses">
 
+            <!-- Parte superior: título del catálogo -->
             <section class="module-heading">
-                <div>
-                    <h1>Gestión de Cursos</h1>
-                    <p>Administre el catálogo de cursos, sus horas semanales y tipo académico.</p>
+                <div class="cursos-heading-title">
+                    <img th:src="@{/assets/IMG_4.svg}" alt="" aria-hidden="true">
+                    <div>
+                        <h1>Gestión de Cursos</h1>
+                        <p>Administre el catálogo de cursos y supervise los registros académicos.</p>
+                    </div>
                 </div>
             </section>
 
@@ -33,15 +39,16 @@
                 <span th:text="${mensajeError}"></span>
             </div>
 
+            <!-- Buscador y acciones principales -->
             <section class="module-toolbar">
                 <div class="module-search">
-                    <img th:src="@{/assets/IMG_11.svg}" alt="Buscar">
+                    <img th:src="@{/assets/buscar_gris.svg}" alt="" aria-hidden="true">
                     <input id="inputBuscarCurso"
                            type="text"
-                           placeholder="Buscar cursos por nombre o código...">
+                           placeholder="Buscar cursos por nombre, código o tipo...">
                 </div>
 
-                <button type="button" class="btn btn--secondary">
+                <button type="button" id="btnBuscarCurso" class="btn btn--secondary">
                     Buscar
                 </button>
 
@@ -55,7 +62,8 @@
                 </a>
             </section>
 
-            <section class="module-table-card">
+            <!-- Tabla dinámica de cursos almacenados -->
+            <section class="module-table-card module-table-card--cursos">
 
                 <div class="table-wrapper">
                     <table class="module-table">
@@ -63,6 +71,7 @@
                         <tr>
                             <th>Código</th>
                             <th>Curso</th>
+                            <th>Aula</th>
                             <th>Horas</th>
                             <th>Tipo</th>
                             <th>Estado</th>
@@ -70,7 +79,7 @@
                         </tr>
                         </thead>
 
-                        <tbody>
+                        <tbody id="tablaCursosBody">
                         <tr th:each="item : ${cursos}"
                             class="curso-row"
                             th:attr="data-codigo=${item.codigo},
@@ -83,6 +92,11 @@
 
                             <td th:text="${item.nombre}">
                                 Base de Datos I
+                            </td>
+
+                            <!-- El catálogo todavía no almacena un aula fija por curso -->
+                            <td>
+                                <span class="curso-aula curso-aula--sin-asignar">No asignado</span>
                             </td>
 
                             <td th:text="${item.horasSemanales}">
@@ -122,7 +136,7 @@
                         </tr>
 
                         <tr th:if="${#lists.isEmpty(cursos)}">
-                            <td colspan="6" class="empty-table">
+                            <td colspan="7" class="empty-table">
                                 No hay cursos registrados.
                             </td>
                         </tr>
@@ -131,17 +145,12 @@
                 </div>
 
                 <div class="module-table-footer">
-                    <p>
-                        Mostrando
-                        <strong id="cantidadCursos" th:text="${#lists.size(cursos)}">0</strong>
-                        cursos registrados
+                    <p id="resumenPaginacionCursos">
+                        Mostrando <strong id="rangoCursos">0</strong> de
+                        <strong id="cantidadCursos" th:text="${#lists.size(cursos)}">0</strong> resultados
                     </p>
 
-                    <div class="pagination">
-                        <button type="button" disabled>‹</button>
-                        <button type="button" class="is-active">1</button>
-                        <button type="button" disabled>›</button>
-                    </div>
+                    <div class="pagination" id="paginacionCursos" aria-label="Paginación de cursos"></div>
                 </div>
 
             </section>

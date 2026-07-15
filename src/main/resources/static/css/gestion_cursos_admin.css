@@ -1,0 +1,153 @@
+/* Contenido compacto exclusivo de Gestión de Cursos */
+.content--courses {
+    padding: 18px 24px;
+}
+
+.content--courses .module-heading {
+    margin-bottom: 12px;
+}
+
+.cursos-heading-title {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.cursos-heading-title > img {
+    width: 18px;
+    height: 18px;
+    margin-top: 1px;
+    filter: brightness(0) saturate(100%) invert(15%) sepia(97%) saturate(6414%) hue-rotate(359deg) brightness(92%) contrast(117%);
+}
+
+.content--courses .module-heading h1 {
+    font-size: 18px;
+}
+
+.content--courses .module-heading p {
+    margin-top: 5px;
+    font-size: 9px;
+}
+
+/* Buscador y botones en una sola línea */
+.content--courses .module-toolbar {
+    min-height: 48px;
+    margin-bottom: 12px;
+    padding: 8px 10px;
+    gap: 8px;
+    border-radius: 7px;
+}
+
+.content--courses .module-search {
+    width: 280px;
+    min-width: 180px;
+    max-width: 280px;
+    height: 29px;
+    flex: 0 1 280px;
+    border-radius: 5px;
+    padding: 0 9px;
+}
+
+.content--courses .module-search img {
+    width: 12px;
+    height: 12px;
+}
+
+.content--courses .module-search input {
+    font-size: 9px;
+}
+
+.content--courses .module-toolbar .btn {
+    min-width: 58px;
+    height: 29px;
+    padding: 0 11px;
+    flex: 0 0 auto;
+    border-radius: 5px;
+    font-size: 9px;
+}
+
+.content--courses .module-toolbar .btn--primary {
+    min-width: 104px;
+}
+
+/* Tabla de cursos con densidad equivalente a la referencia */
+.content--courses .module-table-card {
+    border-radius: 7px;
+}
+
+.content--courses .module-table th {
+    height: 31px;
+    padding: 0 12px;
+    font-size: 8px;
+}
+
+.content--courses .module-table td {
+    height: 40px;
+    padding: 0 12px;
+    font-size: 9px;
+}
+
+.content--courses .module-table th:nth-child(1),
+.content--courses .module-table td:nth-child(1) { width: 13%; }
+.content--courses .module-table th:nth-child(2),
+.content--courses .module-table td:nth-child(2) { width: 26%; }
+.content--courses .module-table th:nth-child(3),
+.content--courses .module-table td:nth-child(3) { width: 14%; }
+.content--courses .module-table th:nth-child(4),
+.content--courses .module-table td:nth-child(4) { width: 9%; }
+.content--courses .module-table th:nth-child(5),
+.content--courses .module-table td:nth-child(5) { width: 14%; }
+.content--courses .module-table th:nth-child(6),
+.content--courses .module-table td:nth-child(6) { width: 13%; }
+.content--courses .module-table th:nth-child(7),
+.content--courses .module-table td:nth-child(7) { width: 11%; }
+
+.content--courses .curso-aula {
+    display: inline-flex;
+    min-height: 18px;
+    align-items: center;
+    padding: 0 7px;
+    border-radius: 999px;
+    font-size: 7px;
+    font-weight: 700;
+}
+
+.content--courses .curso-aula--sin-asignar {
+    color: #7d8490;
+    background: #f0f1f4;
+}
+
+.content--courses .badge,
+.content--courses .status-pill {
+    min-height: 18px;
+    height: 18px;
+    padding: 0 7px;
+    font-size: 7px;
+}
+
+.content--courses .action-group { gap: 8px; }
+.content--courses .action-link,
+.content--courses .action-button { width: 16px; height: 16px; }
+.content--courses .action-link img,
+.content--courses .action-button img { width: 12px; height: 12px; opacity: .72; }
+
+.content--courses .module-table-footer {
+    height: 38px;
+    padding: 0 12px;
+}
+
+.content--courses .module-table-footer p,
+.content--courses .pagination button { font-size: 8px; }
+.content--courses .pagination { gap: 5px; }
+.content--courses .pagination button {
+    min-width: 20px;
+    height: 20px;
+    border-radius: 4px;
+}
+
+@media (max-width: 700px) {
+    .content--courses .module-toolbar { flex-wrap: wrap; }
+    .content--courses .module-search { width: 100%; max-width: none; flex-basis: 100%; }
+    .content--courses .module-toolbar .btn { flex: 1; }
+    .content--courses .module-table { min-width: 650px; }
+}

@@ -2,8 +2,10 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Aulas</title>
     <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" th:href="@{/css/aulas.css}">
 </head>
 <body>
 
@@ -13,11 +15,17 @@
     <div class="main">
         <div th:replace="~{fragments/header :: header}"></div>
 
-        <main class="content">
+        <main class="content content--aulas">
 
-            <section class="page-title">
-                <h1>Gestión de Aulas</h1>
-                <p>Administra los espacios físicos, sus capacidades y asignaciones.</p>
+            <!-- Parte superior: edificio rojo y título del módulo -->
+            <section class="page-title aulas-heading">
+                <div class="page-title__row">
+                    <img class="page-title__icon" th:src="@{/assets/IMG_6.svg}" alt="" aria-hidden="true">
+                    <div>
+                        <h1>Gestión de Aulas</h1>
+                        <p>Administra los espacios físicos, sus capacidades y asignaciones.</p>
+                    </div>
+                </div>
             </section>
 
             <div th:if="${mensajeExito}" class="alert alert--success">
@@ -28,10 +36,11 @@
                 <span th:text="${mensajeError}"></span>
             </div>
 
-            <section class="panel">
+            <!-- Formulario de registro o edición de aula -->
+            <section class="panel aulas-form-panel">
                 <div class="panel__header">
                     <div class="panel__title">
-                        <div class="panel__title-icon">▣</div>
+                        <div class="panel__title-icon">+</div>
                         <h2 th:text="${modoEdicion} ? 'Editar Aula' : 'Agregar Nueva Aula'">Agregar Nueva Aula</h2>
                     </div>
                 </div>
@@ -106,13 +115,17 @@
                 </form>
             </section>
 
-            <section class="panel">
+            <!-- Listado dinámico de aulas registradas -->
+            <section class="panel aulas-table-panel">
                 <div class="panel__header">
                     <div class="panel__title">
                         <h2>Aulas Registradas</h2>
                     </div>
 
-                    <input id="inputBuscarAula" type="text" class="form-control table-toolbar" placeholder="Buscar por número o ubicación...">
+                    <div class="aulas-search">
+                        <img th:src="@{/assets/buscar_gris.svg}" alt="" aria-hidden="true">
+                        <input id="inputBuscarAula" type="text" placeholder="Buscar por número o ubicación...">
+                    </div>
                 </div>
 
                 <div class="table-wrapper">

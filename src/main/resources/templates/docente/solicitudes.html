@@ -2,62 +2,95 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Solicitudes</title>
-    <link rel="stylesheet" th:href="@{/css/style_dashboard_docente.css}">
-    <link rel="stylesheet" th:href="@{/css/opciones_horario.css}">
+    <link rel="stylesheet" th:href="@{/css/docente.css}">
+    <link rel="stylesheet" th:href="@{/css/solicitudes_docente.css}">
 </head>
 <body>
 
 <div class="docente-app">
+    <!-- Sidebar compartido del portal Docente -->
     <div th:replace="~{fragments/sidebar_docente :: sidebarDocente}"></div>
 
     <div class="docente-main">
+        <!-- Parte superior: información del Docente -->
         <div th:replace="~{fragments/header_docente :: headerDocente}"></div>
 
-        <main class="docente-content">
-            <section class="docente-heading">
-                <h1>Solicitudes</h1>
-                <p>Revise el historial de observaciones y rechazos enviados a administracion.</p>
+        <main class="docente-content solicitudes-content">
+            <!-- Parte superior: título y cantidad de Solicitudes -->
+            <section class="solicitudes-header">
+                <div class="solicitudes-title">
+                    <img th:src="@{/img/docente/solicitudes_rojo.svg}" alt="" aria-hidden="true">
+                    <div>
+                        <h1>Solicitudes</h1>
+                        <p>Revise las observaciones o rechazos enviados y la respuesta de Administración.</p>
+                    </div>
+                </div>
+                <span class="solicitudes-count" th:text="${#lists.size(solicitudes)} + ' solicitudes'">0 solicitudes</span>
             </section>
 
-            <div th:if="${mensajeExito}" class="alert alert--success">
-                <span th:text="${mensajeExito}"></span>
+            <!-- Confirmación de una solicitud enviada -->
+            <div th:if="${mensajeExito}" class="solicitudes-alerta">
+                <span aria-hidden="true">✓</span>
+                <p th:text="${mensajeExito}">Solicitud registrada correctamente.</p>
             </div>
 
-            <section class="docente-status-panel">
-                <div class="table-wrapper">
-                    <table class="data-table">
+            <!-- Historial dinámico de solicitudes del Docente -->
+            <section class="solicitudes-panel" th:if="${!#lists.isEmpty(solicitudes)}">
+                <div class="solicitudes-panel__header">
+                    <div>
+                        <h2>Historial de solicitudes</h2>
+                        <p>Seguimiento de los cambios solicitados sobre sus propuestas de horario.</p>
+                    </div>
+                </div>
+
+                <div class="solicitudes-tabla-wrapper">
+                    <table class="solicitudes-tabla">
                         <thead>
                         <tr>
-                            <th>Codigo</th>
+                            <th>Código</th>
                             <th>Fecha</th>
-                            <th>Horario</th>
+                            <th>Propuesta</th>
                             <th>Tipo</th>
                             <th>Comentario</th>
                             <th>Estado</th>
-                            <th>Respuesta</th>
-                            <th>Fecha respuesta</th>
+                            <th>Respuesta de Administración</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr th:each="solicitud : ${solicitudes}">
-                            <td th:text="${solicitud.codigoSolicitud}">SOL</td>
-                            <td th:text="${solicitud.fechaRegistro}">2026-01-01</td>
-                            <td th:text="${'Opcion ' + solicitud.opcionHorario}">Opcion</td>
-                            <td th:text="${solicitud.tipoSolicitud}">Tipo</td>
-                            <td th:text="${solicitud.comentarioDocente}">Comentario</td>
-                            <td th:text="${solicitud.estadoSolicitud}">Pendiente</td>
-                            <td th:text="${solicitud.comentarioAdministrador ?: '-'}">-</td>
-                            <td th:text="${solicitud.fechaResolucion ?: '-'}">-</td>
-                        </tr>
-                        <tr th:if="${#lists.isEmpty(solicitudes)}">
-                            <td colspan="8" class="empty-table">Aun no registra solicitudes.</td>
+                            <td data-label="Código"><strong th:text="${solicitud.codigoSolicitud}">SOL-001</strong></td>
+                            <td data-label="Fecha" th:text="${solicitud.fechaRegistro}">2026-01-01</td>
+                            <td data-label="Propuesta" th:text="${'Opción ' + solicitud.opcionHorario}">Opción 1</td>
+                            <td data-label="Tipo"><span class="solicitud-tipo" th:text="${solicitud.tipoSolicitud}">Observación</span></td>
+                            <td data-label="Comentario" class="solicitud-comentario" th:text="${solicitud.comentarioDocente}">Comentario</td>
+                            <td data-label="Estado">
+                                <span class="solicitud-estado"
+                                      th:classappend="${#strings.equalsIgnoreCase(solicitud.estadoSolicitud, 'PENDIENTE')} ? ' is-pending' : (${#strings.containsIgnoreCase(solicitud.estadoSolicitud, 'APROB')} ? ' is-approved' : ' is-rejected')"
+                                      th:text="${solicitud.estadoSolicitud}">Pendiente</span>
+                            </td>
+                            <td data-label="Respuesta">
+                                <p class="solicitud-respuesta" th:text="${solicitud.comentarioAdministrador ?: 'Sin respuesta todavía'}">Sin respuesta todavía</p>
+                                <small th:if="${solicitud.fechaResolucion}" th:text="${solicitud.fechaResolucion}">2026-01-02</small>
+                            </td>
                         </tr>
                         </tbody>
                     </table>
                 </div>
             </section>
+
+            <!-- Estado vacío cuando el Docente aún no registra solicitudes -->
+            <section class="solicitudes-empty" th:if="${#lists.isEmpty(solicitudes)}">
+                <img th:src="@{/img/docente/solicitudes_rojo.svg}" alt="" aria-hidden="true">
+                <h2>Aún no tiene solicitudes</h2>
+                <p>Las observaciones o rechazos que envíe desde Opciones de horario aparecerán aquí.</p>
+                <a th:href="@{/docente/opciones_horario}">Revisar opciones de horario</a>
+            </section>
         </main>
+
+        <!-- Footer compartido del portal Docente -->
+        <div th:replace="~{fragments/footer_docente :: footerDocente}"></div>
     </div>
 </div>
 

@@ -1,91 +1,59 @@
-<aside th:fragment="sidebarDocente" class="docente-sidebar">
-
-    <div class="docente-brand">
-        <div class="docente-brand__icon">
-            <img th:src="@{/img/docente/IMG_1.svg}" alt="Logo">
-        </div>
+<aside xmlns:th="http://www.thymeleaf.org"
+       th:fragment="sidebarDocente"
+       class="docente-sidebar"
+       aria-label="Navegación del portal docente">
+    <a class="docente-brand" th:href="@{/docente/dashboard}">
+        <span class="docente-brand__icon">
+            <img th:src="@{/img/docente/IMG_1.svg}" alt="" aria-hidden="true">
+        </span>
         <span>Generador UTP</span>
-    </div>
-
+    </a>
 
     <nav class="docente-nav">
-
-
-        <a th:href="@{/docente/dashboard}"
-           class="docente-nav__link"
-           th:classappend="${moduloActivo == 'dashboard'} ? ' active' : ''">
-            <img th:src="@{/img/docente/IMG_2.svg}" alt="Dashboard">
+        <a th:href="@{/docente/dashboard}" class="docente-nav__link"
+           th:classappend="${moduloActivo == 'dashboard'} ? ' active' : ''"
+           th:attr="aria-current=${moduloActivo == 'dashboard'} ? 'page' : null">
+            <img th:src="@{/img/docente/IMG_2.svg}" alt="" aria-hidden="true">
             <strong>Dashboard</strong>
-
         </a>
-
-
-
-        <a th:href="@{/docente/disponibilidad}"
-           class="docente-nav__link"
-           th:classappend="${moduloActivo == 'disponibilidad'} ? ' active' : ''">
-            <img th:src="@{/img/docente/IMG_3.svg}" alt="Disponibilidad">
+        <a th:href="@{/docente/disponibilidad}" class="docente-nav__link"
+           th:classappend="${moduloActivo == 'disponibilidad'} ? ' active' : ''"
+           th:attr="aria-current=${moduloActivo == 'disponibilidad'} ? 'page' : null">
+            <img th:src="@{/img/docente/IMG_3.svg}" alt="" aria-hidden="true">
             <strong>Disponibilidad</strong>
-
         </a>
-
-
-
-        <a th:href="@{/docente/cursos}"
-           class="docente-nav__link"
-           th:classappend="${moduloActivo == 'cursos'} ? ' active' : ''">
-            <img th:src="@{/img/docente/IMG_4.svg}" alt="Cursos">
+        <a th:href="@{/docente/cursos}" class="docente-nav__link"
+           th:classappend="${moduloActivo == 'cursos'} ? ' active' : ''"
+           th:attr="aria-current=${moduloActivo == 'cursos'} ? 'page' : null">
+            <img th:src="@{/img/docente/IMG_4.svg}" alt="" aria-hidden="true">
             <strong>Cursos</strong>
-
         </a>
-
-
-        <a th:href="@{/docente/opciones_horario}"
-           class="docente-nav__link"
-           th:classappend="${moduloActivo == 'opciones_horario'} ? ' active' : ''">
-
-            <img th:src="@{/img/docente/IMG_5.svg}" alt="Opciones de horario">
-
+        <a th:href="@{/docente/opciones_horario}" class="docente-nav__link"
+           th:classappend="${moduloActivo == 'opciones_horario'} ? ' active' : ''"
+           th:attr="aria-current=${moduloActivo == 'opciones_horario'} ? 'page' : null">
+            <img th:src="@{/img/docente/IMG_5.svg}" alt="" aria-hidden="true">
             <strong>Opciones de horario</strong>
-
         </a>
-
-
-        <a th:href="@{/docente/solicitudes}"
-           class="docente-nav__link"
-           th:classappend="${moduloActivo == 'solicitudes'} ? ' active' : ''">
-
-            <img th:src="@{/img/docente/IMG_6.svg}" alt="Solicitudes">
-
+        <a th:href="@{/docente/solicitudes}" class="docente-nav__link"
+           th:classappend="${moduloActivo == 'solicitudes'} ? ' active' : ''"
+           th:attr="aria-current=${moduloActivo == 'solicitudes'} ? 'page' : null">
+            <img th:src="@{/img/docente/IMG_6.svg}" alt="" aria-hidden="true">
             <strong>Solicitudes</strong>
-
         </a>
-
-
-        <a th:href="@{/docente/mi-horario}"
-           class="docente-nav__link"
-           th:classappend="${moduloActivo == 'mi_horario'} ? ' active' : ''">
-            <img th:src="@{/img/docente/IMG_7.svg}" alt="Mi horario">
+        <a th:href="@{/docente/mi-horario}" class="docente-nav__link"
+           th:classappend="${moduloActivo == 'mi_horario'} ? ' active' : ''"
+           th:attr="aria-current=${moduloActivo == 'mi_horario'} ? 'page' : null">
+            <img th:src="@{/img/docente/IMG_7.svg}" alt="" aria-hidden="true">
             <strong>Mi horario</strong>
-
         </a>
-
-
     </nav>
 
-
     <div class="docente-logout">
-
         <form th:action="@{/logout}" method="post">
-
             <button type="submit">
-                <img th:src="@{/img/docente/IMG_8.svg}" alt="Cerrar sesión">
-                <strong>Cerrar sesion</strong>
-
+                <img th:src="@{/img/docente/IMG_8.svg}" alt="" aria-hidden="true">
+                <strong>Cerrar sesión</strong>
             </button>
-
         </form>
-
     </div>
-
 </aside>

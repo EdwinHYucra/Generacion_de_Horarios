@@ -37,7 +37,7 @@ public class ValidadorRestriccionesHorarioServiceImpl implements ValidadorRestri
         for (RestriccionHorario restriccion : restricciones) {
             ResultadoRestriccionDTO resultado = restriccion.validar(candidata, asignacionesActuales);
             if (!resultado.isValido()) {
-                LOGGER.info("Asignacion rechazada por restriccion. codigo={}, mensaje={}",
+                LOGGER.debug("Asignacion rechazada por restriccion. codigo={}, mensaje={}",
                         resultado.getCodigo(), resultado.getMensaje());
                 return resultado;
             }

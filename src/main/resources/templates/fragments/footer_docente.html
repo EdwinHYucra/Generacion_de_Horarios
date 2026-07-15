@@ -1,0 +1,21 @@
+<footer xmlns:th="http://www.thymeleaf.org"
+        th:fragment="footerDocente"
+        class="docente-footer">
+    <p>Generador de Horarios Automático UTP</p>
+    <button class="docente-soporte-trigger" type="button" id="docenteAbrirSoporte">Soporte Técnico</button>
+
+    <!-- Modal informativo: canales demostrativos de soporte técnico -->
+    <div class="docente-soporte-modal" id="docenteSoporteModal" hidden aria-hidden="true">
+        <div class="docente-soporte-backdrop" data-cerrar-soporte></div>
+        <section class="docente-soporte-dialog" role="dialog" aria-modal="true" aria-labelledby="docenteSoporteTitulo">
+            <header><div class="docente-soporte-icon">?</div><div><h2 id="docenteSoporteTitulo">Soporte Técnico</h2><p>Estamos disponibles para ayudarle con la plataforma.</p></div><button type="button" data-cerrar-soporte aria-label="Cerrar">&times;</button></header>
+            <div class="docente-soporte-contenido">
+                <article><strong>Central de ayuda</strong><a href="tel:+51018081234">(01) 808-1234</a><small>Opción 2 · Plataforma académica</small></article>
+                <article><strong>Correo electrónico</strong><a href="mailto:soporte.horarios@utp.edu.pe">soporte.horarios@utp.edu.pe</a><small>Respuesta estimada: 24 horas</small></article>
+                <article><strong>Horario de atención</strong><span>Lunes a sábado</span><small>08:00 a. m. – 08:00 p. m.</small></article>
+                <div class="docente-soporte-motivos"><strong>Puede contactarnos por:</strong><ul><li>Problemas para registrar disponibilidad.</li><li>Cursos que no aparecen en su selección.</li><li>Errores al visualizar o confirmar horarios.</li><li>Dificultades de acceso a su cuenta.</li></ul></div>
+            </div>
+            <footer><button type="button" data-cerrar-soporte>Entendido</button></footer>
+        </section>
+    </div>
+</footer>

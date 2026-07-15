@@ -16,6 +16,8 @@ public interface HorarioGeneradoDAO {
 
     void saveDetalle(Long idHorario, HorarioDetalleDTO detalle);
 
+    void reemplazarDetalles(Long idHorario, List<HorarioDetalleDTO> detalles);
+
     void eliminarPendientesPorDocente(Long idDocente);
 
     List<HorarioGeneradoResumenDTO> listarResumenes();

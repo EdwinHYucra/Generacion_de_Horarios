@@ -15,7 +15,7 @@ import pe.edu.utp.generador_horario.dto.SeleccionCursosRequestDTO;
 import pe.edu.utp.generador_horario.entidad.Docente;
 import pe.edu.utp.generador_horario.entidad.Usuario;
 import pe.edu.utp.generador_horario.service.interfaces.CursoService;
-import pe.edu.utp.generador_horario.service.interfaces.HorarioGeneradoService;
+import pe.edu.utp.generador_horario.service.interfaces.HorarioGeneracionAsyncService;
 
 /**
  * Controlador del modulo docente para seleccionar cursos disponibles.
@@ -33,7 +33,7 @@ public class CursoDocenteController {
     private final UsuarioDAO usuarioDAO;
     private final DocenteDAO docenteDAO;
     private final DocenteCursoDAO docenteCursoDAO;
-    private final HorarioGeneradoService horarioGeneradoService;
+    private final HorarioGeneracionAsyncService horarioGeneracionAsyncService;
 
     public CursoDocenteController(
             CursoService cursoService,
@@ -41,13 +41,13 @@ public class CursoDocenteController {
             UsuarioDAO usuarioDAO,
             DocenteDAO docenteDAO,
             DocenteCursoDAO docenteCursoDAO,
-            HorarioGeneradoService horarioGeneradoService) {
+            HorarioGeneracionAsyncService horarioGeneracionAsyncService) {
         this.cursoService = cursoService;
         this.cicloAcademicoDAO = cicloAcademicoDAO;
         this.usuarioDAO = usuarioDAO;
         this.docenteDAO = docenteDAO;
         this.docenteCursoDAO = docenteCursoDAO;
-        this.horarioGeneradoService = horarioGeneradoService;
+        this.horarioGeneracionAsyncService = horarioGeneracionAsyncService;
     }
 
     @GetMapping
@@ -133,11 +133,8 @@ public class CursoDocenteController {
         LOGGER.info("Cursos seleccionados actualizados. docenteId={}, cicloId={}, cursos={}",
                 docente.getIdDocente(), cicloActivoId, cantidad);
 
-        int opciones = horarioGeneradoService.generarSiTieneInsumos(docente.getIdDocente());
-
-        return ResponseEntity.ok(opciones > 0
-                ? "Cursos guardados. Se generaron " + opciones + " opciones de horario."
-                : "Cursos guardados. El horario se generara cuando tambien exista disponibilidad registrada.");
+        horarioGeneracionAsyncService.programarGeneracion(docente.getIdDocente());
+        return ResponseEntity.ok("Cursos guardados. Las opciones de horario se actualizarán en segundo plano.");
     }
 
     private Long obtenerCicloActivoId() {

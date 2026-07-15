@@ -13,6 +13,7 @@ import pe.edu.utp.generador_horario.dto.OpcionesHorarioDTO;
 import pe.edu.utp.generador_horario.entidad.Docente;
 import pe.edu.utp.generador_horario.entidad.Usuario;
 import pe.edu.utp.generador_horario.service.interfaces.HorarioGeneradoService;
+import pe.edu.utp.generador_horario.service.interfaces.HorarioGeneracionAsyncService;
 import pe.edu.utp.generador_horario.service.interfaces.SolicitudCambioHorarioService;
 
 import java.util.Comparator;
@@ -24,17 +25,20 @@ public class OpcionesHorarioController {
     private final UsuarioDAO usuarioDAO;
     private final DocenteDAO docenteDAO;
     private final HorarioGeneradoService horarioGeneradoService;
+    private final HorarioGeneracionAsyncService horarioGeneracionAsyncService;
     private final SolicitudCambioHorarioService solicitudCambioHorarioService;
 
     public OpcionesHorarioController(
             UsuarioDAO usuarioDAO,
             DocenteDAO docenteDAO,
             HorarioGeneradoService horarioGeneradoService,
+            HorarioGeneracionAsyncService horarioGeneracionAsyncService,
             SolicitudCambioHorarioService solicitudCambioHorarioService) {
 
         this.usuarioDAO = usuarioDAO;
         this.docenteDAO = docenteDAO;
         this.horarioGeneradoService = horarioGeneradoService;
+        this.horarioGeneracionAsyncService = horarioGeneracionAsyncService;
         this.solicitudCambioHorarioService = solicitudCambioHorarioService;
     }
 
@@ -51,13 +55,10 @@ public class OpcionesHorarioController {
         List<OpcionesHorarioDTO> opciones =
                 horarioGeneradoService.listarOpcionesPendientesPorDocente(docente.getIdDocente());
 
-        if (opciones.isEmpty()) {
-            horarioGeneradoService.generarSiTieneInsumos(docente.getIdDocente());
-            opciones = horarioGeneradoService.listarOpcionesPendientesPorDocente(docente.getIdDocente());
-        }
-
         model.addAttribute("bloquesHora", obtenerHorasDeInicio(opciones));
         model.addAttribute("opcionesHorario", opciones);
+        model.addAttribute("generacionEnProceso",
+                horarioGeneracionAsyncService.estaEnProceso(docente.getIdDocente()));
 
         return "docente/opciones_horario";
     }
@@ -72,8 +73,8 @@ public class OpcionesHorarioController {
         Docente docente = obtenerDocente(usuario);
 
         horarioGeneradoService.confirmarSeleccionDocente(idHorario, docente.getIdDocente());
-        redirectAttributes.addFlashAttribute("mensajeExito", "Propuesta aprobada por docente. Queda pendiente de aprobacion administrativa.");
-        return "redirect:/docente/solicitudes";
+        redirectAttributes.addFlashAttribute("mensajeExito", "Horario confirmado. Queda pendiente de aprobacion administrativa.");
+        return "redirect:/docente/mi-horario";
     }
 
     @PostMapping("/docente/opciones_horario/observar")

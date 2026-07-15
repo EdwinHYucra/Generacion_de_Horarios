@@ -7,14 +7,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import pe.edu.utp.generador_horario.dao.DocenteDAO;
 import pe.edu.utp.generador_horario.dao.UsuarioDAO;
 import pe.edu.utp.generador_horario.dto.HorarioGeneradoResumenDTO;
+import pe.edu.utp.generador_horario.dto.HorarioDetalleDTO;
 import pe.edu.utp.generador_horario.entidad.Docente;
 import pe.edu.utp.generador_horario.entidad.Usuario;
 import pe.edu.utp.generador_horario.service.interfaces.HorarioGeneradoService;
 
 import java.util.Optional;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
- * Muestra al docente el horario aprobado por administracion.
+ * Muestra el horario elegido por el docente y su estado de aprobacion.
  */
 @Controller
 public class MiHorarioDocenteController {
@@ -46,10 +51,22 @@ public class MiHorarioDocenteController {
         model.addAttribute("rolUsuario", "Docente");
         model.addAttribute("moduloActivo", "mi_horario");
         model.addAttribute("horario", horario.orElse(null));
-        model.addAttribute("detalleHorario", horario
+        List<HorarioDetalleDTO> detalleHorario = horario
                 .map(item -> horarioGeneradoService.listarDetalles(item.getIdHorario()))
-                .orElse(null));
+                .orElseGet(List::of);
+        model.addAttribute("detalleHorario", detalleHorario);
+        model.addAttribute("detalleHorarioAgrupado", agruparPorCurso(detalleHorario));
 
         return "docente/mi_horario";
+    }
+
+    /** Agrupa las sesiones semanales para mostrar cada curso una sola vez. */
+    private Map<String, List<HorarioDetalleDTO>> agruparPorCurso(List<HorarioDetalleDTO> detalles) {
+        Map<String, List<HorarioDetalleDTO>> agrupados = new LinkedHashMap<>();
+        for (HorarioDetalleDTO detalle : detalles) {
+            String clave = detalle.getIdCurso() != null ? "curso-" + detalle.getIdCurso() : "nombre-" + detalle.getCurso();
+            agrupados.computeIfAbsent(clave, ignorada -> new ArrayList<>()).add(detalle);
+        }
+        return agrupados;
     }
 }

@@ -1,0 +1,15 @@
+<!-- Notificación reutilizable y exclusiva del portal Docente -->
+<div xmlns:th="http://www.thymeleaf.org"
+     th:fragment="notificacionDocente"
+     id="docenteNotificacion"
+     class="docente-notificacion"
+     role="status"
+     aria-live="polite"
+     aria-hidden="true">
+    <div class="docente-notificacion__icon" aria-hidden="true">✓</div>
+    <div class="docente-notificacion__contenido">
+        <strong id="docenteNotificacionTitulo">Proceso completado</strong>
+        <p id="docenteNotificacionMensaje"></p>
+    </div>
+    <button type="button" id="docenteNotificacionCerrar" aria-label="Cerrar notificación">×</button>
+</div>

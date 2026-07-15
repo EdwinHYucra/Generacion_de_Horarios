@@ -47,6 +47,19 @@ public class UsuarioDAOImpl implements UsuarioDAO {
     }
 
     @Override
+    public Optional<Usuario> buscarPorUsuarioInstitucional(String usuario) {
+        List<Usuario> lista = jdbcTemplate.query(
+                "SELECT * FROM usuario WHERE LOWER(SUBSTRING_INDEX(email, '@', 1)) = LOWER(?)",
+                usuarioMapper, usuario);
+        return lista.isEmpty() ? Optional.empty() : Optional.of(lista.get(0));
+    }
+
+    @Override
+    public void actualizarPassword(Long idUsuario, String passwordCifrada) {
+        jdbcTemplate.update("UPDATE usuario SET password = ? WHERE id = ?", passwordCifrada, idUsuario);
+    }
+
+    @Override
     public void guardar(Usuario usuario) {
         String sql = "INSERT INTO usuario (nombre, apellido, email, password, rol, estado) " +
                      "VALUES (?, ?, ?, ?, ?, ?)";
