@@ -59,11 +59,12 @@ public class DisponibilidadDocenteController {
     public ResponseEntity<String> guardar(
             @RequestBody DisponibilidadRequestDTO request,
             Authentication authentication) {
-        disponibilidadService.guardarPorEmail(authentication.getName(), request.getBloques());
-        int opciones = horarioGeneradoService.generarSiTieneInsumos(obtenerDocenteId(authentication));
-        return ResponseEntity.ok(opciones > 0
-                ? "Disponibilidad guardada. Se generaron " + opciones + " opciones de horario."
-                : "Disponibilidad guardada. El horario se generara cuando tambien existan cursos seleccionados.");
+        disponibilidadService.guardarPorEmail(
+                authentication.getName(),
+                request.getBloques());
+
+        return ResponseEntity.ok(
+                "Disponibilidad guardada correctamente.");
     }
 
     private Long obtenerDocenteId(Authentication authentication) {

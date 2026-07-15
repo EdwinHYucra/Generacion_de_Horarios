@@ -40,21 +40,25 @@ public class OpcionesHorarioController {
 
     @GetMapping("/docente/opciones_horario")
     public String mostrarVista(Model model, Authentication authentication) {
+
         Usuario usuario = obtenerUsuario(authentication);
         Docente docente = obtenerDocente(usuario);
 
-        model.addAttribute("nombreUsuario", usuario.getNombre() + " " + usuario.getApellido());
+        long inicio = System.currentTimeMillis();
+
+        List<OpcionesHorarioDTO> opciones = horarioGeneradoService
+                .listarOpcionesPendientesPorDocente(docente.getIdDocente());
+
+        long fin = System.currentTimeMillis();
+
+        System.out.println("Tiempo carga opciones: " + (fin - inicio) + " ms");
+
+        model.addAttribute("nombreUsuario",
+                usuario.getNombre() + " " + usuario.getApellido());
         model.addAttribute("rolUsuario", "Docente");
         model.addAttribute("moduloActivo", "opciones_horario");
-        model.addAttribute("diasSemana", List.of("Lunes", "Martes", "Miercoles", "Jueves", "Viernes"));
-
-        List<OpcionesHorarioDTO> opciones =
-                horarioGeneradoService.listarOpcionesPendientesPorDocente(docente.getIdDocente());
-
-        if (opciones.isEmpty()) {
-            horarioGeneradoService.generarSiTieneInsumos(docente.getIdDocente());
-            opciones = horarioGeneradoService.listarOpcionesPendientesPorDocente(docente.getIdDocente());
-        }
+        model.addAttribute("diasSemana",
+                List.of("Lunes", "Martes", "Miercoles", "Jueves", "Viernes"));
 
         model.addAttribute("bloquesHora", obtenerHorasDeInicio(opciones));
         model.addAttribute("opcionesHorario", opciones);
@@ -72,7 +76,8 @@ public class OpcionesHorarioController {
         Docente docente = obtenerDocente(usuario);
 
         horarioGeneradoService.confirmarSeleccionDocente(idHorario, docente.getIdDocente());
-        redirectAttributes.addFlashAttribute("mensajeExito", "Propuesta aprobada por docente. Queda pendiente de aprobacion administrativa.");
+        redirectAttributes.addFlashAttribute("mensajeExito",
+                "Propuesta aprobada por docente. Queda pendiente de aprobacion administrativa.");
         return "redirect:/docente/solicitudes";
     }
 

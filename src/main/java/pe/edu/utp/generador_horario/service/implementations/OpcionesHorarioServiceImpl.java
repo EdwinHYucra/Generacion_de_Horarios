@@ -28,11 +28,14 @@ import java.util.Locale;
 import java.util.Optional;
 
 /**
- * Genera opciones de horario para un docente usando datos reales del ciclo activo.
+ * Genera opciones de horario para un docente usando datos reales del ciclo
+ * activo.
  *
- * <p>Patrones aplicados: Strategy y Chain of Responsibility se aprovechan a
+ * <p>
+ * Patrones aplicados: Strategy y Chain of Responsibility se aprovechan a
  * traves de {@link ValidadorRestriccionesHorarioService}. Este servicio solo
- * arma candidatas y delega las reglas de negocio al validador.</p>
+ * arma candidatas y delega las reglas de negocio al validador.
+ * </p>
  */
 @Service
 public class OpcionesHorarioServiceImpl implements OpcionesHorarioService {
@@ -82,8 +85,8 @@ public class OpcionesHorarioServiceImpl implements OpcionesHorarioService {
                 .flatMap(Optional::stream)
                 .toList();
 
-        List<DisponibilidadDocente> disponibilidades =
-                disponibilidadDAO.findByDocenteIdAndCicloId(docenteId, cicloActivoId);
+        List<DisponibilidadDocente> disponibilidades = disponibilidadDAO.findByDocenteIdAndCicloId(docenteId,
+                cicloActivoId);
         List<Aula> aulas = aulaDAO.findByEstadoTrue();
 
         if (cursos.isEmpty() || disponibilidades.isEmpty() || aulas.isEmpty()) {
@@ -146,14 +149,13 @@ public class OpcionesHorarioServiceImpl implements OpcionesHorarioService {
             List<HorarioDetalleDTO> bloquesCurso = new ArrayList<>();
 
             for (Integer duracionSesion : calcularSesionesCurso(curso)) {
-                Optional<AsignacionHorarioCandidataDTO> candidata =
-                        buscarMejorCandidataValida(
-                                docenteId,
-                                curso,
-                                duracionSesion,
-                                disponibilidades,
-                                aulas,
-                                asignaciones);
+                Optional<AsignacionHorarioCandidataDTO> candidata = buscarMejorCandidataValida(
+                        docenteId,
+                        curso,
+                        duracionSesion,
+                        disponibilidades,
+                        aulas,
+                        asignaciones);
 
                 if (candidata.isPresent()) {
                     asignaciones.add(candidata.get());
@@ -190,32 +192,33 @@ public class OpcionesHorarioServiceImpl implements OpcionesHorarioService {
             List<Aula> aulas,
             List<AsignacionHorarioCandidataDTO> asignaciones) {
 
-        List<AsignacionHorarioCandidataDTO> candidatasValidas = new ArrayList<>();
-
         for (DisponibilidadDocente disponibilidad : disponibilidades) {
+
             for (LocalTime horaInicio : calcularIniciosPosibles(disponibilidad, duracionMinutos)) {
+
                 LocalTime horaFin = horaInicio.plusMinutes(duracionMinutos);
 
                 for (Aula aula : aulas) {
-                    AsignacionHorarioCandidataDTO candidata =
-                            crearCandidata(docenteId, curso, aula, disponibilidad, horaInicio, horaFin);
-                    ResultadoRestriccionDTO resultado =
-                            validadorRestricciones.validar(candidata, asignaciones);
+
+                    AsignacionHorarioCandidataDTO candidata = crearCandidata(
+                            docenteId,
+                            curso,
+                            aula,
+                            disponibilidad,
+                            horaInicio,
+                            horaFin);
+
+                    ResultadoRestriccionDTO resultado = validadorRestricciones.validar(
+                            candidata,
+                            asignaciones);
 
                     if (resultado.isValido()) {
-                        candidatasValidas.add(candidata);
+                        return Optional.of(candidata);
                     }
                 }
             }
         }
 
-        if (!candidatasValidas.isEmpty()) {
-            return candidatasValidas.stream()
-                    .min(Comparator.comparingInt(candidata -> calcularPuntajeCandidata(candidata, asignaciones)));
-        }
-
-        LOGGER.info("Curso no asignado por restricciones. docenteId={}, cursoId={}",
-                docenteId, curso.getIdCurso());
         return Optional.empty();
     }
 
