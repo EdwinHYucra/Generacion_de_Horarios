@@ -24,6 +24,9 @@
             <div th:if="${mensajeExito}" class="alert alert--success">
                 <span th:text="${mensajeExito}"></span>
             </div>
+            <div th:if="${mensajeError}" class="alert alert--error">
+                <span th:text="${mensajeError}"></span>
+            </div>
 
             <section class="panel">
                 <div class="table-wrapper">
@@ -52,13 +55,17 @@
                                 <form th:if="${solicitud.estadoSolicitud == 'PENDIENTE'}"
                                       th:action="@{/administrador/solicitudes/responder}"
                                       method="post"
-                                      class="form-group"
-                                      onsubmit="return this.comentarioAdministrador.value.trim().length > 0;">
+                                      class="form-group solicitud-respuesta-form">
                                     <input type="hidden" name="idSolicitud" th:value="${solicitud.idSolicitud}">
                                     <textarea name="comentarioAdministrador"
                                               rows="3"
                                               class="form-control"
-                                              placeholder="Comentario obligatorio"></textarea>
+                                              placeholder="Comentario obligatorio"
+                                              required
+                                              minlength="3"></textarea>
+                                    <small class="solicitud-respuesta-error" hidden>
+                                        Escriba una respuesta antes de aprobar o rechazar.
+                                    </small>
                                     <div class="action-group">
                                         <button type="submit" name="estado" value="APROBADA" class="btn btn--primary">
                                             Aprobar
@@ -84,6 +91,8 @@
         <div th:replace="~{fragments/footer :: footer}"></div>
     </div>
 </div>
+
+<script th:src="@{/js/solicitudes_admin.js}"></script>
 
 </body>
 </html>
