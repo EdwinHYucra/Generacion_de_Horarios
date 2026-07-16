@@ -4,6 +4,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import java.util.Map;
 import pe.edu.utp.generador_horario.dao.CicloAcademicoDAO;
 import pe.edu.utp.generador_horario.dao.DisponibilidadDocenteDAO;
 import pe.edu.utp.generador_horario.dao.DocenteCursoDAO;
@@ -66,5 +68,21 @@ public class DocenteDashboardController {
         model.addAttribute("horarioAsignado", horarioAsignado);
 
         return "docente/dashboard";
+    }
+
+    @GetMapping("/docente/dashboard/estado")
+    @ResponseBody
+    public Map<String, Boolean> estado(Authentication authentication) {
+        Usuario usuario = usuarioDAO.buscarPorEmail(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        Docente docente = docenteDAO.findByUsuarioId(usuario.getId())
+                .orElseThrow(() -> new RuntimeException("Docente no encontrado"));
+        Long cicloId = cicloAcademicoDAO.findIdActivo().orElse(null);
+        boolean disponibilidad = cicloId != null && !disponibilidadDocenteDAO
+                .findByDocenteIdAndCicloId(docente.getIdDocente(), cicloId).isEmpty();
+        boolean cursos = cicloId != null && !docenteCursoDAO
+                .findCursoIdsByDocenteIdAndCicloId(docente.getIdDocente(), cicloId).isEmpty();
+        boolean horario = horarioGeneradoService.buscarAprobadoPorDocente(docente.getIdDocente()).isPresent();
+        return Map.of("disponibilidad", disponibilidad, "cursos", cursos, "horario", horario);
     }
 }

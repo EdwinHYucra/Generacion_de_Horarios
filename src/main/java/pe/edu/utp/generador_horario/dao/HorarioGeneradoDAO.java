@@ -20,6 +20,8 @@ public interface HorarioGeneradoDAO {
 
     void eliminarPendientesPorDocente(Long idDocente);
 
+    void eliminarTodosPorDocente(Long idDocente);
+
     List<HorarioGeneradoResumenDTO> listarResumenes();
 
     List<HorarioGeneradoResumenDTO> listarPendientesPorDocente(Long idDocente);

@@ -56,8 +56,12 @@ public class SolicitudAdminController {
 
         Usuario usuario = usuarioDAO.buscarPorEmail(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        solicitudCambioHorarioService.responder(idSolicitud, usuario.getId(), estado, comentarioAdministrador);
-        redirectAttributes.addFlashAttribute("mensajeExito", "Solicitud respondida correctamente.");
+        try {
+            solicitudCambioHorarioService.responder(idSolicitud, usuario.getId(), estado, comentarioAdministrador);
+            redirectAttributes.addFlashAttribute("mensajeExito", "Solicitud respondida correctamente.");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("mensajeError", e.getMessage());
+        }
         return "redirect:/administrador/solicitudes";
     }
 }

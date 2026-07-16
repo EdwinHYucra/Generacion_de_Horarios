@@ -35,6 +35,7 @@ public class HorarioGeneradoServiceImpl implements HorarioGeneradoService {
     private static final String ESTADO_APROBADA_DOCENTE = "APROBADA_DOCENTE";
     private static final String ESTADO_EN_REVISION = "EN_REVISION";
     private static final String ESTADO_RECHAZADA = "RECHAZADA";
+    private static final int TIEMPO_ROTACION_MINUTOS = 15;
 
     private final DocenteDAO docenteDAO;
     private final CicloAcademicoDAO cicloAcademicoDAO;
@@ -222,8 +223,11 @@ public class HorarioGeneradoServiceImpl implements HorarioGeneradoService {
                 if (a.getDia().equalsIgnoreCase(b.getDia())) {
                     LocalTime ai = LocalTime.parse(a.getHoraInicio()), af = LocalTime.parse(a.getHoraFin());
                     LocalTime bi = LocalTime.parse(b.getHoraInicio()), bf = LocalTime.parse(b.getHoraFin());
-                    if (ai.isBefore(bf) && bi.isBefore(af)) {
-                        throw new IllegalArgumentException("Existen bloques superpuestos el " + a.getDia() + ".");
+                    if (ai.isBefore(bf.plusMinutes(TIEMPO_ROTACION_MINUTOS))
+                            && bi.isBefore(af.plusMinutes(TIEMPO_ROTACION_MINUTOS))) {
+                        throw new IllegalArgumentException(
+                                "Debe existir una separacion minima de 15 minutos entre cursos el "
+                                        + a.getDia() + ".");
                     }
                 }
             }
@@ -255,6 +259,17 @@ public class HorarioGeneradoServiceImpl implements HorarioGeneradoService {
         validarHorarioDeDocente(idHorario, idDocente);
         horarioGeneradoDAO.actualizarEstado(idHorario, ESTADO_RECHAZADA);
         LOGGER.info("Horario rechazado por docente. idHorario={}, idDocente={}", idHorario, idDocente);
+    }
+
+    @Override
+    @Transactional
+    public void habilitarNuevaSeleccion(Long idDocente) {
+        Long cicloId = cicloAcademicoDAO.findIdActivo()
+                .orElseThrow(() -> new IllegalArgumentException("No existe un ciclo academico activo."));
+        horarioGeneradoDAO.eliminarTodosPorDocente(idDocente);
+        docenteCursoDAO.deleteByDocenteIdAndCicloId(idDocente, cicloId);
+        disponibilidadDocenteDAO.deleteByDocenteIdAndCicloId(idDocente, cicloId);
+        LOGGER.info("Nueva seleccion habilitada. docenteId={}, cicloId={}", idDocente, cicloId);
     }
 
     private void validarHorarioDeDocente(Long idHorario, Long idDocente) {

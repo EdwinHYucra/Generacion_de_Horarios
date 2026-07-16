@@ -217,6 +217,10 @@ function abrirDetalleActivo() {
     document.getElementById("detalleSedes").textContent = metricas.sedes;
     document.getElementById("detalleAulas").textContent = metricas.aulas;
     document.getElementById("modalDetalle").classList.remove("hidden");
+    const cuerpoModal = document.querySelector("#modalDetalle .modal-body");
+    const tablaDetalle = document.querySelector("#modalDetalle .detalle-horario");
+    if (cuerpoModal) cuerpoModal.scrollTop = 0;
+    if (tablaDetalle) tablaDetalle.scrollLeft = 0;
 }
 
 function cerrarDetalle() {

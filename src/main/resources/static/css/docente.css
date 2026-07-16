@@ -279,3 +279,12 @@ body {
     .docente-footer { align-items: flex-start; flex-direction: column; }
     .docente-soporte-modal{padding:10px}.docente-soporte-dialog{max-height:calc(100vh - 20px)}.docente-soporte-dialog>header{grid-template-columns:36px 1fr 28px;padding:14px}.docente-soporte-icon{width:34px;height:34px}.docente-soporte-contenido{padding:13px}.docente-soporte-dialog>footer{padding:11px 13px}.docente-soporte-dialog>footer button{width:100%}
 }
+.seleccion-bloqueada-aviso {
+    margin: 0 0 18px;
+    padding: 14px 18px;
+    border: 1px solid #b7dfc8;
+    border-radius: 10px;
+    background: #eefaf3;
+    color: #17643a;
+    font-weight: 700;
+}

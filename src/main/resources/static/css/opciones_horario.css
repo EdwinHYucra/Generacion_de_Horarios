@@ -169,7 +169,7 @@ body {
 .horario-grid,
 .tabla-detalle {
     width: 100%;
-    min-width: 720px;
+    min-width: 1040px;
     border-collapse: collapse;
     table-layout: fixed;
     font-size: 13px;
@@ -449,7 +449,7 @@ body.modal-abierto {
 .modal-container {
     position: relative;
     z-index: 1001;
-    width: min(1120px, calc(100% - 56px));
+    width: min(1440px, calc(100% - 32px));
     max-height: calc(100vh - 64px);
     margin: 32px auto;
     overflow: hidden;
@@ -464,7 +464,7 @@ body.modal-abierto {
 
 .modal-body--detalle {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 280px;
+    grid-template-columns: minmax(0, 1fr);
     gap: 18px;
 }
 
@@ -474,12 +474,27 @@ body.modal-abierto {
 
 .detalle-resumen {
     display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     align-content: start;
+    align-items: start;
     gap: 12px;
 }
 
 .detalle-resumen h3 {
     margin: 0;
+    grid-column: 1 / -1;
+}
+
+#detalleCursos {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 0 18px;
+}
+
+.detalle-resumen > .resumen-item {
+    min-height: 56px;
+    align-self: start;
 }
 
 .curso-detalle {
@@ -542,6 +557,8 @@ body.modal-abierto {
     .btn-secundario { width: 100%; justify-content: center; }
     .horario-grid-shell { overflow-x: auto; scrollbar-width: thin; }
     .resumen-horario { width: 100%; }
+    .detalle-resumen { grid-template-columns: 1fr; }
+    #detalleCursos { grid-template-columns: 1fr; }
     .solicitud-actions { display: grid; grid-template-columns: 1fr 1fr; }
     .solicitud-actions .btn { width: 100%; }
 }

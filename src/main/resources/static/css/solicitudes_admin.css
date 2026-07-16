@@ -62,3 +62,20 @@
         flex: 1
     }
 }
+
+.content--solicitudes textarea.is-invalid {
+    border-color: #dc2626;
+    outline: 2px solid rgba(220, 38, 38, .12);
+}
+
+.solicitud-respuesta-error {
+    display: block;
+    margin-top: 5px;
+    color: #b91c1c;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.solicitud-respuesta-error[hidden] {
+    display: none;
+}
