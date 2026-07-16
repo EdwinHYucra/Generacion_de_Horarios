@@ -182,7 +182,7 @@ CREATE TABLE evaluacion_docente (
     comentario VARCHAR(500),
     creado_en DATETIME DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT chk_evaluacion_puntaje
-        CHECK (puntaje BETWEEN 1 AND 20),
+        CHECK (puntaje BETWEEN 0 AND 10),
     CONSTRAINT fk_evaluacion_ciclo
         FOREIGN KEY (id_ciclo_academico) REFERENCES ciclos_academicos(id_ciclo_academico),
     CONSTRAINT fk_evaluacion_docente
@@ -264,6 +264,25 @@ CREATE TABLE comentario_horario (
         ,
 
     CONSTRAINT fk_comentario_administrador
+        FOREIGN KEY (id_administrador)
+        REFERENCES usuario(id)
+);
+
+CREATE TABLE historial_solicitud_horario (
+    id_historial BIGINT PRIMARY KEY AUTO_INCREMENT,
+    id_solicitud BIGINT NOT NULL,
+    id_administrador BIGINT NULL,
+    estado_anterior VARCHAR(30) NULL,
+    estado_nuevo VARCHAR(30) NOT NULL,
+    accion VARCHAR(50) NOT NULL,
+    comentario VARCHAR(500) NULL,
+    fecha_cambio DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_historial_solicitud
+        FOREIGN KEY (id_solicitud)
+        REFERENCES comentario_horario(id_comentario),
+
+    CONSTRAINT fk_historial_solicitud_admin
         FOREIGN KEY (id_administrador)
         REFERENCES usuario(id)
 );
@@ -546,45 +565,24 @@ VALUES (
     (SELECT id_curso FROM cursos WHERE codigo = 'IS101')
 );
 
-INSERT INTO docente_curso (id_ciclo_academico, id_docente, id_curso)
-VALUES (
-    (SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'),
-    (SELECT id_docente FROM docentes WHERE correo = 'percy@utp.edu.pe'),
-    (SELECT id_curso FROM cursos WHERE codigo = 'IS101')
-);
-
 -- Historial adicional del ciclo anterior: base para evaluacion publica
 INSERT INTO docente_curso (id_ciclo_academico, id_docente, id_curso)
 VALUES
     ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2025-II'), (SELECT id_docente FROM docentes WHERE correo = 'ana.torres@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'IS201')),
     ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2025-II'), (SELECT id_docente FROM docentes WHERE correo = 'luis.ramos@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'ADM101'));
 
--- Cursos seleccionados para el ciclo activo: insumo de generacion de horarios
-INSERT INTO docente_curso (id_ciclo_academico, id_docente, id_curso)
-VALUES
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'percy@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'IS102')),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'ana.torres@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'IS201')),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'luis.ramos@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'ADM101')),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'maria.quispe@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'ADM102')),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'maria.quispe@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'ADM201'));
+-- La seleccion de cursos del ciclo activo no se precarga.
+-- Cada docente debe confirmarla desde el portal docente.
 
--- Disponibilidad del ciclo activo. Dos docentes pueden tener el mismo bloque sin conflicto.
-INSERT INTO disponibilidad_docente (id_ciclo_academico, id_docente, dia_semana, hora_inicio, hora_fin, estado)
-VALUES
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'percy@utp.edu.pe'), 'LUNES', '07:00:00', '08:30:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'percy@utp.edu.pe'), 'MIERCOLES', '09:00:00', '11:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'ana.torres@utp.edu.pe'), 'LUNES', '07:00:00', '08:30:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'ana.torres@utp.edu.pe'), 'MARTES', '10:00:00', '12:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'luis.ramos@utp.edu.pe'), 'MARTES', '08:00:00', '11:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'maria.quispe@utp.edu.pe'), 'JUEVES', '07:00:00', '10:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'maria.quispe@utp.edu.pe'), 'VIERNES', '14:00:00', '17:00:00', TRUE);
+-- La disponibilidad del ciclo activo no se precarga.
+-- Cada docente debe confirmarla desde el portal docente.
 
 -- Evaluaciones del ciclo anterior para probar restricciones durante la generacion
 INSERT INTO evaluacion_docente (id_ciclo_academico, id_docente, id_curso, puntaje, categoria, comentario)
 VALUES
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2025-II'), (SELECT id_docente FROM docentes WHERE correo = 'percy@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'IS101'), 10, 'MALO', 'Debe reforzar acompanamiento.'),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2025-II'), (SELECT id_docente FROM docentes WHERE correo = 'ana.torres@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'IS201'), 19, 'POSITIVO', 'Buen dominio del laboratorio.'),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2025-II'), (SELECT id_docente FROM docentes WHERE correo = 'luis.ramos@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'ADM101'), 17, 'NEUTRAL', 'Desempeno regular.');
+    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2025-II'), (SELECT id_docente FROM docentes WHERE correo = 'percy@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'IS101'), 5, 'MALO', 'Debe reforzar acompanamiento.'),
+    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2025-II'), (SELECT id_docente FROM docentes WHERE correo = 'ana.torres@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'IS201'), 10, 'POSITIVO', 'Buen dominio del laboratorio.'),
+    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2025-II'), (SELECT id_docente FROM docentes WHERE correo = 'luis.ramos@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'ADM101'), 8, 'NEUTRAL', 'Desempeno regular.');
 
 -- ============================================
 -- Datos ampliados para pruebas integrales
@@ -674,43 +672,17 @@ VALUES
     ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2025-II'), (SELECT id_docente FROM docentes WHERE correo = 'rosa.flores@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'ADM301')),
     ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2025-II'), (SELECT id_docente FROM docentes WHERE correo = 'diego.vega@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'ADM201'));
 
--- Cursos activos seleccionados por docentes para generar horarios
-INSERT INTO docente_curso (id_ciclo_academico, id_docente, id_curso)
-VALUES
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'percy@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'IS202')),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'ana.torres@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'GEN102')),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'luis.ramos@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'ADM202')),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'jorge.salazar@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'IS301')),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'jorge.salazar@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'IS302')),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'carla.medina@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'GEN101')),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'carla.medina@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'IS102')),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'rosa.flores@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'ADM301')),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'rosa.flores@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'ADM302')),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'diego.vega@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'ADM201')),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'diego.vega@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'ADM303'));
+-- Sin cursos activos precargados para que el docente seleccione desde cero.
 
--- Disponibilidad ampliada del ciclo activo
-INSERT INTO disponibilidad_docente (id_ciclo_academico, id_docente, dia_semana, hora_inicio, hora_fin, estado)
-VALUES
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'percy@utp.edu.pe'), 'LUNES', '09:00:00', '12:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'ana.torres@utp.edu.pe'), 'MIERCOLES', '07:00:00', '11:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'luis.ramos@utp.edu.pe'), 'JUEVES', '14:00:00', '17:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'jorge.salazar@utp.edu.pe'), 'LUNES', '07:00:00', '11:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'jorge.salazar@utp.edu.pe'), 'MARTES', '15:00:00', '18:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'carla.medina@utp.edu.pe'), 'LUNES', '07:00:00', '08:30:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'carla.medina@utp.edu.pe'), 'MIERCOLES', '10:00:00', '13:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'rosa.flores@utp.edu.pe'), 'MARTES', '07:00:00', '10:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'rosa.flores@utp.edu.pe'), 'JUEVES', '10:00:00', '13:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'diego.vega@utp.edu.pe'), 'VIERNES', '08:00:00', '12:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'diego.vega@utp.edu.pe'), 'MIERCOLES', '09:00:00', '12:00:00', TRUE);
+-- Sin disponibilidad ampliada precargada para permitir probar el flujo real.
 
 -- Evaluaciones ampliadas para forzar y comparar restricciones
 INSERT INTO evaluacion_docente (id_ciclo_academico, id_docente, id_curso, puntaje, categoria, comentario)
 VALUES
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2025-II'), (SELECT id_docente FROM docentes WHERE correo = 'jorge.salazar@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'IS301'), 11, 'MALO', 'Presento reclamos recurrentes en laboratorios.'),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2025-II'), (SELECT id_docente FROM docentes WHERE correo = 'carla.medina@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'GEN101'), 18, 'NEUTRAL', 'Cumple, pero debe mejorar retroalimentacion.'),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2025-II'), (SELECT id_docente FROM docentes WHERE correo = 'rosa.flores@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'ADM301'), 20, 'POSITIVO', 'Excelente claridad y puntualidad.'),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2025-II'), (SELECT id_docente FROM docentes WHERE correo = 'diego.vega@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'ADM201'), 16, 'NEUTRAL', 'Desempeno aceptable.');
+    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2025-II'), (SELECT id_docente FROM docentes WHERE correo = 'jorge.salazar@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'IS301'), 5, 'MALO', 'Presento reclamos recurrentes en laboratorios.'),
+    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2025-II'), (SELECT id_docente FROM docentes WHERE correo = 'carla.medina@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'GEN101'), 8, 'NEUTRAL', 'Cumple, pero debe mejorar retroalimentacion.'),
+    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2025-II'), (SELECT id_docente FROM docentes WHERE correo = 'rosa.flores@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'ADM301'), 10, 'POSITIVO', 'Excelente claridad y puntualidad.'),
+    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2025-II'), (SELECT id_docente FROM docentes WHERE correo = 'diego.vega@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'ADM201'), 8, 'NEUTRAL', 'Desempeno aceptable.');
 
 -- ============================================
 -- Refuerzo de datos para generar opciones variadas
@@ -754,50 +726,10 @@ VALUES
     ((SELECT id_carrera FROM carreras WHERE codigo = 'IS'), (SELECT id_curso FROM cursos WHERE codigo = 'GEN104'), 1, TRUE),
     ((SELECT id_carrera FROM carreras WHERE codigo = 'ADM'), (SELECT id_curso FROM cursos WHERE codigo = 'GEN104'), 1, TRUE);
 
--- Mas cursos activos por docente para que el algoritmo pueda distribuir carga
--- en distintas combinaciones de dias, aulas y sedes.
-INSERT INTO docente_curso (id_ciclo_academico, id_docente, id_curso)
-VALUES
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'ana.torres@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'IS304')),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'luis.ramos@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'ADM304')),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'maria.quispe@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'GEN103')),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'jorge.salazar@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'IS303')),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'jorge.salazar@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'IS304')),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'carla.medina@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'GEN102')),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'carla.medina@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'GEN104')),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'rosa.flores@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'ADM303')),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'rosa.flores@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'ADM305')),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'diego.vega@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'ADM202')),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'diego.vega@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'GEN101'));
+-- La carga del ciclo activo se genera despues de la confirmacion real de cursos.
 
--- Ventanas amplias y no duplicadas. Al existir varias sedes/aulas compatibles,
--- estas franjas permiten que cada opcion rote aulas, sedes y dias.
-INSERT INTO disponibilidad_docente (id_ciclo_academico, id_docente, dia_semana, hora_inicio, hora_fin, estado)
-VALUES
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'percy@utp.edu.pe'), 'MARTES', '07:00:00', '11:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'percy@utp.edu.pe'), 'JUEVES', '08:00:00', '12:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'percy@utp.edu.pe'), 'SABADO', '08:00:00', '12:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'ana.torres@utp.edu.pe'), 'JUEVES', '08:00:00', '12:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'ana.torres@utp.edu.pe'), 'VIERNES', '14:00:00', '18:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'ana.torres@utp.edu.pe'), 'SABADO', '08:00:00', '11:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'luis.ramos@utp.edu.pe'), 'LUNES', '14:00:00', '18:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'luis.ramos@utp.edu.pe'), 'MIERCOLES', '08:00:00', '12:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'luis.ramos@utp.edu.pe'), 'VIERNES', '07:00:00', '11:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'maria.quispe@utp.edu.pe'), 'LUNES', '10:00:00', '13:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'maria.quispe@utp.edu.pe'), 'MARTES', '14:00:00', '18:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'maria.quispe@utp.edu.pe'), 'SABADO', '09:00:00', '12:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'jorge.salazar@utp.edu.pe'), 'MIERCOLES', '07:00:00', '12:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'jorge.salazar@utp.edu.pe'), 'JUEVES', '08:00:00', '12:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'jorge.salazar@utp.edu.pe'), 'VIERNES', '14:00:00', '18:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'carla.medina@utp.edu.pe'), 'MARTES', '08:00:00', '12:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'carla.medina@utp.edu.pe'), 'JUEVES', '14:00:00', '18:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'carla.medina@utp.edu.pe'), 'SABADO', '08:00:00', '12:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'rosa.flores@utp.edu.pe'), 'LUNES', '08:00:00', '12:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'rosa.flores@utp.edu.pe'), 'MIERCOLES', '14:00:00', '18:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'rosa.flores@utp.edu.pe'), 'VIERNES', '09:00:00', '13:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'diego.vega@utp.edu.pe'), 'LUNES', '14:00:00', '18:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'diego.vega@utp.edu.pe'), 'MARTES', '10:00:00', '14:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'diego.vega@utp.edu.pe'), 'SABADO', '08:00:00', '12:00:00', TRUE);
+-- Sin ventanas de disponibilidad precargadas.
+-- Las franjas deben ser confirmadas por cada docente.
 
 -- ============================================
 -- Refuerzo adicional para pruebas de volumen
@@ -807,6 +739,14 @@ VALUES
 
 INSERT INTO carreras (codigo, nombre, estado)
 VALUES ('IND', 'Ingenieria Industrial', TRUE);
+
+-- Alinear cursos generales existentes con la tercera carrera demo.
+INSERT INTO carrera_curso (id_carrera, id_curso, ciclo, estado)
+VALUES
+    ((SELECT id_carrera FROM carreras WHERE codigo = 'IND'), (SELECT id_curso FROM cursos WHERE codigo = 'GEN101'), 1, TRUE),
+    ((SELECT id_carrera FROM carreras WHERE codigo = 'IND'), (SELECT id_curso FROM cursos WHERE codigo = 'GEN102'), 1, TRUE),
+    ((SELECT id_carrera FROM carreras WHERE codigo = 'IND'), (SELECT id_curso FROM cursos WHERE codigo = 'GEN103'), 1, TRUE),
+    ((SELECT id_carrera FROM carreras WHERE codigo = 'IND'), (SELECT id_curso FROM cursos WHERE codigo = 'GEN104'), 1, TRUE);
 
 INSERT INTO aulas (codigo, nombre, tipo, capacidad, ubicacion, id_sede, estado)
 VALUES
@@ -889,34 +829,13 @@ VALUES
 
 INSERT INTO evaluacion_docente (id_ciclo_academico, id_docente, id_curso, puntaje, categoria, comentario)
 VALUES
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2025-II'), (SELECT id_docente FROM docentes WHERE correo = 'elena.castro@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'IND202'), 19, 'POSITIVO', 'Excelente uso de laboratorios.'),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2025-II'), (SELECT id_docente FROM docentes WHERE correo = 'hector.paredes@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'IND201'), 12, 'MALO', 'Requiere mejorar acompanamiento.'),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2025-II'), (SELECT id_docente FROM docentes WHERE correo = 'valeria.nunez@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'GEN105'), 18, 'NEUTRAL', 'Buen desempeno general.');
+    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2025-II'), (SELECT id_docente FROM docentes WHERE correo = 'elena.castro@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'IND202'), 10, 'POSITIVO', 'Excelente uso de laboratorios.'),
+    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2025-II'), (SELECT id_docente FROM docentes WHERE correo = 'hector.paredes@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'IND201'), 6, 'MALO', 'Requiere mejorar acompanamiento.'),
+    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2025-II'), (SELECT id_docente FROM docentes WHERE correo = 'valeria.nunez@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'GEN105'), 8, 'NEUTRAL', 'Buen desempeno general.');
 
-INSERT INTO docente_curso (id_ciclo_academico, id_docente, id_curso)
-VALUES
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'elena.castro@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'IND101')),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'elena.castro@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'IND202')),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'elena.castro@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'IND301')),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'hector.paredes@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'IND201')),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'hector.paredes@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'IND302')),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'hector.paredes@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'GEN105')),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'valeria.nunez@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'IND301')),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'valeria.nunez@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'ADM307')),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'valeria.nunez@utp.edu.pe'), (SELECT id_curso FROM cursos WHERE codigo = 'GEN104'));
+-- Sin seleccion de cursos industriales precargada para el ciclo activo.
 
-INSERT INTO disponibilidad_docente (id_ciclo_academico, id_docente, dia_semana, hora_inicio, hora_fin, estado)
-VALUES
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'elena.castro@utp.edu.pe'), 'LUNES', '07:00:00', '12:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'elena.castro@utp.edu.pe'), 'MIERCOLES', '08:00:00', '13:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'elena.castro@utp.edu.pe'), 'VIERNES', '14:00:00', '18:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'hector.paredes@utp.edu.pe'), 'MARTES', '07:00:00', '12:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'hector.paredes@utp.edu.pe'), 'JUEVES', '13:00:00', '18:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'hector.paredes@utp.edu.pe'), 'SABADO', '08:00:00', '13:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'valeria.nunez@utp.edu.pe'), 'LUNES', '18:00:00', '22:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'valeria.nunez@utp.edu.pe'), 'MIERCOLES', '18:00:00', '22:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'valeria.nunez@utp.edu.pe'), 'VIERNES', '18:00:00', '22:00:00', TRUE),
-    ((SELECT id_ciclo_academico FROM ciclos_academicos WHERE nombre = '2026-I'), (SELECT id_docente FROM docentes WHERE correo = 'valeria.nunez@utp.edu.pe'), 'SABADO', '09:00:00', '13:00:00', TRUE);
+-- Sin disponibilidad precargada para docentes industriales.
 
 
 

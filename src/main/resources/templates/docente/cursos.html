@@ -3,38 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Selección de Cursos</title>
+    <title>Seleccion de Cursos</title>
     <link rel="stylesheet" th:href="@{/css/docente.css}">
     <link rel="stylesheet" th:href="@{/css/cursos_docente.css}">
 </head>
 <body>
 
 <div class="docente-app">
-    <!-- Sidebar compartido del portal Docente -->
     <div th:replace="~{fragments/sidebar_docente :: sidebarDocente}"></div>
 
     <div class="docente-main">
-        <!-- Parte superior: información del Docente -->
         <div th:replace="~{fragments/header_docente :: headerDocente}"></div>
 
         <main class="docente-content">
-            <!-- Parte superior: título de Selección de Cursos -->
             <section class="cursos-header">
                 <div class="cursos-title">
                     <img class="title-books-icon" th:src="@{/img/docente/IMG_12.svg}" alt="" aria-hidden="true">
                     <div>
-                        <h1>Selección de Cursos</h1>
-                        <p>Seleccione los cursos que puede dictar durante el ciclo académico.</p>
+                        <h1>Seleccion de Cursos</h1>
+                        <p th:if="${!cursosBloqueados}">Seleccione los cursos que puede dictar durante el ciclo academico.</p>
+                        <p th:if="${cursosBloqueados}">La seleccion de cursos ya fue confirmada y no puede modificarse.</p>
                     </div>
                 </div>
             </section>
 
-            <!-- Buscador dinámico de cursos disponibles -->
+            <section class="estado-bloqueado" th:if="${cursosBloqueados}">
+                <strong>Cursos confirmados</strong>
+                <span>La lista se muestra solo como consulta.</span>
+            </section>
+
             <div class="cursos-search">
                 <input type="search" id="buscarCursos" placeholder="Buscar cursos" aria-label="Buscar cursos">
             </div>
 
-            <!-- Módulos desplegables y resumen de selección -->
             <section class="cursos-layout">
 
                 <div class="cursos-listas">
@@ -57,7 +58,8 @@
                                        th:value="${curso.idCurso}"
                                        th:data-nombre="${curso.nombre}"
                                        th:data-horas="${curso.horasSemanales}"
-                                       th:checked="${#lists.contains(cursosSeleccionados, curso.idCurso)}">
+                                       th:checked="${#lists.contains(cursosSeleccionados, curso.idCurso)}"
+                                       th:disabled="${cursosBloqueados}">
 
                                 <span class="curso-check-custom"></span>
 
@@ -65,7 +67,7 @@
                                     <strong th:text="${curso.nombre}">Base de Datos</strong>
                                     <small>
                                         <span th:text="${curso.codigo}">CUR001</span>
-                                        ·
+                                        -
                                         <span th:text="${curso.horasSemanales}">4</span> horas semanales
                                     </small>
                                 </div>
@@ -91,15 +93,16 @@
                                        th:value="${curso.idCurso}"
                                        th:data-nombre="${curso.nombre}"
                                        th:data-horas="${curso.horasSemanales}"
-                                       th:checked="${#lists.contains(cursosSeleccionados, curso.idCurso)}">
+                                       th:checked="${#lists.contains(cursosSeleccionados, curso.idCurso)}"
+                                       th:disabled="${cursosBloqueados}">
 
                                 <span class="curso-check-custom"></span>
 
                                 <div class="curso-info">
-                                    <strong th:text="${curso.nombre}">Comunicación</strong>
+                                    <strong th:text="${curso.nombre}">Comunicacion</strong>
                                     <small>
                                         <span th:text="${curso.codigo}">GEN001</span>
-                                        ·
+                                        -
                                         <span th:text="${curso.horasSemanales}">3</span> horas semanales
                                     </small>
                                 </div>
@@ -110,11 +113,11 @@
                 </div>
 
                 <aside class="resumen-card">
-                    <h2>Resumen de selección</h2>
+                    <h2>Resumen de seleccion</h2>
                     <p class="resumen-subtitle">Cursos seleccionados por el docente.</p>
 
                     <div id="resumenLista" class="resumen-lista">
-                        <p class="resumen-vacio">Aún no seleccionaste cursos.</p>
+                        <p class="resumen-vacio">Aun no seleccionaste cursos.</p>
                     </div>
 
                     <div class="resumen-totales">
@@ -131,15 +134,17 @@
 
                     <p id="limiteHorasMensaje" class="resumen-alerta"></p>
 
-                    <button type="button" id="btnGuardarCursos" class="btn-guardar-cursos">
-                        Confirmar selección
+                    <button type="button" id="btnGuardarCursos" class="btn-guardar-cursos"
+                            th:disabled="${cursosBloqueados}"
+                            th:text="${cursosBloqueados} ? 'Seleccion confirmada' : 'Confirmar seleccion'">
+                        Confirmar seleccion
                     </button>
                 </aside>
 
             </section>
 
         </main>
-        <!-- Footer compartido del portal Docente -->
+
         <div th:replace="~{fragments/footer_docente :: footerDocente}"></div>
 
     </div>
@@ -148,8 +153,8 @@
 
 <script th:inline="javascript">
     window.maxHorasSemanales = /*[[${maxHorasSemanales}]]*/ 40;
+    window.cursosBloqueados = /*[[${cursosBloqueados}]]*/ false;
 </script>
-<!-- Mensajes de guardado del portal Docente -->
 <div th:replace="~{fragments/notificacion_docente :: notificacionDocente}"></div>
 <script th:src="@{/js/docente_notificaciones.js}"></script>
 <script th:src="@{/js/cursos_docente.js}"></script>

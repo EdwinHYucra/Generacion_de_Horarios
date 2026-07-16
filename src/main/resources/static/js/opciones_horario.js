@@ -13,6 +13,8 @@ const estadoOpciones = {
     activa: null
 };
 
+let temporizadorEstado = null;
+
 document.addEventListener("DOMContentLoaded", () => {
     if (window.lucide) {
         window.lucide.createIcons();
@@ -29,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (estadoOpciones.opciones.length === 0) {
         sinOpciones.classList.remove("hidden");
         if (generacionEnProcesoData) {
-            setTimeout(() => window.location.reload(), 2000);
+            iniciarMonitoreoGeneracion();
         }
         return;
     }
@@ -52,6 +54,41 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+
+function iniciarMonitoreoGeneracion() {
+    if (temporizadorEstado !== null) {
+        return;
+    }
+
+    temporizadorEstado = window.setInterval(async () => {
+        try {
+            const response = await fetch("/docente/opciones_horario/estado", {
+                headers: {
+                    "Accept": "application/json"
+                },
+                credentials: "same-origin"
+            });
+
+            if (!response.ok) {
+                return;
+            }
+
+            const data = await response.json();
+            const opciones = Array.isArray(data.opcionesHorario) ? data.opcionesHorario : [];
+
+            if (opciones.length > 0) {
+                window.clearInterval(temporizadorEstado);
+                temporizadorEstado = null;
+                window.location.reload();
+            } else if (!data.generacionEnProceso) {
+                window.clearInterval(temporizadorEstado);
+                temporizadorEstado = null;
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }, 2000);
+}
 
 function construirSelectorOpciones() {
     const selector = document.getElementById("opcionesSelector");
@@ -160,7 +197,7 @@ function renderizarResumen(opcion) {
 
     const metricas = calcularMetricas(opcion);
     document.getElementById("metricaBloques").textContent = metricas.bloques;
-    document.getElementById("metricaCarga").textContent = `${metricas.horas}h`;
+    document.getElementById("metricaCarga").textContent = `${metricas.horasAcademicas} h acad.`;
     document.getElementById("metricaDias").textContent = metricas.dias;
     document.getElementById("metricaAulas").textContent = metricas.aulas;
 }
@@ -176,7 +213,7 @@ function abrirDetalleActivo() {
     renderizarDetalleCursos(opcion);
 
     const metricas = calcularMetricas(opcion);
-    document.getElementById("detalleCarga").textContent = `${metricas.horas}h`;
+    document.getElementById("detalleCarga").textContent = `${metricas.horasAcademicas} h acad.`;
     document.getElementById("detalleSedes").textContent = metricas.sedes;
     document.getElementById("detalleAulas").textContent = metricas.aulas;
     document.getElementById("modalDetalle").classList.remove("hidden");
@@ -273,11 +310,16 @@ function calcularMetricas(opcion) {
 
     return {
         bloques: bloques.length,
-        horas: (minutos / 60).toFixed(minutos % 60 === 0 ? 0 : 1),
+        horasAcademicas: formatearHorasAcademicas(minutos),
         dias: new Set(bloques.map(bloque => normalizarDia(bloque.dia))).size,
         sedes: new Set(bloques.map(bloque => bloque.sede)).size,
         aulas: new Set(bloques.map(bloque => bloque.aula)).size
     };
+}
+
+function formatearHorasAcademicas(minutos) {
+    const horas = minutos / 45;
+    return Number.isInteger(horas) ? String(horas) : horas.toFixed(1);
 }
 
 function minutosEntre(inicio, fin) {

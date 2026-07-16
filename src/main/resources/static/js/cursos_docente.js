@@ -5,9 +5,10 @@ const totalHoras = document.getElementById("totalHoras");
 const btnGuardarCursos = document.getElementById("btnGuardarCursos");
 const limiteHorasMensaje = document.getElementById("limiteHorasMensaje");
 const maxHorasSemanales = Number(window.maxHorasSemanales || 40);
+const cursosBloqueados = window.cursosBloqueados === true || window.cursosBloqueados === "true";
 const buscarCursos = document.getElementById("buscarCursos");
+const GUARDAR_CURSOS_TIMEOUT_MS = 20000;
 
-// Abre o cierra cada módulo sin modificar las selecciones realizadas.
 document.querySelectorAll(".curso-toggle").forEach(boton => {
     boton.addEventListener("click", () => {
         const lista = document.getElementById(boton.getAttribute("aria-controls"));
@@ -19,7 +20,6 @@ document.querySelectorAll(".curso-toggle").forEach(boton => {
     });
 });
 
-// Filtra datos reales de ambos módulos y los expande cuando hay una búsqueda.
 buscarCursos.addEventListener("input", () => {
     const termino = buscarCursos.value.trim().toLocaleLowerCase("es");
 
@@ -38,7 +38,6 @@ buscarCursos.addEventListener("input", () => {
     }
 });
 
-// Actualiza el resumen con la selección actual del docente.
 function actualizarResumen() {
     const seleccionados = document.querySelectorAll(".curso-check:checked");
 
@@ -47,7 +46,7 @@ function actualizarResumen() {
     let horas = 0;
 
     if (seleccionados.length === 0) {
-        resumenLista.innerHTML = '<p class="resumen-vacio">Aún no seleccionaste cursos.</p>';
+        resumenLista.innerHTML = '<p class="resumen-vacio">Aun no seleccionaste cursos.</p>';
     }
 
     seleccionados.forEach(check => {
@@ -69,7 +68,10 @@ function actualizarResumen() {
     totalCursos.textContent = seleccionados.length;
     totalHoras.textContent = horas;
 
-    if (horas > maxHorasSemanales) {
+    if (cursosBloqueados) {
+        limiteHorasMensaje.textContent = "Seleccion confirmada. No se puede modificar.";
+        btnGuardarCursos.disabled = true;
+    } else if (horas > maxHorasSemanales) {
         limiteHorasMensaje.textContent = `La carga supera el maximo permitido de ${maxHorasSemanales} horas semanales.`;
         btnGuardarCursos.disabled = true;
     } else {
@@ -83,6 +85,8 @@ checksCursos.forEach(check => {
 });
 
 btnGuardarCursos.addEventListener("click", async () => {
+    if (cursosBloqueados) return;
+
     const cursosSeleccionados = [];
     const horasSeleccionadas = Number(totalHoras.textContent || 0);
 
@@ -90,7 +94,7 @@ btnGuardarCursos.addEventListener("click", async () => {
         mostrarNotificacionDocente(
             `La carga supera ${maxHorasSemanales} horas semanales.`,
             "error",
-            "Selección no válida"
+            "Seleccion no valida"
         );
         return;
     }
@@ -99,31 +103,59 @@ btnGuardarCursos.addEventListener("click", async () => {
         cursosSeleccionados.push(Number(check.value));
     });
 
+    let timeoutId = null;
+    let redirigiendo = false;
+
     try {
         btnGuardarCursos.disabled = true;
         btnGuardarCursos.textContent = "Guardando...";
+
+        const controller = new AbortController();
+        timeoutId = window.setTimeout(() => controller.abort(), GUARDAR_CURSOS_TIMEOUT_MS);
+
         const response = await fetch("/docente/cursos/guardar", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
+            credentials: "same-origin",
+            signal: controller.signal,
             body: JSON.stringify({
                 cursosSeleccionados: cursosSeleccionados
             })
         });
 
+        window.clearTimeout(timeoutId);
+        timeoutId = null;
+
         if (response.ok) {
+            redirigiendo = true;
             window.location.assign("/docente/opciones_horario");
             return;
-        } else {
-            mostrarNotificacionDocente(await response.text(), "error");
         }
+
+        mostrarNotificacionDocente(await response.text(), "error");
     } catch (error) {
         console.error(error);
-        mostrarNotificacionDocente("No fue posible conectar con el servidor.", "error", "Error de conexión");
+
+        if (error.name === "AbortError") {
+            mostrarNotificacionDocente(
+                "La solicitud esta tardando demasiado. Intenta nuevamente o revisa Opciones de horario en unos segundos.",
+                "error",
+                "Tiempo de espera agotado"
+            );
+        } else {
+            mostrarNotificacionDocente("No fue posible conectar con el servidor.", "error", "Error de conexion");
+        }
     } finally {
-        btnGuardarCursos.disabled = false;
-        btnGuardarCursos.textContent = "Confirmar selección";
+        if (timeoutId !== null) {
+            window.clearTimeout(timeoutId);
+        }
+
+        if (!redirigiendo) {
+            btnGuardarCursos.disabled = false;
+            btnGuardarCursos.textContent = "Confirmar seleccion";
+        }
     }
 });
 

@@ -2,19 +2,25 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Evaluacion Docente</title>
     <link rel="stylesheet" th:href="@{/css/evaluacion_docente.css}">
 </head>
 <body>
 
-<main class="survey-shell">
-    <section class="survey-panel">
-        <div class="survey-heading">
+<main class="survey-page">
+    <section class="survey-hero">
+        <div class="survey-brand">
             <span>UTP</span>
-            <h1>Evaluacion docente</h1>
-            <p>Califica a docentes que dictaron cursos en el ciclo academico anterior.</p>
+            <strong>Encuesta academica</strong>
         </div>
+        <div>
+            <h1>Evaluacion docente</h1>
+            <p>Califica el desempeno del docente por curso dictado en el ciclo anterior.</p>
+        </div>
+    </section>
 
+    <section class="survey-panel">
         <div th:if="${mensajeExito}" class="alert alert--success" th:text="${mensajeExito}"></div>
         <div th:if="${mensajeError}" class="alert alert--error" th:text="${mensajeError}"></div>
 
@@ -35,18 +41,33 @@
                 </select>
             </label>
 
-            <label class="field">
-                <span>Puntaje</span>
-                <input id="puntajeInput" type="number" th:field="*{puntaje}" min="1" max="20" required>
-            </label>
+            <div class="score-section">
+                <div class="score-section__header">
+                    <span>Puntaje</span>
+                    <div id="categoriaPreview" class="category-preview">Seleccione un puntaje</div>
+                </div>
 
-            <div class="score-scale">
-                <span class="score-scale__bad">1-15 Malo</span>
-                <span class="score-scale__neutral">16-18 Neutral</span>
-                <span class="score-scale__good">19-20 Positivo</span>
+                <input id="puntajeInput" type="hidden" th:field="*{puntaje}" required>
+
+                <div class="score-options" role="radiogroup" aria-label="Puntaje de evaluacion">
+                    <label th:each="valor : ${#numbers.sequence(0, 10)}"
+                           class="score-option"
+                           th:classappend="${evaluacion.puntaje != null and evaluacion.puntaje == valor} ? ' is-selected' : ''">
+                        <input type="radio"
+                               name="puntajeRadio"
+                               th:value="${valor}"
+                               th:checked="${evaluacion.puntaje != null and evaluacion.puntaje == valor}"
+                               required>
+                        <span th:text="${valor}">0</span>
+                    </label>
+                </div>
             </div>
 
-            <div id="categoriaPreview" class="category-preview">Seleccione un puntaje</div>
+            <div class="score-scale" aria-label="Escala de calificacion">
+                <span class="score-scale__bad"><strong>0-6</strong> Malo</span>
+                <span class="score-scale__neutral"><strong>7-8</strong> Neutral</span>
+                <span class="score-scale__good"><strong>9-10</strong> Positivo</span>
+            </div>
 
             <label class="field">
                 <span>Comentario</span>

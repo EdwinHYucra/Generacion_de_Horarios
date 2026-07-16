@@ -61,8 +61,8 @@ public class EvaluacionDocenteServiceImpl implements EvaluacionDocenteService {
             throw new IllegalArgumentException("Seleccione un docente y curso para evaluar.");
         }
 
-        if (request.getPuntaje() == null || request.getPuntaje() < 1 || request.getPuntaje() > 20) {
-            throw new IllegalArgumentException("El puntaje debe estar entre 1 y 20.");
+        if (request.getPuntaje() == null || request.getPuntaje() < 0 || request.getPuntaje() > 10) {
+            throw new IllegalArgumentException("El puntaje debe estar entre 0 y 10.");
         }
 
         boolean existeRelacion = evaluacionDocenteDAO.existeDocenteCursoEnCiclo(
@@ -82,10 +82,10 @@ public class EvaluacionDocenteServiceImpl implements EvaluacionDocenteService {
     }
 
     private String clasificarPuntaje(Integer puntaje) {
-        if (puntaje <= 15) {
+        if (puntaje <= 6) {
             return "MALO";
         }
-        if (puntaje <= 18) {
+        if (puntaje <= 8) {
             return "NEUTRAL";
         }
         return "POSITIVO";

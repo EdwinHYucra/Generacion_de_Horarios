@@ -11,26 +11,26 @@
 
 <div class="docente-app">
 
-    <!-- Sidebar compartido del portal Docente -->
     <div th:replace="~{fragments/sidebar_docente :: sidebarDocente}"></div>
 
     <div class="docente-main">
 
-        <!-- Parte superior: información del Docente -->
         <div th:replace="~{fragments/header_docente :: headerDocente}"></div>
 
         <main class="docente-content">
 
-            <!-- Parte superior: título e intervalo de Disponibilidad -->
             <section class="disponibilidad-header">
                 <div class="disponibilidad-title">
                     <img class="title-calendar-icon" th:src="@{/img/docente/IMG_14.svg}" alt="" aria-hidden="true">
 
                     <div>
                         <h1>Disponibilidad</h1>
-                        <p>
-                            Define tus rangos de hora disponibles para el ciclo académico.<br>
-                            Haz clic o arrastra sobre la cuadrícula para seleccionar tus horas preferidas.
+                        <p th:if="${!disponibilidadBloqueada}">
+                            Define tus rangos de hora disponibles para el ciclo academico.<br>
+                            Haz clic o arrastra sobre la cuadricula para seleccionar tus horas preferidas.
+                        </p>
+                        <p th:if="${disponibilidadBloqueada}">
+                            Tu disponibilidad ya fue confirmada para el ciclo academico y no puede modificarse.
                         </p>
                     </div>
                 </div>
@@ -41,43 +41,48 @@
                 </div>
             </section>
 
-            <!-- Botones reversibles: mañana, tarde y noche -->
+            <section class="estado-bloqueado" th:if="${disponibilidadBloqueada}">
+                <strong>Disponibilidad confirmada</strong>
+                <span>Los bloques se muestran solo como consulta.</span>
+            </section>
+
             <section class="turnos-rapidos">
                 <div>
-                    <h3>Selección rápida por turno</h3>
+                    <h3>Seleccion rapida por turno</h3>
                     <p>Marca un turno completo y luego ajusta bloques manualmente si deseas.</p>
                 </div>
 
                 <div class="turnos-botones">
-                    <button type="button" class="turno-btn" data-inicio="07:00" data-fin="12:00" aria-pressed="false">
-                        Mañana
+                    <button type="button" class="turno-btn" data-inicio="07:00" data-fin="12:00"
+                            aria-pressed="false" th:disabled="${disponibilidadBloqueada}">
+                        Manana
                     </button>
 
-                    <button type="button" class="turno-btn" data-inicio="12:00" data-fin="17:00" aria-pressed="false">
+                    <button type="button" class="turno-btn" data-inicio="12:00" data-fin="17:00"
+                            aria-pressed="false" th:disabled="${disponibilidadBloqueada}">
                         Tarde
                     </button>
 
-                    <button type="button" class="turno-btn" data-inicio="17:00" data-fin="22:30" aria-pressed="false">
+                    <button type="button" class="turno-btn" data-inicio="17:00" data-fin="22:30"
+                            aria-pressed="false" th:disabled="${disponibilidadBloqueada}">
                         Noche
                     </button>
                 </div>
             </section>
 
-            <!-- Cuadrícula dinámica de bloques de 15 minutos -->
-            <p class="schedule-scroll-hint" aria-hidden="true">↔ Desliza para ver todos los días</p>
+            <p class="schedule-scroll-hint" aria-hidden="true">Desliza para ver todos los dias</p>
             <section class="schedule-card">
                 <div class="schedule-grid" id="scheduleGrid">
                     <div class="cell header-cell">Horario</div>
                     <div class="cell header-cell">Lunes</div>
                     <div class="cell header-cell">Martes</div>
-                    <div class="cell header-cell">Miércoles</div>
+                    <div class="cell header-cell">Miercoles</div>
                     <div class="cell header-cell">Jueves</div>
                     <div class="cell header-cell">Viernes</div>
-                    <div class="cell header-cell">Sábado</div>
+                    <div class="cell header-cell">Sabado</div>
                     <div class="cell header-cell">Domingo</div>
                 </div>
 
-                <!-- Contador y botones para limpiar o confirmar -->
                 <div class="schedule-footer">
                     <p>
                         <strong id="contadorBloques">0</strong>
@@ -86,11 +91,14 @@
                     </p>
 
                     <div class="actions">
-                        <button type="button" id="btnLimpiar" class="btn btn-light">
+                        <button type="button" id="btnLimpiar" class="btn btn-light"
+                                th:disabled="${disponibilidadBloqueada}">
                             Limpiar
                         </button>
 
-                        <button type="button" id="btnConfirmar" class="btn btn-red">
+                        <button type="button" id="btnConfirmar" class="btn btn-red"
+                                th:disabled="${disponibilidadBloqueada}"
+                                th:text="${disponibilidadBloqueada} ? 'Confirmada' : 'Confirmar'">
                             Confirmar
                         </button>
                     </div>
@@ -98,15 +106,17 @@
             </section>
 
         </main>
-        <!-- Footer compartido del portal Docente -->
+
         <div th:replace="~{fragments/footer_docente :: footerDocente}"></div>
 
     </div>
 
 </div>
 
-<!-- Mensajes de guardado del portal Docente -->
 <div th:replace="~{fragments/notificacion_docente :: notificacionDocente}"></div>
+<script th:inline="javascript">
+    window.disponibilidadBloqueada = /*[[${disponibilidadBloqueada}]]*/ false;
+</script>
 <script th:src="@{/js/docente_notificaciones.js}"></script>
 <script th:src="@{/js/disponibilidad_docente.js}"></script>
 </body>
