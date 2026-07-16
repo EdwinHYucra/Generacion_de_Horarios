@@ -68,6 +68,9 @@ public class DisponibilidadDocenteServiceImpl implements DisponibilidadDocenteSe
     public void guardarPorEmail(String email, List<BloqueDisponibilidadDTO> bloques) {
         Docente docente = obtenerDocentePorEmail(email);
         Long cicloActivoId = obtenerCicloActivoId();
+        if (!disponibilidadDAO.findByDocenteIdAndCicloId(docente.getIdDocente(), cicloActivoId).isEmpty()) {
+            throw new IllegalStateException("La disponibilidad ya fue confirmada y no puede modificarse.");
+        }
 
         disponibilidadDAO.deleteByDocenteIdAndCicloId(docente.getIdDocente(), cicloActivoId);
 

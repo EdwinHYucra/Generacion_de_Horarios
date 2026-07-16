@@ -9,6 +9,7 @@ const dias = [
 ];
 
 const grid = document.getElementById("scheduleGrid");
+const disponibilidadBloqueada = Boolean(window.disponibilidadBloqueada);
 
 let bloquesSeleccionados = [];
 
@@ -37,6 +38,12 @@ function generarHorario() {
             slot.className = "cell slot";
             slot.dataset.dia = dia;
             slot.dataset.hora = horaTexto;
+
+            if (disponibilidadBloqueada) {
+                slot.classList.add("locked");
+                grid.appendChild(slot);
+                return;
+            }
 
             slot.addEventListener("mousedown", (e) => {
     e.preventDefault();
@@ -101,6 +108,8 @@ function sumar15Minutos(hora) {
 }
 
 document.getElementById("btnLimpiar").addEventListener("click", () => {
+    if (disponibilidadBloqueada) return;
+
     document.querySelectorAll(".slot.selected")
         .forEach(c => c.classList.remove("selected"));
 
@@ -108,6 +117,8 @@ document.getElementById("btnLimpiar").addEventListener("click", () => {
 });
 
 document.getElementById("btnConfirmar").addEventListener("click", async () => {
+    if (disponibilidadBloqueada) return;
+
     const botonConfirmar = document.getElementById("btnConfirmar");
     const bloques = [];
 
@@ -181,6 +192,8 @@ function alternarTurno(inicio, fin) {
 
 document.querySelectorAll(".turno-btn").forEach(boton => {
     boton.addEventListener("click", () => {
+        if (disponibilidadBloqueada) return;
+
         alternarTurno(
             boton.dataset.inicio,
             boton.dataset.fin

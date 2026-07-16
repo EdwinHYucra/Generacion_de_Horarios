@@ -15,5 +15,15 @@ public interface SolicitudCambioHorarioDAO {
 
     List<SolicitudCambioHorario> findAll();
 
+    void tomarEnRevision(Long idSolicitud, Long idAdministrador);
+
     void responder(Long idSolicitud, Long idAdministrador, String estado, String comentarioAdministrador);
+
+    void registrarHistorial(
+            Long idSolicitud,
+            Long idAdministrador,
+            String estadoAnterior,
+            String estadoNuevo,
+            String accion,
+            String comentario);
 }

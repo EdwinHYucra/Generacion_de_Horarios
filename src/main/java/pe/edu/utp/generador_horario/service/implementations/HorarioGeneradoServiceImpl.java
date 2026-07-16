@@ -205,6 +205,17 @@ public class HorarioGeneradoServiceImpl implements HorarioGeneradoService {
                 throw new IllegalArgumentException("El bloque de " + bloque.getCurso() + " está fuera de la disponibilidad del docente.");
             }
         }
+        for (HorarioDetalleDTO bloque : detalles) {
+            if (horarioGeneradoDAO.existeAulaOcupadaEnHorarioAprobado(
+                    idHorario,
+                    bloque.getIdAula(),
+                    bloque.getDia(),
+                    bloque.getHoraInicio(),
+                    bloque.getHoraFin())) {
+                throw new IllegalArgumentException("El aula seleccionada para " + bloque.getCurso()
+                        + " ya se encuentra ocupada en ese horario.");
+            }
+        }
         for (int i = 0; i < detalles.size(); i++) {
             for (int j = i + 1; j < detalles.size(); j++) {
                 HorarioDetalleDTO a = detalles.get(i), b = detalles.get(j);

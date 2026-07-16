@@ -14,5 +14,9 @@ public interface SolicitudCambioHorarioService {
 
     List<SolicitudCambioHorario> listarTodas();
 
+    void tomarEnRevision(Long idSolicitud, Long idAdministrador);
+
     void responder(Long idSolicitud, Long idAdministrador, String estado, String comentarioAdministrador);
+
+    void registrarEdicionHorario(Long idSolicitud, Long idAdministrador);
 }

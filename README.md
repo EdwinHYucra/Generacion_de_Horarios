@@ -15,7 +15,7 @@ Sistema web para la gestión y generación automática de horarios universitario
 
 | Tecnología | Versión | Uso |
 |---|---|---|
-| Java | 25 | Lenguaje principal |
+| Java | 21 | Lenguaje principal |
 | Spring Boot | 4.0.7 | Framework backend |
 | Spring Security | 4.x | Autenticación y roles |
 | Spring JDBC | 4.x | Acceso a datos (JdbcTemplate) |
@@ -80,7 +80,7 @@ src/
 
 ## Requisitos previos
 
-- Java 25 instalado
+- Java 21 instalado
 - MySQL 8.0 instalado y corriendo en el puerto 3306
 - Maven (o usar el wrapper `mvnw` incluido)
 

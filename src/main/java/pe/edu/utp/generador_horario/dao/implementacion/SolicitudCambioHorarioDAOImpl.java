@@ -88,6 +88,21 @@ public class SolicitudCambioHorarioDAOImpl implements SolicitudCambioHorarioDAO 
     }
 
     @Override
+    public void tomarEnRevision(Long idSolicitud, Long idAdministrador) {
+        jdbcTemplate.update(
+                """
+                        UPDATE comentario_horario
+                        SET estado_solicitud = 'EN_REVISION',
+                            id_administrador = ?,
+                            comentario_administrador = NULL,
+                            fecha_resolucion = NULL
+                        WHERE id_comentario = ?
+                        """,
+                idAdministrador,
+                idSolicitud);
+    }
+
+    @Override
     public void responder(Long idSolicitud, Long idAdministrador, String estado, String comentarioAdministrador) {
         jdbcTemplate.update(
                 """
@@ -95,13 +110,39 @@ public class SolicitudCambioHorarioDAOImpl implements SolicitudCambioHorarioDAO 
                         SET estado_solicitud = ?,
                             id_administrador = ?,
                             comentario_administrador = ?,
-                            fecha_resolucion = CURRENT_TIMESTAMP
+                            fecha_resolucion = CASE
+                                WHEN ? IN ('APROBADA', 'RECHAZADA') THEN CURRENT_TIMESTAMP
+                                ELSE fecha_resolucion
+                            END
                         WHERE id_comentario = ?
                         """,
                 estado,
                 idAdministrador,
                 comentarioAdministrador,
+                estado,
                 idSolicitud);
+    }
+
+    @Override
+    public void registrarHistorial(
+            Long idSolicitud,
+            Long idAdministrador,
+            String estadoAnterior,
+            String estadoNuevo,
+            String accion,
+            String comentario) {
+        jdbcTemplate.update(
+                """
+                        INSERT INTO historial_solicitud_horario
+                        (id_solicitud, id_administrador, estado_anterior, estado_nuevo, accion, comentario)
+                        VALUES (?, ?, ?, ?, ?, ?)
+                        """,
+                idSolicitud,
+                idAdministrador,
+                estadoAnterior,
+                estadoNuevo,
+                accion,
+                comentario);
     }
 
     private String baseSelect() {

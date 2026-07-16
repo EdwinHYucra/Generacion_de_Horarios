@@ -67,7 +67,7 @@
                             <td data-label="Comentario" class="solicitud-comentario" th:text="${solicitud.comentarioDocente}">Comentario</td>
                             <td data-label="Estado">
                                 <span class="solicitud-estado"
-                                      th:classappend="${#strings.equalsIgnoreCase(solicitud.estadoSolicitud, 'PENDIENTE')} ? ' is-pending' : (${#strings.containsIgnoreCase(solicitud.estadoSolicitud, 'APROB')} ? ' is-approved' : ' is-rejected')"
+                                      th:classappend="${#strings.equalsIgnoreCase(solicitud.estadoSolicitud, 'PENDIENTE')} ? ' is-pending' : (${#strings.equalsIgnoreCase(solicitud.estadoSolicitud, 'EN_REVISION')} ? ' is-review' : (${#strings.containsIgnoreCase(solicitud.estadoSolicitud, 'APROB')} ? ' is-approved' : ' is-rejected'))"
                                       th:text="${solicitud.estadoSolicitud}">Pendiente</span>
                             </td>
                             <td data-label="Respuesta">

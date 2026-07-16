@@ -110,6 +110,38 @@
     background: #e00000;
 }
 
+.slot.locked {
+    cursor: default;
+}
+
+.slot.locked:hover {
+    background: white;
+}
+
+.slot.locked.selected:hover {
+    background: #e00000;
+}
+
+.estado-bloqueado {
+    margin: 0 0 18px;
+    padding: 14px 16px;
+    border: 1px solid #f0c8c8;
+    border-radius: 10px;
+    background: #fff5f5;
+    color: #7a1f1f;
+    display: grid;
+    gap: 3px;
+}
+
+.estado-bloqueado strong {
+    font-size: 14px;
+}
+
+.estado-bloqueado span {
+    font-size: 13px;
+    font-weight: 600;
+}
+
 .schedule-footer {
     padding: 20px;
     display: flex;
@@ -137,6 +169,12 @@
 .btn-red {
     background: #e00000;
     color: white;
+}
+
+.btn:disabled,
+.turno-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.62;
 }
 
 .schedule-grid,

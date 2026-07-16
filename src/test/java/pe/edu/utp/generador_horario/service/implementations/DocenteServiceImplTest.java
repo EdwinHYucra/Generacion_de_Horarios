@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pe.edu.utp.generador_horario.dao.DocenteDAO;
 import pe.edu.utp.generador_horario.dao.UsuarioDAO;
+import pe.edu.utp.generador_horario.config.EstadoUsuario;
 import pe.edu.utp.generador_horario.entidad.Docente;
 import pe.edu.utp.generador_horario.entidad.Usuario;
 import pe.edu.utp.generador_horario.service.factory.UsuarioFactory;
@@ -15,6 +16,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -80,6 +83,43 @@ class DocenteServiceImplTest {
         assertTrue(exception.getMessage().contains("correo"));
         verify(usuarioFactory, never()).crearDocente(any());
         verify(docenteDAO, never()).save(any());
+    }
+
+    @Test
+    void guardarDocenteExistenteDebeSincronizarUsuarioAsociado() {
+        Docente docente = docenteNuevo();
+        docente.setIdDocente(10L);
+        docente.setUsuarioId(20L);
+        docente.setNombres("Ana Maria");
+        docente.setCorreo("ana.actualizada@utp.edu.pe");
+
+        when(docenteDAO.save(docente)).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Docente resultado = docenteService.guardarDocente(docente);
+
+        assertEquals(10L, resultado.getIdDocente());
+        verify(usuarioDAO).actualizarDatosBasicos(eq(20L), argThat(usuario ->
+                "Ana Maria".equals(usuario.getNombre())
+                        && "ana.actualizada@utp.edu.pe".equals(usuario.getEmail())
+                        && EstadoUsuario.ACTIVO.equals(usuario.getEstado())));
+        verify(usuarioDAO, never()).guardarRetornandoId(any());
+    }
+
+    @Test
+    void desactivarDocenteDebeInactivarUsuarioAsociado() {
+        Docente docente = docenteNuevo();
+        docente.setIdDocente(10L);
+        docente.setUsuarioId(20L);
+
+        when(docenteDAO.findById(10L)).thenReturn(java.util.Optional.of(docente));
+        when(docenteDAO.save(docente)).thenAnswer(invocation -> invocation.getArgument(0));
+
+        docenteService.desactivarDocente(10L);
+
+        assertEquals(false, docente.getEstado());
+        verify(usuarioDAO).actualizarDatosBasicos(eq(20L), argThat(usuario ->
+                EstadoUsuario.INACTIVO.equals(usuario.getEstado())));
+        verify(docenteDAO).save(docente);
     }
 
     private Docente docenteNuevo() {

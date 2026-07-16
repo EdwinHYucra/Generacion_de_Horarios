@@ -35,7 +35,6 @@ public class HorarioGeneracionAsyncServiceImpl implements HorarioGeneracionAsync
         }
 
         if (!docentesEnProceso.add(idDocente)) {
-            // Conserva un solo reintento para tomar los datos más recientes.
             docentesConReintento.add(idDocente);
             return false;
         }
@@ -50,11 +49,15 @@ public class HorarioGeneracionAsyncServiceImpl implements HorarioGeneracionAsync
     }
 
     private void generar(Long idDocente) {
+        long inicio = System.currentTimeMillis();
         try {
+            LOGGER.info("Generacion automatica iniciada. docenteId={}", idDocente);
             int opciones = horarioGeneradoService.generarSiTieneInsumos(idDocente);
-            LOGGER.info("Generación automática finalizada. docenteId={}, opciones={}", idDocente, opciones);
+            LOGGER.info("Generacion automatica finalizada. docenteId={}, opciones={}, duracionMs={}",
+                    idDocente, opciones, System.currentTimeMillis() - inicio);
         } catch (RuntimeException ex) {
-            LOGGER.error("Falló la generación automática. docenteId={}", idDocente, ex);
+            LOGGER.error("Fallo la generacion automatica. docenteId={}, duracionMs={}",
+                    idDocente, System.currentTimeMillis() - inicio, ex);
         } finally {
             docentesEnProceso.remove(idDocente);
             if (docentesConReintento.remove(idDocente)) {

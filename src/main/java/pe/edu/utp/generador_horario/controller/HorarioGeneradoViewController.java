@@ -1,5 +1,6 @@
 package pe.edu.utp.generador_horario.controller;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,12 +13,15 @@ import pe.edu.utp.generador_horario.dao.DocenteDAO;
 import pe.edu.utp.generador_horario.dao.AulaDAO;
 import pe.edu.utp.generador_horario.dao.CicloAcademicoDAO;
 import pe.edu.utp.generador_horario.dao.DisponibilidadDocenteDAO;
+import pe.edu.utp.generador_horario.dao.UsuarioDAO;
 import pe.edu.utp.generador_horario.dto.HorarioDetalleDTO;
 import pe.edu.utp.generador_horario.dto.HorarioGeneradoResumenDTO;
 import pe.edu.utp.generador_horario.dto.HorariosDocenteGrupoDTO;
 import pe.edu.utp.generador_horario.dto.OpcionesHorarioDTO;
 import pe.edu.utp.generador_horario.service.interfaces.HorarioGeneradoService;
+import pe.edu.utp.generador_horario.service.interfaces.SolicitudCambioHorarioService;
 import pe.edu.utp.generador_horario.entidad.Docente;
+import pe.edu.utp.generador_horario.entidad.Usuario;
 
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -37,18 +41,24 @@ public class HorarioGeneradoViewController {
     private final AulaDAO aulaDAO;
     private final CicloAcademicoDAO cicloAcademicoDAO;
     private final DisponibilidadDocenteDAO disponibilidadDocenteDAO;
+    private final SolicitudCambioHorarioService solicitudCambioHorarioService;
+    private final UsuarioDAO usuarioDAO;
 
     public HorarioGeneradoViewController(
             HorarioGeneradoService horarioGeneradoService,
             DocenteDAO docenteDAO,
             AulaDAO aulaDAO,
             CicloAcademicoDAO cicloAcademicoDAO,
-            DisponibilidadDocenteDAO disponibilidadDocenteDAO) {
+            DisponibilidadDocenteDAO disponibilidadDocenteDAO,
+            SolicitudCambioHorarioService solicitudCambioHorarioService,
+            UsuarioDAO usuarioDAO) {
         this.horarioGeneradoService = horarioGeneradoService;
         this.docenteDAO = docenteDAO;
         this.aulaDAO = aulaDAO;
         this.cicloAcademicoDAO = cicloAcademicoDAO;
         this.disponibilidadDocenteDAO = disponibilidadDocenteDAO;
+        this.solicitudCambioHorarioService = solicitudCambioHorarioService;
+        this.usuarioDAO = usuarioDAO;
     }
 
     @GetMapping
@@ -142,7 +152,11 @@ public class HorarioGeneradoViewController {
     }
 
     @GetMapping("/editar/{id}")
-    public String editarHorario(@PathVariable("id") Long idHorario, Model model, RedirectAttributes redirectAttributes) {
+    public String editarHorario(
+            @PathVariable("id") Long idHorario,
+            @RequestParam(value = "solicitud", required = false) Long idSolicitud,
+            Model model,
+            RedirectAttributes redirectAttributes) {
         HorarioGeneradoResumenDTO resumen = horarioGeneradoService.listarResumenes().stream()
                 .filter(item -> idHorario.equals(item.getIdHorario())).findFirst().orElse(null);
         if (resumen == null || !("EN_REVISION".equals(resumen.getEstado()) || "APROBADA_DOCENTE".equals(resumen.getEstado()))) {
@@ -157,6 +171,7 @@ public class HorarioGeneradoViewController {
                 : disponibilidadDocenteDAO.findByDocenteIdAndCicloId(resumen.getIdDocente(), cicloId));
         model.addAttribute("dias", List.of("Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo"));
         model.addAttribute("moduloActivo", "horarios");
+        model.addAttribute("idSolicitud", idSolicitud);
         return "horarios/editar";
     }
 
@@ -168,6 +183,8 @@ public class HorarioGeneradoViewController {
             @RequestParam("dia") List<String> dias,
             @RequestParam("horaInicio") List<String> horasInicio,
             @RequestParam("horaFin") List<String> horasFin,
+            @RequestParam(value = "idSolicitud", required = false) Long idSolicitud,
+            Authentication authentication,
             RedirectAttributes redirectAttributes) {
         try {
             if (!(idsCurso.size() == cursos.size() && cursos.size() == idsAula.size()
@@ -183,11 +200,23 @@ public class HorarioGeneradoViewController {
                 bloques.add(bloque);
             }
             horarioGeneradoService.editarYAprobar(idHorario, bloques);
-            redirectAttributes.addFlashAttribute("mensajeExito", "Horario corregido y aprobado correctamente.");
-            return "redirect:/administrador/horarios";
+            if (idSolicitud != null) {
+                Usuario usuario = usuarioDAO.buscarPorEmail(authentication.getName())
+                        .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                solicitudCambioHorarioService.registrarEdicionHorario(idSolicitud, usuario.getId());
+            }
+            redirectAttributes.addFlashAttribute("mensajeExito",
+                    idSolicitud == null
+                            ? "Horario corregido y aprobado correctamente."
+                            : "Horario corregido y aprobado. Registre la respuesta final de la solicitud.");
+            return idSolicitud == null
+                    ? "redirect:/administrador/horarios"
+                    : "redirect:/administrador/solicitudes";
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("mensajeError", e.getMessage());
-            return "redirect:/administrador/horarios/editar/" + idHorario;
+            return idSolicitud == null
+                    ? "redirect:/administrador/horarios/editar/" + idHorario
+                    : "redirect:/administrador/horarios/editar/" + idHorario + "?solicitud=" + idSolicitud;
         }
     }
 

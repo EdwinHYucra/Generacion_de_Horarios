@@ -192,10 +192,9 @@ public class HorarioGeneradoDAOImpl implements HorarioGeneradoDAO {
                         INNER JOIN docentes d ON d.id_docente = h.id_docente
                         LEFT JOIN horario_generado_detalle det ON det.id_horario = h.id_horario
                         WHERE h.id_docente = ?
-                          AND h.estado IN ('APROBADO', 'APROBADA_DOCENTE')
+                          AND h.estado = 'APROBADO'
                         GROUP BY h.id_horario, h.id_docente, d.nombres, d.apellidos, h.opcion, h.estado, h.fecha_generacion
-                        ORDER BY CASE WHEN h.estado = 'APROBADO' THEN 0 ELSE 1 END,
-                                 h.fecha_generacion DESC,
+                        ORDER BY h.fecha_generacion DESC,
                                  h.id_horario DESC
                         LIMIT 1
                         """,
@@ -226,6 +225,35 @@ public class HorarioGeneradoDAOImpl implements HorarioGeneradoDAO {
                         """,
                 detalleMapper,
                 idHorario);
+    }
+
+    @Override
+    public boolean existeAulaOcupadaEnHorarioAprobado(
+            Long idHorarioExcluido,
+            Long idAula,
+            String dia,
+            String horaInicio,
+            String horaFin) {
+
+        Integer total = jdbcTemplate.queryForObject(
+                """
+                        SELECT COUNT(1)
+                        FROM horario_generado_detalle det
+                        INNER JOIN horario_generado h ON h.id_horario = det.id_horario
+                        WHERE h.id_horario <> ?
+                          AND h.estado = 'APROBADO'
+                          AND det.id_aula = ?
+                          AND UPPER(det.dia_semana) = UPPER(?)
+                          AND TIME(?) < det.hora_fin
+                          AND det.hora_inicio < TIME(?)
+                        """,
+                Integer.class,
+                idHorarioExcluido,
+                idAula,
+                dia,
+                horaInicio,
+                horaFin);
+        return total != null && total > 0;
     }
 
     @Override

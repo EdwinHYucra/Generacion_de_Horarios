@@ -33,6 +33,19 @@ public class SolicitudAdminController {
         return "solicitudes/index";
     }
 
+    @PostMapping("/tomar")
+    public String tomar(
+            @RequestParam("idSolicitud") Long idSolicitud,
+            Authentication authentication,
+            RedirectAttributes redirectAttributes) {
+
+        Usuario usuario = usuarioDAO.buscarPorEmail(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        solicitudCambioHorarioService.tomarEnRevision(idSolicitud, usuario.getId());
+        redirectAttributes.addFlashAttribute("mensajeExito", "Solicitud tomada en revision.");
+        return "redirect:/administrador/solicitudes";
+    }
+
     @PostMapping("/responder")
     public String responder(
             @RequestParam("idSolicitud") Long idSolicitud,

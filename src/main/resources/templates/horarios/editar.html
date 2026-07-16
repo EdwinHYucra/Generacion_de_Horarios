@@ -22,6 +22,7 @@
                 <section class="editar-panel editar-panel--bloques">
                     <header><div><h2>Horario propuesto</h2><p>Todos los bloques deben permanecer dentro de la disponibilidad declarada.</p></div><span th:text="${#lists.size(bloques) + ' bloques'}"></span></header>
                     <form th:action="@{/administrador/horarios/editar/{id}(id=${resumen.idHorario})}" method="post" id="formEditarHorario">
+                        <input th:if="${idSolicitud != null}" type="hidden" name="idSolicitud" th:value="${idSolicitud}">
                         <div class="editar-bloques">
                             <article class="editar-bloque" th:each="bloque, estado : ${bloques}">
                                 <div class="editar-curso"><span th:text="${estado.count}"></span><div><strong th:text="${bloque.curso}"></strong><small th:text="${'Bloque ' + estado.count}"></small></div></div>
