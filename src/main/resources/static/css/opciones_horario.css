@@ -474,14 +474,27 @@ body.modal-abierto {
 
 .detalle-resumen {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     align-content: start;
+    align-items: start;
     gap: 12px;
 }
 
 .detalle-resumen h3 {
     margin: 0;
     grid-column: 1 / -1;
+}
+
+#detalleCursos {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 0 18px;
+}
+
+.detalle-resumen > .resumen-item {
+    min-height: 56px;
+    align-self: start;
 }
 
 .curso-detalle {
@@ -544,6 +557,8 @@ body.modal-abierto {
     .btn-secundario { width: 100%; justify-content: center; }
     .horario-grid-shell { overflow-x: auto; scrollbar-width: thin; }
     .resumen-horario { width: 100%; }
+    .detalle-resumen { grid-template-columns: 1fr; }
+    #detalleCursos { grid-template-columns: 1fr; }
     .solicitud-actions { display: grid; grid-template-columns: 1fr 1fr; }
     .solicitud-actions .btn { width: 100%; }
 }
