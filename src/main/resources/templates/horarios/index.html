@@ -53,6 +53,10 @@
                                     <button type="submit" class="validacion-aprobar" title="Aprobar horario">✓</button>
                                 </form>
                                 <button th:if="${grupo.estadoResumen == 'APROBADA_DOCENTE' and grupo.idHorarioElegido != null}" type="button" class="validacion-rechazar" th:data-horario-id="${grupo.idHorarioElegido}" th:data-docente="${grupo.docente}" title="Rechazar horario">&times;</button>
+                                <button type="button" class="validacion-reiniciar"
+                                        th:data-docente-id="${grupo.idDocente}" th:data-docente="${grupo.docente}"
+                                        th:data-aprobado="${grupo.estadoResumen == 'APROBADO'}"
+                                        title="Habilitar nueva selección">&#8635;</button>
                                 <button type="button" class="validacion-ver" th:data-docente-id="${grupo.idDocente}" th:data-docente="${grupo.docente}" onclick="abrirModalOpciones(this)" title="Ver propuestas">&#8942;</button>
                             </div></td>
                         </tr>
@@ -73,6 +77,21 @@
         <span class="validacion-rechazo-icon">&times;</span><h2 id="tituloRechazoValidacion">Rechazar propuesta</h2>
         <p id="textoRechazoValidacion">Esta propuesta volverá a requerir revisión.</p>
         <div><button type="button" class="btn" data-cerrar-rechazo>Cancelar</button><form id="formRechazoValidacion" method="post"><button type="submit" class="btn btn--primary">Rechazar</button></form></div>
+    </div>
+</div>
+
+<div class="validacion-rechazo-modal hidden" id="modalReiniciarSeleccion" aria-hidden="true">
+    <div class="validacion-rechazo-backdrop" data-cerrar-reinicio></div>
+    <div class="validacion-rechazo-dialog" role="dialog" aria-modal="true" aria-labelledby="tituloReiniciarSeleccion">
+        <span class="validacion-reinicio-icon">&#8635;</span>
+        <h2 id="tituloReiniciarSeleccion">Habilitar nueva selección</h2>
+        <p id="textoReiniciarSeleccion"></p>
+        <div>
+            <button type="button" class="btn" data-cerrar-reinicio>Cancelar</button>
+            <form id="formReiniciarSeleccion" method="post">
+                <button type="submit" class="btn btn--primary">Habilitar</button>
+            </form>
+        </div>
     </div>
 </div>
 

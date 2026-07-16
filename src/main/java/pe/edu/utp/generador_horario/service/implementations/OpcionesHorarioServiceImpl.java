@@ -46,6 +46,7 @@ public class OpcionesHorarioServiceImpl implements OpcionesHorarioService {
     private static final int DURACION_MINIMA_MINUTOS = 60;
     private static final int MAX_HORAS_SEMANALES = 40;
     private static final int JORNADA_MAXIMA_RECOMENDADA_MINUTOS = 360;
+    private static final int TIEMPO_ROTACION_MINUTOS = 15;
 
     private final DisponibilidadDocenteDAO disponibilidadDAO;
     private final DocenteCursoDAO docenteCursoDAO;
@@ -212,7 +213,7 @@ public class OpcionesHorarioServiceImpl implements OpcionesHorarioService {
                             candidata,
                             asignaciones);
 
-                    if (resultado.isValido()) {
+                    if (resultado.isValido() && respetaTiempoRotacion(candidata, asignaciones)) {
                         return Optional.of(candidata);
                     }
                 }
@@ -220,6 +221,24 @@ public class OpcionesHorarioServiceImpl implements OpcionesHorarioService {
         }
 
         return Optional.empty();
+    }
+
+    /**
+     * Reserva quince minutos entre dos clases del docente en un mismo dia.
+     * El margen permite cambiar de aula o sede y se aplica aunque no exista
+     * un solapamiento estricto entre los bloques.
+     */
+    private boolean respetaTiempoRotacion(
+            AsignacionHorarioCandidataDTO candidata,
+            List<AsignacionHorarioCandidataDTO> asignaciones) {
+
+        return asignaciones.stream()
+                .filter(asignacion -> mismoDia(asignacion, candidata))
+                .allMatch(asignacion ->
+                        !candidata.getHoraInicio().isBefore(
+                                asignacion.getHoraFin().plusMinutes(TIEMPO_ROTACION_MINUTOS))
+                        || !asignacion.getHoraInicio().isBefore(
+                                candidata.getHoraFin().plusMinutes(TIEMPO_ROTACION_MINUTOS)));
     }
 
     /**
@@ -394,7 +413,7 @@ public class OpcionesHorarioServiceImpl implements OpcionesHorarioService {
         LocalTime cursor = disponibilidad.getHoraInicio();
         while (!cursor.plusMinutes(duracionMinutos).isAfter(disponibilidad.getHoraFin())) {
             inicios.add(cursor);
-            cursor = cursor.plusMinutes(30);
+            cursor = cursor.plusMinutes(15);
         }
         return inicios;
     }

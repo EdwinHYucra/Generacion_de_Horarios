@@ -40,6 +40,7 @@ function generarHorario() {
 
             slot.addEventListener("mousedown", (e) => {
     e.preventDefault();
+    if (window.seleccionBloqueada) return;
 
     arrastrando = true;
     modoSeleccion = !slot.classList.contains("selected");
@@ -49,7 +50,7 @@ function generarHorario() {
 });
 
 slot.addEventListener("mouseenter", () => {
-    if (arrastrando) {
+    if (arrastrando && !window.seleccionBloqueada) {
         slot.classList.toggle("selected", modoSeleccion);
         actualizarContador();
     }
@@ -101,6 +102,7 @@ function sumar15Minutos(hora) {
 }
 
 document.getElementById("btnLimpiar").addEventListener("click", () => {
+    if (window.seleccionBloqueada) return;
     document.querySelectorAll(".slot.selected")
         .forEach(c => c.classList.remove("selected"));
 
@@ -108,6 +110,7 @@ document.getElementById("btnLimpiar").addEventListener("click", () => {
 });
 
 document.getElementById("btnConfirmar").addEventListener("click", async () => {
+    if (window.seleccionBloqueada) return;
     const botonConfirmar = document.getElementById("btnConfirmar");
     const bloques = [];
 
@@ -133,7 +136,12 @@ document.getElementById("btnConfirmar").addEventListener("click", async () => {
         });
 
         if (response.ok) {
-            window.location.assign("/docente/cursos");
+            mostrarNotificacionDocente(
+                "Tu disponibilidad fue aceptada y guardada correctamente.",
+                "success",
+                "Disponibilidad confirmada"
+            );
+            setTimeout(() => window.location.assign("/docente/cursos"), 1400);
             return;
         } else {
             mostrarNotificacionDocente(await response.text() || "Error al guardar.", "error");
@@ -187,6 +195,11 @@ document.querySelectorAll(".turno-btn").forEach(boton => {
         );
     });
 });
+
+if (window.seleccionBloqueada) {
+    document.querySelectorAll(".turno-btn, #btnLimpiar, #btnConfirmar").forEach(boton => boton.disabled = true);
+    grid.classList.add("is-readonly");
+}
 
 generarHorario();
 cargarDisponibilidadGuardada();

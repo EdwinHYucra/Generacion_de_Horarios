@@ -111,6 +111,19 @@ public class HorarioGeneradoDAOImpl implements HorarioGeneradoDAO {
     }
 
     @Override
+    public void eliminarTodosPorDocente(Long idDocente) {
+        List<Long> ids = jdbcTemplate.queryForList(
+                "SELECT id_horario FROM horario_generado WHERE id_docente = ?",
+                Long.class,
+                idDocente);
+        for (Long id : ids) {
+            jdbcTemplate.update("DELETE FROM comentario_horario WHERE id_horario = ?", id);
+            jdbcTemplate.update("DELETE FROM horario_generado_detalle WHERE id_horario = ?", id);
+            jdbcTemplate.update("DELETE FROM horario_generado WHERE id_horario = ?", id);
+        }
+    }
+
+    @Override
     public List<HorarioGeneradoResumenDTO> listarResumenes() {
         return jdbcTemplate.query(
                 """

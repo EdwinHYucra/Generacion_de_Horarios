@@ -7,6 +7,12 @@ const limiteHorasMensaje = document.getElementById("limiteHorasMensaje");
 const maxHorasSemanales = Number(window.maxHorasSemanales || 40);
 const buscarCursos = document.getElementById("buscarCursos");
 
+if (window.seleccionBloqueada) {
+    checksCursos.forEach(check => check.disabled = true);
+    btnGuardarCursos.disabled = true;
+    btnGuardarCursos.textContent = "Selección confirmada";
+}
+
 // Abre o cierra cada módulo sin modificar las selecciones realizadas.
 document.querySelectorAll(".curso-toggle").forEach(boton => {
     boton.addEventListener("click", () => {
@@ -83,6 +89,7 @@ checksCursos.forEach(check => {
 });
 
 btnGuardarCursos.addEventListener("click", async () => {
+    if (window.seleccionBloqueada) return;
     const cursosSeleccionados = [];
     const horasSeleccionadas = Number(totalHoras.textContent || 0);
 
@@ -113,7 +120,12 @@ btnGuardarCursos.addEventListener("click", async () => {
         });
 
         if (response.ok) {
-            window.location.assign("/docente/opciones_horario");
+            mostrarNotificacionDocente(
+                "Tus cursos fueron confirmados. Estamos generando opciones con tus cursos y disponibilidad.",
+                "success",
+                "Cursos confirmados"
+            );
+            setTimeout(() => window.location.assign("/docente/opciones_horario"), 1600);
             return;
         } else {
             mostrarNotificacionDocente(await response.text(), "error");

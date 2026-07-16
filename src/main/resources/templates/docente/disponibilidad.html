@@ -21,6 +21,10 @@
 
         <main class="docente-content">
 
+            <p th:if="${seleccionBloqueada}" class="seleccion-bloqueada-aviso">
+                Selección confirmada. Se muestra la disponibilidad registrada para este ciclo y ya no puede modificarse.
+            </p>
+
             <!-- Parte superior: título e intervalo de Disponibilidad -->
             <section class="disponibilidad-header">
                 <div class="disponibilidad-title">
@@ -108,6 +112,7 @@
 <!-- Mensajes de guardado del portal Docente -->
 <div th:replace="~{fragments/notificacion_docente :: notificacionDocente}"></div>
 <script th:src="@{/js/docente_notificaciones.js}"></script>
+<script th:inline="javascript">window.seleccionBloqueada = /*[[${seleccionBloqueada}]]*/ false;</script>
 <script th:src="@{/js/disponibilidad_docente.js}"></script>
 </body>
 </html>

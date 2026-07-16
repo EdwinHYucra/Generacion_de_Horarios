@@ -74,7 +74,7 @@
 
                 <div class="docente-status-grid">
 
-                    <div class="docente-status-item" th:classappend="${disponibilidadRegistrada} ? ' is-complete' : ' is-pending'">
+                    <div class="docente-status-item" data-estado="disponibilidad" th:classappend="${disponibilidadRegistrada} ? ' is-complete' : ' is-pending'">
                         <div class="docente-status-item__icon" th:text="${disponibilidadRegistrada} ? '✓' : '…'">…</div>
                         <div>
                             <strong>Disponibilidad</strong>
@@ -82,7 +82,7 @@
                         </div>
                     </div>
 
-                    <div class="docente-status-item" th:classappend="${cursosSeleccionados} ? ' is-complete' : ' is-pending'">
+                    <div class="docente-status-item" data-estado="cursos" th:classappend="${cursosSeleccionados} ? ' is-complete' : ' is-pending'">
                         <div class="docente-status-item__icon" th:text="${cursosSeleccionados} ? '✓' : '…'">…</div>
                         <div>
                             <strong>Cursos</strong>
@@ -90,7 +90,7 @@
                         </div>
                     </div>
 
-                    <div class="docente-status-item" th:classappend="${horarioAsignado} ? ' is-complete' : ' is-pending'">
+                    <div class="docente-status-item" data-estado="horario" th:classappend="${horarioAsignado} ? ' is-complete' : ' is-pending'">
                         <div class="docente-status-item__icon" th:text="${horarioAsignado} ? '✓' : '…'">…</div>
                         <div>
                             <strong>Horario final</strong>
@@ -112,6 +112,7 @@
 <!-- Confirmación del cambio de fotografía del perfil -->
 <div th:replace="~{fragments/notificacion_docente :: notificacionDocente}"></div>
 <script th:src="@{/js/docente_notificaciones.js}"></script>
+<script th:src="@{/js/dashboard_docente.js}"></script>
 
 </body>
 </html>

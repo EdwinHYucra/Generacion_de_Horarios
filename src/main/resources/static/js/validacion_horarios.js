@@ -45,4 +45,20 @@ document.addEventListener("DOMContentLoaded", () => {
         modalRechazo.classList.add("hidden");
         modalRechazo.setAttribute("aria-hidden", "true");
     }));
+
+    const modalReinicio = document.getElementById("modalReiniciarSeleccion");
+    const formReinicio = document.getElementById("formReiniciarSeleccion");
+    const textoReinicio = document.getElementById("textoReiniciarSeleccion");
+    document.querySelectorAll(".validacion-reiniciar").forEach(boton => boton.addEventListener("click", () => {
+        formReinicio.action = `/administrador/horarios/habilitar-seleccion/${boton.dataset.docenteId}`;
+        textoReinicio.textContent = boton.dataset.aprobado === "true"
+            ? `Este docente tiene un horario final aprobado. Se eliminarán ese horario, su disponibilidad, sus cursos y todas sus propuestas. ${boton.dataset.docente} podrá realizar nuevamente todo el proceso.`
+            : `Se eliminarán la disponibilidad, los cursos y las propuestas de ${boton.dataset.docente}. El docente podrá realizar nuevamente el proceso.`;
+        modalReinicio.classList.remove("hidden");
+        modalReinicio.setAttribute("aria-hidden", "false");
+    }));
+    modalReinicio?.querySelectorAll("[data-cerrar-reinicio]").forEach(elemento => elemento.addEventListener("click", () => {
+        modalReinicio.classList.add("hidden");
+        modalReinicio.setAttribute("aria-hidden", "true");
+    }));
 });

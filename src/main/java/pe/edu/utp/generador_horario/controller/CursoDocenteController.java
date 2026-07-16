@@ -9,12 +9,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import pe.edu.utp.generador_horario.dao.CicloAcademicoDAO;
 import pe.edu.utp.generador_horario.dao.DocenteCursoDAO;
+import pe.edu.utp.generador_horario.dao.DisponibilidadDocenteDAO;
 import pe.edu.utp.generador_horario.dao.DocenteDAO;
 import pe.edu.utp.generador_horario.dao.UsuarioDAO;
 import pe.edu.utp.generador_horario.dto.SeleccionCursosRequestDTO;
 import pe.edu.utp.generador_horario.entidad.Docente;
 import pe.edu.utp.generador_horario.entidad.Usuario;
 import pe.edu.utp.generador_horario.service.interfaces.CursoService;
+import pe.edu.utp.generador_horario.service.interfaces.HorarioGeneracionAsyncService;
 
 /**
  * Controlador del modulo docente para seleccionar cursos disponibles.
@@ -32,19 +34,25 @@ public class CursoDocenteController {
         private final UsuarioDAO usuarioDAO;
         private final DocenteDAO docenteDAO;
         private final DocenteCursoDAO docenteCursoDAO;
+        private final HorarioGeneracionAsyncService horarioGeneracionAsyncService;
+        private final DisponibilidadDocenteDAO disponibilidadDocenteDAO;
 
         public CursoDocenteController(
                         CursoService cursoService,
                         CicloAcademicoDAO cicloAcademicoDAO,
                         UsuarioDAO usuarioDAO,
                         DocenteDAO docenteDAO,
-                        DocenteCursoDAO docenteCursoDAO) {
+                        DocenteCursoDAO docenteCursoDAO,
+                        HorarioGeneracionAsyncService horarioGeneracionAsyncService,
+                        DisponibilidadDocenteDAO disponibilidadDocenteDAO) {
 
                 this.cursoService = cursoService;
                 this.cicloAcademicoDAO = cicloAcademicoDAO;
                 this.usuarioDAO = usuarioDAO;
                 this.docenteDAO = docenteDAO;
                 this.docenteCursoDAO = docenteCursoDAO;
+                this.horarioGeneracionAsyncService = horarioGeneracionAsyncService;
+                this.disponibilidadDocenteDAO = disponibilidadDocenteDAO;
         }
 
         @GetMapping
@@ -89,6 +97,7 @@ public class CursoDocenteController {
                                 docenteCursoDAO.findCursoIdsByDocenteIdAndCicloId(docente.getIdDocente(),
                                                 cicloActivoId));
                 model.addAttribute("maxHorasSemanales", MAX_HORAS_SEMANALES);
+                model.addAttribute("seleccionBloqueada", seleccionCompleta(docente.getIdDocente(), cicloActivoId));
 
                 return "docente/cursos";
         }
@@ -105,6 +114,11 @@ public class CursoDocenteController {
                 Docente docente = docenteDAO.findByUsuarioId(usuario.getId())
                                 .orElseThrow(() -> new RuntimeException("Docente no encontrado"));
                 Long cicloActivoId = obtenerCicloActivoId();
+
+                if (seleccionCompleta(docente.getIdDocente(), cicloActivoId)) {
+                        return ResponseEntity.status(409).body(
+                                        "La disponibilidad y los cursos ya fueron confirmados para este ciclo.");
+                }
 
                 int horasSeleccionadas = request.getCursosSeleccionados() == null
                                 ? 0
@@ -136,11 +150,17 @@ public class CursoDocenteController {
                  * La generación automática se separó del guardado de cursos
                  * para evitar tiempos de espera elevados en la respuesta.
                  */
+                horarioGeneracionAsyncService.programarGeneracion(docente.getIdDocente());
                 return ResponseEntity.ok("Cursos guardados correctamente.");
         }
 
         private Long obtenerCicloActivoId() {
                 return cicloAcademicoDAO.findIdActivo()
                                 .orElseThrow(() -> new IllegalStateException("No existe un ciclo academico activo."));
+        }
+
+        private boolean seleccionCompleta(Long docenteId, Long cicloId) {
+                return !docenteCursoDAO.findCursoIdsByDocenteIdAndCicloId(docenteId, cicloId).isEmpty()
+                                && !disponibilidadDocenteDAO.findByDocenteIdAndCicloId(docenteId, cicloId).isEmpty();
         }
 }

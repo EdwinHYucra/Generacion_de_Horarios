@@ -18,6 +18,9 @@
         <div th:replace="~{fragments/header_docente :: headerDocente}"></div>
 
         <main class="docente-content">
+            <p th:if="${seleccionBloqueada}" class="seleccion-bloqueada-aviso">
+                Selección confirmada. Se muestran los cursos registrados para este ciclo y ya no pueden modificarse.
+            </p>
             <!-- Parte superior: título de Selección de Cursos -->
             <section class="cursos-header">
                 <div class="cursos-title">
@@ -148,6 +151,7 @@
 
 <script th:inline="javascript">
     window.maxHorasSemanales = /*[[${maxHorasSemanales}]]*/ 40;
+    window.seleccionBloqueada = /*[[${seleccionBloqueada}]]*/ false;
 </script>
 <!-- Mensajes de guardado del portal Docente -->
 <div th:replace="~{fragments/notificacion_docente :: notificacionDocente}"></div>

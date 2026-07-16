@@ -117,6 +117,23 @@ public class HorarioGeneradoViewController {
         return "redirect:/administrador/horarios";
     }
 
+    @PostMapping("/habilitar-seleccion/{idDocente}")
+    public String habilitarSeleccion(
+            @PathVariable Long idDocente,
+            RedirectAttributes redirectAttributes) {
+        try {
+            horarioGeneradoService.habilitarNuevaSeleccion(idDocente);
+            redirectAttributes.addFlashAttribute("mensajeExito",
+                    "Nueva seleccion habilitada. El docente puede registrar otra vez su disponibilidad y cursos.");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("mensajeError", e.getMessage());
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("mensajeError",
+                    "No se pudo habilitar la nueva seleccion. Intente nuevamente.");
+        }
+        return "redirect:/administrador/horarios";
+    }
+
     @PostMapping("/aprobar/{id}")
     public String aprobar(
             @PathVariable("id") Long idHorario,

@@ -64,7 +64,7 @@ class OpcionesHorarioServiceImplTest {
         when(docenteCursoDAO.countDocentesByCursoIdAndCicloId(10L, CICLO_ID)).thenReturn(1);
         when(cursoDAO.findById(10L)).thenReturn(Optional.of(curso));
         when(disponibilidadDAO.findByDocenteIdAndCicloId(DOCENTE_ID, CICLO_ID))
-                .thenReturn(List.of(disponibilidad("LUNES", "07:00", "11:00")));
+                .thenReturn(List.of(disponibilidad("LUNES", "07:00", "11:15")));
         when(aulaDAO.findByEstadoTrue()).thenReturn(List.of(aula(1L, 1L)));
 
         List<OpcionesHorarioDTO> opciones = opcionesHorarioService.generarHorarios(DOCENTE_ID);
@@ -72,7 +72,7 @@ class OpcionesHorarioServiceImplTest {
         assertEquals(3, opciones.size());
         assertEquals(2, opciones.get(0).getBloques().size());
         assertEquals("07:00", opciones.get(0).getBloques().get(0).getHoraInicio());
-        assertEquals("09:00", opciones.get(0).getBloques().get(1).getHoraInicio());
+        assertEquals("09:15", opciones.get(0).getBloques().get(1).getHoraInicio());
     }
 
     @Test
