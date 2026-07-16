@@ -40,4 +40,12 @@ public interface UsuarioDAO {
      * @return {@code true} si el email ya esta registrado
      */
     boolean existeEmail(String email);
+
+    /**
+     * Actualiza los datos de autenticacion compartidos con perfiles del sistema.
+     *
+     * @param id identificador del usuario asociado
+     * @param usuario datos actualizados
+     */
+    void actualizarDatosBasicos(Long id, Usuario usuario);
 }

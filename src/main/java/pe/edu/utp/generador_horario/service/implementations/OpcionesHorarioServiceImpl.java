@@ -23,8 +23,10 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -42,11 +44,12 @@ public class OpcionesHorarioServiceImpl implements OpcionesHorarioService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OpcionesHorarioServiceImpl.class);
     private static final DateTimeFormatter HORA_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
-    private static final int DURACION_BASE_MINUTOS = 120;
-    private static final int DURACION_MINIMA_MINUTOS = 60;
+    private static final int MINUTOS_HORA_ACADEMICA = 45;
+    private static final int DURACION_BASE_MINUTOS = MINUTOS_HORA_ACADEMICA * 2;
+    private static final int DURACION_MINIMA_MINUTOS = MINUTOS_HORA_ACADEMICA;
+    private static final int INTERVALO_INICIO_MINUTOS = 15;
     private static final int MAX_HORAS_SEMANALES = 40;
-    private static final int JORNADA_MAXIMA_RECOMENDADA_MINUTOS = 360;
-    private static final int TIEMPO_ROTACION_MINUTOS = 15;
+    private static final int JORNADA_MAXIMA_RECOMENDADA_MINUTOS = MINUTOS_HORA_ACADEMICA * 6;
 
     private final DisponibilidadDocenteDAO disponibilidadDAO;
     private final DocenteCursoDAO docenteCursoDAO;
@@ -125,10 +128,15 @@ public class OpcionesHorarioServiceImpl implements OpcionesHorarioService {
                 cursosPriorizados.stream()
                         .sorted(Comparator.comparingInt(this::horasSemanales).reversed())
                         .toList(),
-                disponibilidades,
+                disponibilidades.stream()
+                        .sorted(Comparator.comparing(DisponibilidadDocente::getHoraInicio).reversed()
+                                .thenComparing(DisponibilidadDocente::getDiaSemana,
+                                        Comparator.nullsLast(String::compareToIgnoreCase)))
+                        .toList(),
                 ordenarAulasParaOpcion(aulas, 3),
                 "Horario generado priorizando cursos de mayor carga."));
 
+        marcarOpcionesRepetidas(opciones);
         return opciones;
     }
 
@@ -152,6 +160,7 @@ public class OpcionesHorarioServiceImpl implements OpcionesHorarioService {
             for (Integer duracionSesion : calcularSesionesCurso(curso)) {
                 Optional<AsignacionHorarioCandidataDTO> candidata = buscarMejorCandidataValida(
                         docenteId,
+                        numeroOpcion,
                         curso,
                         duracionSesion,
                         disponibilidades,
@@ -187,11 +196,15 @@ public class OpcionesHorarioServiceImpl implements OpcionesHorarioService {
 
     private Optional<AsignacionHorarioCandidataDTO> buscarMejorCandidataValida(
             Long docenteId,
+            Integer numeroOpcion,
             Curso curso,
             int duracionMinutos,
             List<DisponibilidadDocente> disponibilidades,
             List<Aula> aulas,
             List<AsignacionHorarioCandidataDTO> asignaciones) {
+
+        AsignacionHorarioCandidataDTO mejorCandidata = null;
+        int mejorPuntaje = Integer.MAX_VALUE;
 
         for (DisponibilidadDocente disponibilidad : disponibilidades) {
 
@@ -213,32 +226,18 @@ public class OpcionesHorarioServiceImpl implements OpcionesHorarioService {
                             candidata,
                             asignaciones);
 
-                    if (resultado.isValido() && respetaTiempoRotacion(candidata, asignaciones)) {
-                        return Optional.of(candidata);
+                    if (resultado.isValido()) {
+                        int puntaje = calcularPuntajeCandidata(candidata, asignaciones, numeroOpcion);
+                        if (puntaje < mejorPuntaje) {
+                            mejorPuntaje = puntaje;
+                            mejorCandidata = candidata;
+                        }
                     }
                 }
             }
         }
 
-        return Optional.empty();
-    }
-
-    /**
-     * Reserva quince minutos entre dos clases del docente en un mismo dia.
-     * El margen permite cambiar de aula o sede y se aplica aunque no exista
-     * un solapamiento estricto entre los bloques.
-     */
-    private boolean respetaTiempoRotacion(
-            AsignacionHorarioCandidataDTO candidata,
-            List<AsignacionHorarioCandidataDTO> asignaciones) {
-
-        return asignaciones.stream()
-                .filter(asignacion -> mismoDia(asignacion, candidata))
-                .allMatch(asignacion ->
-                        !candidata.getHoraInicio().isBefore(
-                                asignacion.getHoraFin().plusMinutes(TIEMPO_ROTACION_MINUTOS))
-                        || !asignacion.getHoraInicio().isBefore(
-                                candidata.getHoraFin().plusMinutes(TIEMPO_ROTACION_MINUTOS)));
+        return Optional.ofNullable(mejorCandidata);
     }
 
     /**
@@ -323,7 +322,8 @@ public class OpcionesHorarioServiceImpl implements OpcionesHorarioService {
      */
     private int calcularPuntajeCandidata(
             AsignacionHorarioCandidataDTO candidata,
-            List<AsignacionHorarioCandidataDTO> asignaciones) {
+            List<AsignacionHorarioCandidataDTO> asignaciones,
+            Integer numeroOpcion) {
 
         List<AsignacionHorarioCandidataDTO> asignacionesDelDia = asignaciones.stream()
                 .filter(asignacion -> mismoDia(asignacion, candidata))
@@ -343,7 +343,56 @@ public class OpcionesHorarioServiceImpl implements OpcionesHorarioService {
             puntaje += Math.min(hueco, 240);
         }
 
+        int minutosInicio = candidata.getHoraInicio().toSecondOfDay() / 60;
+        int indiceDia = indiceDia(candidata.getDiaSemana());
+
+        if (Integer.valueOf(1).equals(numeroOpcion)) {
+            puntaje += minutosInicio / 30;
+        } else if (Integer.valueOf(2).equals(numeroOpcion)) {
+            puntaje += asignacionesDelDia.size() * 160;
+            puntaje += Math.abs(3 - indiceDia) * 12;
+        } else if (Integer.valueOf(3).equals(numeroOpcion)) {
+            puntaje += Math.max(0, 1440 - minutosInicio) / 8;
+            puntaje += Math.max(0, 7 - indiceDia) * 10;
+        }
+
         return puntaje;
+    }
+
+    private void marcarOpcionesRepetidas(List<OpcionesHorarioDTO> opciones) {
+        Map<String, Integer> primeraOpcionPorFirma = new LinkedHashMap<>();
+
+        for (OpcionesHorarioDTO opcion : opciones) {
+            String firma = construirFirmaHorario(opcion);
+            Integer primeraOpcion = primeraOpcionPorFirma.putIfAbsent(firma, opcion.getOpcion());
+            if (primeraOpcion != null) {
+                opcion.setObservacion(opcion.getObservacion()
+                        + " Esta propuesta coincide con la opcion " + primeraOpcion
+                        + " porque la disponibilidad registrada no permite una distribucion distinta.");
+            }
+        }
+    }
+
+    private String construirFirmaHorario(OpcionesHorarioDTO opcion) {
+        return opcion.getBloques().stream()
+                .sorted(Comparator
+                        .comparing(HorarioDetalleDTO::getDia, Comparator.nullsLast(String::compareToIgnoreCase))
+                        .thenComparing(HorarioDetalleDTO::getHoraInicio,
+                                Comparator.nullsLast(String::compareToIgnoreCase))
+                        .thenComparing(HorarioDetalleDTO::getHoraFin,
+                                Comparator.nullsLast(String::compareToIgnoreCase))
+                        .thenComparing(HorarioDetalleDTO::getIdCurso,
+                                Comparator.nullsLast(Long::compareTo))
+                        .thenComparing(HorarioDetalleDTO::getIdAula,
+                                Comparator.nullsLast(Long::compareTo)))
+                .map(detalle -> String.join("|",
+                        valor(detalle.getDia()),
+                        valor(detalle.getHoraInicio()),
+                        valor(detalle.getHoraFin()),
+                        String.valueOf(detalle.getIdCurso()),
+                        String.valueOf(detalle.getIdAula())))
+                .toList()
+                .toString();
     }
 
     private int calcularMenorHuecoMinutos(
@@ -366,12 +415,13 @@ public class OpcionesHorarioServiceImpl implements OpcionesHorarioService {
     }
 
     /**
-     * Divide las horas semanales de un curso en sesiones programables. Esta
-     * version genera bloques de hasta dos horas y evita fragmentos menores a
-     * una hora, para que el horario represente la carga real del curso.
+     * Divide las horas academicas semanales de un curso en sesiones
+     * programables. Cada hora academica equivale a 45 minutos de reloj.
      */
     private List<Integer> calcularSesionesCurso(Curso curso) {
-        int minutosPendientes = Math.max(DURACION_MINIMA_MINUTOS, horasSemanales(curso) * 60);
+        int minutosPendientes = Math.max(
+                DURACION_MINIMA_MINUTOS,
+                horasSemanales(curso) * MINUTOS_HORA_ACADEMICA);
         List<Integer> sesiones = new ArrayList<>();
 
         while (minutosPendientes > 0) {
@@ -382,7 +432,7 @@ public class OpcionesHorarioServiceImpl implements OpcionesHorarioService {
 
             int remanente = minutosPendientes - DURACION_BASE_MINUTOS;
             if (remanente > 0 && remanente < DURACION_MINIMA_MINUTOS) {
-                int primeraSesion = redondearMediaHora(minutosPendientes / 2);
+                int primeraSesion = redondearIntervaloInicio(minutosPendientes / 2);
                 sesiones.add(primeraSesion);
                 sesiones.add(minutosPendientes - primeraSesion);
                 break;
@@ -395,9 +445,9 @@ public class OpcionesHorarioServiceImpl implements OpcionesHorarioService {
         return sesiones;
     }
 
-    private int redondearMediaHora(int minutos) {
-        int resto = minutos % 30;
-        return resto == 0 ? minutos : minutos + (30 - resto);
+    private int redondearIntervaloInicio(int minutos) {
+        int resto = minutos % INTERVALO_INICIO_MINUTOS;
+        return resto == 0 ? minutos : minutos + (INTERVALO_INICIO_MINUTOS - resto);
     }
 
     private List<LocalTime> calcularIniciosPosibles(DisponibilidadDocente disponibilidad, int duracionMinutos) {
@@ -413,7 +463,7 @@ public class OpcionesHorarioServiceImpl implements OpcionesHorarioService {
         LocalTime cursor = disponibilidad.getHoraInicio();
         while (!cursor.plusMinutes(duracionMinutos).isAfter(disponibilidad.getHoraFin())) {
             inicios.add(cursor);
-            cursor = cursor.plusMinutes(15);
+            cursor = cursor.plusMinutes(INTERVALO_INICIO_MINUTOS);
         }
         return inicios;
     }
@@ -484,6 +534,26 @@ public class OpcionesHorarioServiceImpl implements OpcionesHorarioService {
     private boolean mismoDia(AsignacionHorarioCandidataDTO asignacion, AsignacionHorarioCandidataDTO candidata) {
         return asignacion.getDiaSemana() != null
                 && asignacion.getDiaSemana().equalsIgnoreCase(candidata.getDiaSemana());
+    }
+
+    private int indiceDia(String dia) {
+        if (dia == null) {
+            return 7;
+        }
+        return switch (dia.trim().toUpperCase(Locale.ROOT)) {
+            case "LUNES" -> 1;
+            case "MARTES" -> 2;
+            case "MIERCOLES", "MIÉRCOLES" -> 3;
+            case "JUEVES" -> 4;
+            case "VIERNES" -> 5;
+            case "SABADO", "SÁBADO" -> 6;
+            case "DOMINGO" -> 7;
+            default -> 7;
+        };
+    }
+
+    private String valor(String texto) {
+        return texto == null ? "" : texto;
     }
 
     private String formatearDia(String dia) {

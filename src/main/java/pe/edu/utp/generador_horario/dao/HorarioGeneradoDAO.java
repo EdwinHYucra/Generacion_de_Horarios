@@ -34,6 +34,13 @@ public interface HorarioGeneradoDAO {
 
     List<HorarioDetalleDTO> listarDetalles(Long idHorario);
 
+    boolean existeAulaOcupadaEnHorarioAprobado(
+            Long idHorarioExcluido,
+            Long idAula,
+            String dia,
+            String horaInicio,
+            String horaFin);
+
     void actualizarEstado(Long idHorario, String estado);
 
     void descartarPendientesDeDocenteExcepto(Long idHorario, Long idDocente);

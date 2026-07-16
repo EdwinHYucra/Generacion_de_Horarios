@@ -99,4 +99,19 @@ public class UsuarioDAOImpl implements UsuarioDAO {
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, email);
         return count != null && count > 0;
     }
+
+    @Override
+    public void actualizarDatosBasicos(Long id, Usuario usuario) {
+        String sql = """
+                UPDATE usuario
+                SET nombre = ?, apellido = ?, email = ?, estado = ?
+                WHERE id = ?
+                """;
+        jdbcTemplate.update(sql,
+                usuario.getNombre(),
+                usuario.getApellido(),
+                usuario.getEmail(),
+                usuario.getEstado(),
+                id);
+    }
 }

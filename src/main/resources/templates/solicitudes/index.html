@@ -53,6 +53,23 @@
                             <td th:text="${solicitud.estadoSolicitud}">PENDIENTE</td>
                             <td>
                                 <form th:if="${solicitud.estadoSolicitud == 'PENDIENTE'}"
+                                      th:action="@{/administrador/solicitudes/tomar}"
+                                      method="post"
+                                      class="form-group">
+                                    <input type="hidden" name="idSolicitud" th:value="${solicitud.idSolicitud}">
+                                    <div class="action-group">
+                                        <button type="submit" class="btn btn--secondary">
+                                            Tomar
+                                        </button>
+                                    </div>
+                                </form>
+                                <div th:if="${solicitud.estadoSolicitud == 'EN_REVISION'}" class="action-group">
+                                    <a class="btn btn--secondary"
+                                       th:href="@{/administrador/horarios/editar/{id}(id=${solicitud.idHorario},solicitud=${solicitud.idSolicitud})}">
+                                        Editar horario
+                                    </a>
+                                </div>
+                                <form th:if="${solicitud.estadoSolicitud == 'PENDIENTE' or solicitud.estadoSolicitud == 'EN_REVISION'}"
                                       th:action="@{/administrador/solicitudes/responder}"
                                       method="post"
                                       class="form-group solicitud-respuesta-form">
@@ -75,7 +92,7 @@
                                         </button>
                                     </div>
                                 </form>
-                                <span th:unless="${solicitud.estadoSolicitud == 'PENDIENTE'}"
+                                <span th:unless="${solicitud.estadoSolicitud == 'PENDIENTE' or solicitud.estadoSolicitud == 'EN_REVISION'}"
                                       th:text="${solicitud.comentarioAdministrador ?: '-'}">-</span>
                             </td>
                         </tr>

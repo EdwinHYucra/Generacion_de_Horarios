@@ -1,23 +1,27 @@
 package pe.edu.utp.generador_horario.controller;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import pe.edu.utp.generador_horario.dao.DocenteDAO;
 import pe.edu.utp.generador_horario.dao.UsuarioDAO;
 import pe.edu.utp.generador_horario.dto.OpcionesHorarioDTO;
 import pe.edu.utp.generador_horario.entidad.Docente;
 import pe.edu.utp.generador_horario.entidad.Usuario;
-import pe.edu.utp.generador_horario.service.interfaces.HorarioGeneradoService;
 import pe.edu.utp.generador_horario.service.interfaces.HorarioGeneracionAsyncService;
+import pe.edu.utp.generador_horario.service.interfaces.HorarioGeneradoService;
+import pe.edu.utp.generador_horario.service.interfaces.SeleccionCursosAsyncService;
 import pe.edu.utp.generador_horario.service.interfaces.SolicitudCambioHorarioService;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class OpcionesHorarioController {
@@ -26,6 +30,7 @@ public class OpcionesHorarioController {
     private final DocenteDAO docenteDAO;
     private final HorarioGeneradoService horarioGeneradoService;
     private final HorarioGeneracionAsyncService horarioGeneracionAsyncService;
+    private final SeleccionCursosAsyncService seleccionCursosAsyncService;
     private final SolicitudCambioHorarioService solicitudCambioHorarioService;
 
     public OpcionesHorarioController(
@@ -33,12 +38,14 @@ public class OpcionesHorarioController {
             DocenteDAO docenteDAO,
             HorarioGeneradoService horarioGeneradoService,
             HorarioGeneracionAsyncService horarioGeneracionAsyncService,
+            SeleccionCursosAsyncService seleccionCursosAsyncService,
             SolicitudCambioHorarioService solicitudCambioHorarioService) {
 
         this.usuarioDAO = usuarioDAO;
         this.docenteDAO = docenteDAO;
         this.horarioGeneradoService = horarioGeneradoService;
         this.horarioGeneracionAsyncService = horarioGeneracionAsyncService;
+        this.seleccionCursosAsyncService = seleccionCursosAsyncService;
         this.solicitudCambioHorarioService = solicitudCambioHorarioService;
     }
 
@@ -62,14 +69,34 @@ public class OpcionesHorarioController {
         model.addAttribute("rolUsuario", "Docente");
         model.addAttribute("moduloActivo", "opciones_horario");
         model.addAttribute("diasSemana",
-                List.of("Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado", "Domingo"));
+                List.of("Lunes", "Martes", "Miercoles", "Jueves", "Viernes"));
 
         model.addAttribute("bloquesHora", obtenerHorasDeInicio(opciones));
         model.addAttribute("opcionesHorario", opciones);
         model.addAttribute("generacionEnProceso",
-                horarioGeneracionAsyncService.estaEnProceso(docente.getIdDocente()));
+                opciones.isEmpty()
+                        && (seleccionCursosAsyncService.estaEnProceso(docente.getIdDocente())
+                                || horarioGeneracionAsyncService.estaEnProceso(docente.getIdDocente())));
 
         return "docente/opciones_horario";
+    }
+
+    @GetMapping("/docente/opciones_horario/estado")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> consultarEstado(Authentication authentication) {
+        Usuario usuario = obtenerUsuario(authentication);
+        Docente docente = obtenerDocente(usuario);
+        List<OpcionesHorarioDTO> opciones = horarioGeneradoService
+                .listarOpcionesPendientesPorDocente(docente.getIdDocente());
+        boolean generacionEnProceso = opciones.isEmpty()
+                && (seleccionCursosAsyncService.estaEnProceso(docente.getIdDocente())
+                        || horarioGeneracionAsyncService.estaEnProceso(docente.getIdDocente()));
+
+        return ResponseEntity.ok(Map.of(
+                "generacionEnProceso", generacionEnProceso,
+                "opcionesHorario", opciones,
+                "bloquesHora", obtenerHorasDeInicio(opciones),
+                "diasSemana", List.of("Lunes", "Martes", "Miercoles", "Jueves", "Viernes")));
     }
 
     @PostMapping("/docente/opciones_horario/confirmar")

@@ -9,14 +9,16 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import pe.edu.utp.generador_horario.dao.CicloAcademicoDAO;
 import pe.edu.utp.generador_horario.dao.DocenteCursoDAO;
-import pe.edu.utp.generador_horario.dao.DisponibilidadDocenteDAO;
 import pe.edu.utp.generador_horario.dao.DocenteDAO;
 import pe.edu.utp.generador_horario.dao.UsuarioDAO;
 import pe.edu.utp.generador_horario.dto.SeleccionCursosRequestDTO;
+import pe.edu.utp.generador_horario.entidad.Curso;
 import pe.edu.utp.generador_horario.entidad.Docente;
 import pe.edu.utp.generador_horario.entidad.Usuario;
 import pe.edu.utp.generador_horario.service.interfaces.CursoService;
-import pe.edu.utp.generador_horario.service.interfaces.HorarioGeneracionAsyncService;
+import pe.edu.utp.generador_horario.service.interfaces.SeleccionCursosAsyncService;
+
+import java.util.List;
 
 /**
  * Controlador del modulo docente para seleccionar cursos disponibles.
@@ -27,15 +29,14 @@ public class CursoDocenteController {
 
         private static final Logger LOGGER = LoggerFactory.getLogger(CursoDocenteController.class);
         private static final int MAX_HORAS_SEMANALES = 40;
-        private static final double PUNTAJE_MINIMO_CURSO_DISPONIBLE = 12.0;
+        private static final double PUNTAJE_MINIMO_CURSO_DISPONIBLE = 7.0;
 
         private final CursoService cursoService;
         private final CicloAcademicoDAO cicloAcademicoDAO;
         private final UsuarioDAO usuarioDAO;
         private final DocenteDAO docenteDAO;
         private final DocenteCursoDAO docenteCursoDAO;
-        private final HorarioGeneracionAsyncService horarioGeneracionAsyncService;
-        private final DisponibilidadDocenteDAO disponibilidadDocenteDAO;
+        private final SeleccionCursosAsyncService seleccionCursosAsyncService;
 
         public CursoDocenteController(
                         CursoService cursoService,
@@ -43,16 +44,14 @@ public class CursoDocenteController {
                         UsuarioDAO usuarioDAO,
                         DocenteDAO docenteDAO,
                         DocenteCursoDAO docenteCursoDAO,
-                        HorarioGeneracionAsyncService horarioGeneracionAsyncService,
-                        DisponibilidadDocenteDAO disponibilidadDocenteDAO) {
+                        SeleccionCursosAsyncService seleccionCursosAsyncService) {
 
                 this.cursoService = cursoService;
                 this.cicloAcademicoDAO = cicloAcademicoDAO;
                 this.usuarioDAO = usuarioDAO;
                 this.docenteDAO = docenteDAO;
                 this.docenteCursoDAO = docenteCursoDAO;
-                this.horarioGeneracionAsyncService = horarioGeneracionAsyncService;
-                this.disponibilidadDocenteDAO = disponibilidadDocenteDAO;
+                this.seleccionCursosAsyncService = seleccionCursosAsyncService;
         }
 
         @GetMapping
@@ -67,15 +66,7 @@ public class CursoDocenteController {
                 model.addAttribute("nombreUsuario", usuario.getNombre() + " " + usuario.getApellido());
                 model.addAttribute("rolUsuario", "Docente");
                 model.addAttribute("moduloActivo", "cursos");
-                String carreraDocente = docente.getCarrera();
-
-                String palabraCarrera = carreraDocente;
-
-                if (carreraDocente != null && carreraDocente.toLowerCase().contains("sistemas")) {
-                        palabraCarrera = "Sistemas";
-                } else if (carreraDocente != null && carreraDocente.toLowerCase().contains("civil")) {
-                        palabraCarrera = "Civil";
-                }
+                String palabraCarrera = obtenerPalabraCarrera(docente);
 
                 Long cicloAnteriorId = cicloAcademicoDAO.findIdAnteriorAlActivo().orElse(null);
 
@@ -86,18 +77,16 @@ public class CursoDocenteController {
                                                 docente.getIdDocente(),
                                                 cicloAnteriorId,
                                                 PUNTAJE_MINIMO_CURSO_DISPONIBLE));
-                model.addAttribute("cursosGenerales", cicloAnteriorId == null
-                                ? cursoService.listarCursosGeneralesPorCarrera(palabraCarrera)
-                                : cursoService.listarCursosGeneralesPorCarreraFiltrandoEvaluacion(
-                                                palabraCarrera,
-                                                docente.getIdDocente(),
-                                                cicloAnteriorId,
-                                                PUNTAJE_MINIMO_CURSO_DISPONIBLE));
-                model.addAttribute("cursosSeleccionados",
-                                docenteCursoDAO.findCursoIdsByDocenteIdAndCicloId(docente.getIdDocente(),
-                                                cicloActivoId));
+                model.addAttribute("cursosGenerales", listarCursosGeneralesDisponibles(
+                                palabraCarrera,
+                                docente.getIdDocente(),
+                                cicloAnteriorId));
+                List<Long> cursosSeleccionados = docenteCursoDAO.findCursoIdsByDocenteIdAndCicloId(
+                                docente.getIdDocente(),
+                                cicloActivoId);
+                model.addAttribute("cursosSeleccionados", cursosSeleccionados);
+                model.addAttribute("cursosBloqueados", !cursosSeleccionados.isEmpty());
                 model.addAttribute("maxHorasSemanales", MAX_HORAS_SEMANALES);
-                model.addAttribute("seleccionBloqueada", seleccionCompleta(docente.getIdDocente(), cicloActivoId));
 
                 return "docente/cursos";
         }
@@ -114,44 +103,21 @@ public class CursoDocenteController {
                 Docente docente = docenteDAO.findByUsuarioId(usuario.getId())
                                 .orElseThrow(() -> new RuntimeException("Docente no encontrado"));
                 Long cicloActivoId = obtenerCicloActivoId();
-
-                if (seleccionCompleta(docente.getIdDocente(), cicloActivoId)) {
-                        return ResponseEntity.status(409).body(
-                                        "La disponibilidad y los cursos ya fueron confirmados para este ciclo.");
+                if (!docenteCursoDAO.findCursoIdsByDocenteIdAndCicloId(docente.getIdDocente(), cicloActivoId).isEmpty()) {
+                        return ResponseEntity.badRequest()
+                                        .body("La seleccion de cursos ya fue confirmada y no puede modificarse.");
                 }
 
-                int horasSeleccionadas = request.getCursosSeleccionados() == null
-                                ? 0
-                                : request.getCursosSeleccionados()
-                                                .stream()
-                                                .map(cursoService::obtenerPorId)
-                                                .mapToInt(curso -> curso.getHorasSemanales() == null ? 0
-                                                                : curso.getHorasSemanales())
-                                                .sum();
-                if (horasSeleccionadas > MAX_HORAS_SEMANALES) {
-                        return ResponseEntity.badRequest().body(
-                                        "No se puede continuar: la carga seleccionada supera "
-                                                        + MAX_HORAS_SEMANALES + " horas semanales.");
-                }
+                boolean confirmacionProgramada = seleccionCursosAsyncService.programarConfirmacion(
+                                docente.getIdDocente(),
+                                request.getCursosSeleccionados());
 
-                docenteCursoDAO.deleteByDocenteIdAndCicloId(docente.getIdDocente(), cicloActivoId);
+                LOGGER.info("Confirmacion de cursos recibida. docenteId={}, cicloId={}, programada={}",
+                                docente.getIdDocente(), cicloActivoId, confirmacionProgramada);
 
-                if (request.getCursosSeleccionados() != null) {
-                        for (Long idCurso : request.getCursosSeleccionados()) {
-                                docenteCursoDAO.save(docente.getIdDocente(), idCurso, cicloActivoId);
-                        }
-                }
-
-                int cantidad = request.getCursosSeleccionados() == null ? 0 : request.getCursosSeleccionados().size();
-                LOGGER.info("Cursos seleccionados actualizados. docenteId={}, cicloId={}, cursos={}",
-                                docente.getIdDocente(), cicloActivoId, cantidad);
-
-                /*
-                 * La generación automática se separó del guardado de cursos
-                 * para evitar tiempos de espera elevados en la respuesta.
-                 */
-                horarioGeneracionAsyncService.programarGeneracion(docente.getIdDocente());
-                return ResponseEntity.ok("Cursos guardados correctamente.");
+                return ResponseEntity.accepted().body(confirmacionProgramada
+                                ? "Seleccion recibida. Estamos generando opciones de horario."
+                                : "La seleccion ya se encuentra en proceso.");
         }
 
         private Long obtenerCicloActivoId() {
@@ -159,8 +125,28 @@ public class CursoDocenteController {
                                 .orElseThrow(() -> new IllegalStateException("No existe un ciclo academico activo."));
         }
 
-        private boolean seleccionCompleta(Long docenteId, Long cicloId) {
-                return !docenteCursoDAO.findCursoIdsByDocenteIdAndCicloId(docenteId, cicloId).isEmpty()
-                                && !disponibilidadDocenteDAO.findByDocenteIdAndCicloId(docenteId, cicloId).isEmpty();
+        private String obtenerPalabraCarrera(Docente docente) {
+                String carreraDocente = docente.getCarrera();
+                if (carreraDocente != null && carreraDocente.toLowerCase().contains("sistemas")) {
+                        return "Sistemas";
+                }
+                if (carreraDocente != null && carreraDocente.toLowerCase().contains("civil")) {
+                        return "Civil";
+                }
+                return carreraDocente;
         }
+
+        private List<Curso> listarCursosGeneralesDisponibles(
+                        String palabraCarrera,
+                        Long idDocente,
+                        Long cicloAnteriorId) {
+                return cicloAnteriorId == null
+                                ? cursoService.listarCursosGeneralesPorCarrera(palabraCarrera)
+                                : cursoService.listarCursosGeneralesPorCarreraFiltrandoEvaluacion(
+                                                palabraCarrera,
+                                                idDocente,
+                                                cicloAnteriorId,
+                                                PUNTAJE_MINIMO_CURSO_DISPONIBLE);
+        }
+
 }

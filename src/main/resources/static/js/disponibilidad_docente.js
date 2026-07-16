@@ -9,6 +9,7 @@ const dias = [
 ];
 
 const grid = document.getElementById("scheduleGrid");
+const disponibilidadBloqueada = Boolean(window.disponibilidadBloqueada);
 
 let bloquesSeleccionados = [];
 
@@ -38,9 +39,14 @@ function generarHorario() {
             slot.dataset.dia = dia;
             slot.dataset.hora = horaTexto;
 
+            if (disponibilidadBloqueada) {
+                slot.classList.add("locked");
+                grid.appendChild(slot);
+                return;
+            }
+
             slot.addEventListener("mousedown", (e) => {
     e.preventDefault();
-    if (window.seleccionBloqueada) return;
 
     arrastrando = true;
     modoSeleccion = !slot.classList.contains("selected");
@@ -50,7 +56,7 @@ function generarHorario() {
 });
 
 slot.addEventListener("mouseenter", () => {
-    if (arrastrando && !window.seleccionBloqueada) {
+    if (arrastrando) {
         slot.classList.toggle("selected", modoSeleccion);
         actualizarContador();
     }
@@ -102,7 +108,8 @@ function sumar15Minutos(hora) {
 }
 
 document.getElementById("btnLimpiar").addEventListener("click", () => {
-    if (window.seleccionBloqueada) return;
+    if (disponibilidadBloqueada) return;
+
     document.querySelectorAll(".slot.selected")
         .forEach(c => c.classList.remove("selected"));
 
@@ -110,7 +117,8 @@ document.getElementById("btnLimpiar").addEventListener("click", () => {
 });
 
 document.getElementById("btnConfirmar").addEventListener("click", async () => {
-    if (window.seleccionBloqueada) return;
+    if (disponibilidadBloqueada) return;
+
     const botonConfirmar = document.getElementById("btnConfirmar");
     const bloques = [];
 
@@ -136,12 +144,7 @@ document.getElementById("btnConfirmar").addEventListener("click", async () => {
         });
 
         if (response.ok) {
-            mostrarNotificacionDocente(
-                "Tu disponibilidad fue aceptada y guardada correctamente.",
-                "success",
-                "Disponibilidad confirmada"
-            );
-            setTimeout(() => window.location.assign("/docente/cursos"), 1400);
+            window.location.assign("/docente/cursos");
             return;
         } else {
             mostrarNotificacionDocente(await response.text() || "Error al guardar.", "error");
@@ -189,17 +192,14 @@ function alternarTurno(inicio, fin) {
 
 document.querySelectorAll(".turno-btn").forEach(boton => {
     boton.addEventListener("click", () => {
+        if (disponibilidadBloqueada) return;
+
         alternarTurno(
             boton.dataset.inicio,
             boton.dataset.fin
         );
     });
 });
-
-if (window.seleccionBloqueada) {
-    document.querySelectorAll(".turno-btn, #btnLimpiar, #btnConfirmar").forEach(boton => boton.disabled = true);
-    grid.classList.add("is-readonly");
-}
 
 generarHorario();
 cargarDisponibilidadGuardada();

@@ -57,14 +57,14 @@ class OpcionesHorarioServiceImplTest {
     }
 
     @Test
-    void generarHorariosDebeDividirCursoDeCuatroHorasEnDosSesiones() {
+    void generarHorariosDebeDividirCursoDeCuatroHorasAcademicasEnDosSesiones() {
         Curso curso = curso(10L, "Programacion I", 4);
         when(cicloAcademicoDAO.findIdActivo()).thenReturn(Optional.of(CICLO_ID));
         when(docenteCursoDAO.findCursoIdsByDocenteIdAndCicloId(DOCENTE_ID, CICLO_ID)).thenReturn(List.of(10L));
         when(docenteCursoDAO.countDocentesByCursoIdAndCicloId(10L, CICLO_ID)).thenReturn(1);
         when(cursoDAO.findById(10L)).thenReturn(Optional.of(curso));
         when(disponibilidadDAO.findByDocenteIdAndCicloId(DOCENTE_ID, CICLO_ID))
-                .thenReturn(List.of(disponibilidad("LUNES", "07:00", "11:15")));
+                .thenReturn(List.of(disponibilidad("LUNES", "07:00", "11:00")));
         when(aulaDAO.findByEstadoTrue()).thenReturn(List.of(aula(1L, 1L)));
 
         List<OpcionesHorarioDTO> opciones = opcionesHorarioService.generarHorarios(DOCENTE_ID);
@@ -72,7 +72,9 @@ class OpcionesHorarioServiceImplTest {
         assertEquals(3, opciones.size());
         assertEquals(2, opciones.get(0).getBloques().size());
         assertEquals("07:00", opciones.get(0).getBloques().get(0).getHoraInicio());
-        assertEquals("09:15", opciones.get(0).getBloques().get(1).getHoraInicio());
+        assertEquals("08:30", opciones.get(0).getBloques().get(0).getHoraFin());
+        assertEquals("08:30", opciones.get(0).getBloques().get(1).getHoraInicio());
+        assertEquals("10:00", opciones.get(0).getBloques().get(1).getHoraFin());
     }
 
     @Test

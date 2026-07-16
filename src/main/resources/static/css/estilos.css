@@ -327,11 +327,12 @@ body {
 
 /* Login estilo prototipo UTP */
 .login-page {
-    min-height: 100vh;
+    height: 100vh;
     background: #f4f4f6;
     color: #151821;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 .login-topbar {
@@ -385,7 +386,7 @@ body {
     flex: 1;
     display: grid;
     grid-template-columns: minmax(480px, 1fr) minmax(420px, 1fr);
-    min-height: calc(100vh - 98px);
+    min-height: 0;
 }
 
 .login-visual {
@@ -393,12 +394,13 @@ body {
     overflow: hidden;
     background: #eff8fb;
     border-right: 1px solid #d9dce3;
+    min-height: 0;
 }
 
 .login-visual__image {
     width: 100%;
     height: 100%;
-    min-height: calc(100vh - 98px);
+    min-height: 0;
     display: block;
     object-fit: cover;
     object-position: center bottom;
@@ -590,6 +592,8 @@ body {
     align-items: center;
     justify-content: center;
     padding: 48px;
+    min-height: 0;
+    overflow: auto;
 }
 
 .login-card--prototype {
@@ -1011,7 +1015,7 @@ body {
 /* Login en teléfono: únicamente el formulario, sin ilustración institucional */
 @media (max-width: 920px) {
     .login-visual { display: none; }
-    .login-shell { display: flex; min-height: calc(100vh - 96px); }
+    .login-shell { display: flex; min-height: 0; }
     .login-panel { width: 100%; padding: 32px; }
     .login-card--prototype { max-width: 400px; padding: 30px 22px 24px; }
     .login-topbar { height: 54px; padding: 0 16px; }

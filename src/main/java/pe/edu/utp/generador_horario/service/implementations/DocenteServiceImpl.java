@@ -3,6 +3,7 @@ package pe.edu.utp.generador_horario.service.implementations;
 import pe.edu.utp.generador_horario.entidad.Docente;
 import pe.edu.utp.generador_horario.dao.DocenteDAO;
 import pe.edu.utp.generador_horario.dao.UsuarioDAO;
+import pe.edu.utp.generador_horario.config.EstadoUsuario;
 import pe.edu.utp.generador_horario.entidad.Usuario;
 import pe.edu.utp.generador_horario.service.factory.UsuarioFactory;
 import pe.edu.utp.generador_horario.service.interfaces.DocenteService;
@@ -68,6 +69,8 @@ public class DocenteServiceImpl implements DocenteService {
             Long usuarioId = usuarioDAO.guardarRetornandoId(usuario);
             docente.setUsuarioId(usuarioId);
             LOGGER.info("Usuario docente creado. usuarioId={}, correo={}", usuarioId, docente.getCorreo());
+        } else {
+            sincronizarUsuario(docente);
         }
 
         try {
@@ -86,12 +89,29 @@ public class DocenteServiceImpl implements DocenteService {
     public void desactivarDocente(Long id) {
         Docente docente = obtenerPorId(id);
         docente.setEstado(false);
+        sincronizarUsuario(docente);
         try {
             docenteDAO.save(docente);
         } catch (RuntimeException e) {
             LOGGER.error("No se pudo guardar la desactivacion del docente. id={}", id, e);
             throw e;
         }
+    }
+
+    private void sincronizarUsuario(Docente docente) {
+        if (docente.getUsuarioId() == null) {
+            throw new IllegalArgumentException("El docente no tiene usuario de acceso asociado.");
+        }
+
+        Usuario usuario = new Usuario();
+        usuario.setNombre(docente.getNombres());
+        usuario.setApellido(docente.getApellidos());
+        usuario.setEmail(docente.getCorreo());
+        usuario.setEstado(Boolean.TRUE.equals(docente.getEstado())
+                ? EstadoUsuario.ACTIVO
+                : EstadoUsuario.INACTIVO);
+
+        usuarioDAO.actualizarDatosBasicos(docente.getUsuarioId(), usuario);
     }
 }
 

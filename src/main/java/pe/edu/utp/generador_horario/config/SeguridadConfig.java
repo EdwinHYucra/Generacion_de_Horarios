@@ -1,5 +1,7 @@
 package pe.edu.utp.generador_horario.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -11,11 +13,14 @@ import org.springframework.security.web.SecurityFilterChain;
 import pe.edu.utp.generador_horario.dao.UsuarioDAO;
 import pe.edu.utp.generador_horario.entidad.Usuario;
 
+import java.util.Locale;
 import java.util.Optional;
 
 @Configuration
 @EnableWebSecurity
 public class SeguridadConfig {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SeguridadConfig.class);
 
     private final UsuarioDAO usuarioDAO;
 
@@ -31,14 +36,16 @@ public class SeguridadConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         return email -> {
-            Optional<Usuario> opcional = usuarioDAO.buscarPorEmail(email);
+            String emailNormalizado = email == null ? "" : email.trim().toLowerCase(Locale.ROOT);
+            Optional<Usuario> opcional = usuarioDAO.buscarPorEmail(emailNormalizado);
             Usuario usuario = opcional
                     .orElseThrow(() -> new org.springframework.security.core.userdetails.UsernameNotFoundException(
-                            "Usuario no encontrado: " + email));
+                            "Usuario no encontrado: " + emailNormalizado));
             return org.springframework.security.core.userdetails.User
                     .withUsername(usuario.getEmail())
                     .password(usuario.getPassword())
                     .roles(usuario.getRol())
+                    .disabled(!EstadoUsuario.ACTIVO.equals(usuario.getEstado()))
                     .build();
         };
     }
@@ -49,7 +56,7 @@ public class SeguridadConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/css/**", "/js/**", "/images/**", "/img/**", "/assets/**").permitAll()
-                        .requestMatchers("/evaluacion-docente/**").permitAll()
+                        .requestMatchers("/evaluacion-docente", "/evaluacion-docente/**").permitAll()
                         .requestMatchers(RutasSistema.LOGIN, RutasSistema.LOGOUT, "/recuperar-contrasena", "/restablecer-contrasena").permitAll()
                         .requestMatchers(RutasSistema.SUPERADMIN + "/**").hasRole(RolSistema.SUPERADMIN)
                         .requestMatchers(RutasSistema.ADMINISTRADOR + "/**").hasRole(RolSistema.ADMIN)
@@ -57,6 +64,13 @@ public class SeguridadConfig {
                         .anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginPage(RutasSistema.LOGIN)
+                        .failureHandler((request, response, exception) -> {
+                            String email = request.getParameter("username");
+                            LOGGER.warn("Login rechazado para email={}. motivo={}",
+                                    email == null ? "" : email.trim().toLowerCase(Locale.ROOT),
+                                    exception.getClass().getSimpleName());
+                            response.sendRedirect(RutasSistema.LOGIN_ERROR);
+                        })
                         .successHandler((request, response, authentication) -> {
                             boolean esSuperAdmin = authentication.getAuthorities().stream()
                                     .anyMatch(authority -> authority.getAuthority().equals(RolSistema.AUTHORITY_SUPERADMIN));
